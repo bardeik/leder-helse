@@ -37,8 +37,8 @@ export default function HomePage() {
   if (loading) {
     return (
       <section className="card">
-        <h1>Dashboard</h1>
-        <small className="muted">Loading local data...</small>
+        <h1>Oversikt</h1>
+        <small className="muted">Laster lokale data...</small>
       </section>
     );
   }

@@ -70,7 +70,7 @@ export function maybeSendScheduledReminders(now = new Date()) {
   if (settings.energyReminderEnabled && now.getHours() === 15 && now.getMinutes() < 2) {
     const sentAt = window.localStorage.getItem(ENERGY_SENT_KEY);
     if (sentAt !== dateKey) {
-      sendNotification("Energy check-in", "How is your energy right now on a 1-5 scale?");
+      sendNotification("Energi-innsjekk", "Hvordan er energien din akkurat nå på en skala fra 1 til 5?");
       window.localStorage.setItem(ENERGY_SENT_KEY, dateKey);
     }
   }
@@ -78,7 +78,7 @@ export function maybeSendScheduledReminders(now = new Date()) {
   if (settings.strengthMorningEnabled && now.getHours() === settings.strengthReminderHour && now.getMinutes() < 2) {
     const sentAt = window.localStorage.getItem(STRENGTH_SENT_KEY);
     if (sentAt !== dateKey) {
-      sendNotification("Strength reminder", "Plan either Strength A or Strength B this morning.");
+      sendNotification("Styrkepåminnelse", "Planlegg enten Styrke A eller Styrke B i morgen tidlig.");
       window.localStorage.setItem(STRENGTH_SENT_KEY, dateKey);
     }
   }

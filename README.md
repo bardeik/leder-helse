@@ -14,6 +14,11 @@ Offline-first PWA for a 6-week health loop:
 - Locale-aware numeric inputs for weight and sleep hours
 - Save confirmation toast fixed to the visible viewport on mobile
 
+## Language
+- UI language: **Norwegian (Bokmål)**
+- App name shown to users: **Helseloggen**
+- Auto-save toast text: **"Endringer lagret"**
+
 ## Tech Stack
 - **Next.js 15 (App Router)** + **TypeScript strict**
 - **Dexie 4 (IndexedDB)** for local persistence — DB name: `leader-health-loop`
@@ -71,17 +76,17 @@ npm run build
 
 ## Verification Steps
 1. Open the app at `http://localhost:3000`.
-2. Go to `/log` (Log Today):
-	- Change energy or sleep — verify "Changes saved" appears briefly (no save button needed).
+2. Go to `/log` (Logg i dag):
+	- Change energy or sleep — verify "Endringer lagret" appears briefly (no save button needed).
 	- Use `‹` / `›` navigation to go back to previous days and edit them.
 	- Add a workout, then delete it.
 3. Go to `/check-in` and save a weekly weight.
 	- Use week navigation to move between current week and up to two earlier weeks.
-4. Return to `/` (Dashboard) and verify:
+4. Return to `/` (Oversikt) and verify:
 	- Adherence percent and green/yellow/red status for current week.
 	- Weight, energy, and sleep trend rows for recent weeks.
 	- Recent workouts list and "Next actions" section.
-5. Go to `/settings` and verify:
+5. Go to `/settings` (Innstillinger) and verify:
 	- Reminder toggles are persisted across page refresh.
 	- Export downloads a JSON backup file.
 	- Import accepts a valid JSON backup and restores data.

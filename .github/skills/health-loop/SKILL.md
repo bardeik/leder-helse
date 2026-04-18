@@ -19,6 +19,7 @@ All MVP features are implemented. Key things already in place:
 - Locale-aware number input parsing/formatting for weight and sleep hours
 - Portal-based save toast fixed to the visible mobile viewport
 - Playwright mobile E2E coverage for save-toast visibility
+- Auto-save toast text in UI: "Endringer lagret"
 
 ## Not yet built (valid next features)
 - Push notifications (needs server component)

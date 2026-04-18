@@ -94,10 +94,10 @@ export function useWeeklyCheckIn() {
       });
 
       await weeklyCheckInsRepo.upsert(checkIn);
-      setTransientMessage("Changes saved");
+      setTransientMessage("Endringer lagret");
       return true;
     } catch {
-      setMessage("Please enter a valid weight.");
+      setMessage("Skriv inn en gyldig vekt.");
       return false;
     } finally {
       setSaving(false);

@@ -120,10 +120,10 @@ export function useLogToday() {
       });
 
       await dailyLogsRepo.upsert(validated);
-      setTransientMessage("Changes saved");
+      setTransientMessage("Endringer lagret");
       return true;
     } catch {
-      setMessage("Please check your inputs.");
+      setMessage("Kontroller feltene dine.");
       return false;
     } finally {
       setSaving(false);
@@ -152,13 +152,13 @@ export function useLogToday() {
     };
 
     setTodayWorkouts((prev) => [added, ...prev]);
-    setTransientMessage("Changes saved");
+    setTransientMessage("Endringer lagret");
   }
 
   async function removeWorkout(id: number) {
     await workoutLogsRepo.delete(id);
     setTodayWorkouts((prev) => prev.filter((item) => item.id !== id));
-    setTransientMessage("Deleted activity");
+    setTransientMessage("Aktivitet slettet");
   }
 
   return {

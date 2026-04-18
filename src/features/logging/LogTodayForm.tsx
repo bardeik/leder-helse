@@ -6,6 +6,16 @@ import type { LogTodayState } from "@/features/logging/hooks/useLogToday";
 import { parseLocalNumber, formatLocalNumber, getDecimalSeparator } from "@/domain/localeNumber";
 import { FloatingSaveNotice } from "@/components/FloatingSaveNotice";
 
+function formatWorkoutType(type: "strengthA" | "strengthB" | "walk") {
+  if (type === "strengthA") {
+    return "Styrke A";
+  }
+  if (type === "strengthB") {
+    return "Styrke B";
+  }
+  return "Gåtur";
+}
+
 export function LogTodayForm() {
   const { state, setState, save, addQuickWorkout, todayWorkouts, removeWorkout, saving, message, selectedDate, today, canGoBack, canGoForward, goBack, goForward } = useLogToday();
   const [sleepHoursFocused, setSleepHoursFocused] = useState(false);
@@ -19,13 +29,13 @@ export function LogTodayForm() {
 
   return (
     <section className="card appear" aria-labelledby="log-title">
-      <h1 id="log-title">{isToday ? "Log today" : `Log — ${selectedDate}`}</h1>
+      <h1 id="log-title">{isToday ? "Logg i dag" : `Logg — ${selectedDate}`}</h1>
 
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
         <button
           className="secondary"
           type="button"
-          aria-label="Previous day"
+          aria-label="Forrige dag"
           onClick={goBack}
           disabled={!canGoBack}
           style={{ padding: "0.4rem 0.75rem", fontWeight: 600 }}
@@ -33,12 +43,12 @@ export function LogTodayForm() {
           ‹
         </button>
         <span style={{ flex: 1, textAlign: "center", fontSize: "0.9rem" }}>
-          {isToday ? <strong>Today</strong> : selectedDate}
+          {isToday ? <strong>I dag</strong> : selectedDate}
         </span>
         <button
           className="secondary"
           type="button"
-          aria-label="Next day"
+          aria-label="Neste dag"
           onClick={goForward}
           disabled={!canGoForward}
           style={{ padding: "0.4rem 0.75rem", fontWeight: 600 }}
@@ -48,13 +58,13 @@ export function LogTodayForm() {
       </div>
 
       <p>
-        <small className="muted">Auto-save on field leave. Navigate up to 2 weeks back.</small>
+        <small className="muted">Lagrer automatisk når du går ut av feltet. Du kan gå opptil 2 uker tilbake.</small>
       </p>
 
       <div className="grid" style={{ marginTop: "1rem" }}>
         <div>
           <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-            <legend>Energy at 15:00 (1-5)</legend>
+            <legend>Energi kl. 15:00 (1-5)</legend>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
               {[1, 2, 3, 4, 5].map((energyValue) => (
                 <label key={energyValue}>
@@ -77,7 +87,7 @@ export function LogTodayForm() {
         </div>
 
         <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-          <legend>Sleep OK?</legend>
+          <legend>Søvn ok?</legend>
           <label>
             <input
               name="sleep-ok"
@@ -89,7 +99,7 @@ export function LogTodayForm() {
                 void save(next);
               }}
             />{" "}
-            Yes
+            Ja
           </label>
           <label>
             <input
@@ -102,16 +112,16 @@ export function LogTodayForm() {
                 void save(next);
               }}
             />{" "}
-            No
+            Nei
           </label>
         </fieldset>
 
         <div>
-          <label htmlFor="sleep-hours">Sleep hours (optional)</label>
+          <label htmlFor="sleep-hours">Sovntimer (valgfritt)</label>
           <input
             id="sleep-hours"
             type="text"
-            placeholder={`e.g. 7${getDecimalSeparator()}5`}
+            placeholder={`f.eks. 7${getDecimalSeparator()}5`}
             value={sleepHoursFocused ? sleepHoursInput : (state.sleepHours ? formatLocalNumber(state.sleepHours) : "")}
             onFocus={(event) => {
               setSleepHoursFocused(true);
@@ -133,7 +143,7 @@ export function LogTodayForm() {
         </div>
 
         <div>
-          <label htmlFor="notes">Notes (optional)</label>
+          <label htmlFor="notes">Notater (valgfritt)</label>
           <textarea
             id="notes"
             value={state.notes ?? ""}
@@ -144,27 +154,27 @@ export function LogTodayForm() {
 
         <div className="grid grid-3">
           <button className="secondary" type="button" onClick={() => addQuickWorkout("walk", 20)}>
-            + Walk 20m
+            + Gåtur 20 min
           </button>
           <button className="secondary" type="button" onClick={() => addQuickWorkout("strengthA")}> 
-            + Strength A
+            + Styrke A
           </button>
           <button className="secondary" type="button" onClick={() => addQuickWorkout("strengthB")}> 
-            + Strength B
+            + Styrke B
           </button>
         </div>
 
         <div>
-          <strong>{isToday ? "Today\u2019s activities" : `Activities \u2014 ${selectedDate}`}</strong>
+          <strong>{isToday ? "Dagens aktiviteter" : `Aktiviteter — ${selectedDate}`}</strong>
           {todayWorkouts.length === 0 ? (
             <small className="muted" style={{ display: "block", marginTop: "0.4rem" }}>
-              No workouts logged yet.
+              Ingen økter loggført enda.
             </small>
           ) : (
             <ul style={{ marginTop: "0.5rem", paddingLeft: "1.1rem" }}>
               {todayWorkouts.map((item) => (
                 <li key={`${item.id ?? item.dateTime}-${item.type}`} style={{ marginBottom: "0.35rem" }}>
-                  {item.type}
+                  {formatWorkoutType(item.type)}
                   {item.durationMin ? ` (${item.durationMin}m)` : ""}
                   <button
                     className="secondary"
@@ -172,7 +182,7 @@ export function LogTodayForm() {
                     style={{ marginLeft: "0.5rem", padding: "0.35rem 0.55rem" }}
                     onClick={() => item.id && void removeWorkout(item.id)}
                   >
-                    Delete
+                    Slett
                   </button>
                 </li>
               ))}
@@ -181,7 +191,7 @@ export function LogTodayForm() {
         </div>
 
         <FloatingSaveNotice message={message} />
-        {saving ? <small className="muted">Saving...</small> : null}
+        {saving ? <small className="muted">Lagrer...</small> : null}
       </div>
     </section>
   );

@@ -10,8 +10,8 @@ describe("dashboard trend helpers", () => {
       [{ dateTime: "2026-04-13T06:00:00.000Z", date: "2026-04-13", type: "walk" }]
     );
 
-    expect(snapshot.nextActions.some((item) => item.includes("Strength A"))).toBe(true);
-    expect(snapshot.nextActions.some((item) => item.includes("Strength B"))).toBe(true);
-    expect(snapshot.nextActions.some((item) => item.includes("weigh-in"))).toBe(true);
+    expect(snapshot.nextActions.some((item) => item.includes("Styrke A"))).toBe(true);
+    expect(snapshot.nextActions.some((item) => item.includes("Styrke B"))).toBe(true);
+    expect(snapshot.nextActions.some((item) => item.includes("veiing"))).toBe(true);
   });
 });

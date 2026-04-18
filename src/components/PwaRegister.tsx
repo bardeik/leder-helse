@@ -99,12 +99,12 @@ export function PwaRegister() {
     <aside className="pwa-update-banner" role="status" aria-live="polite">
       <p>
         {installingUpdate
-          ? "Installing the new app version and restarting..."
-          : "A new version is available and ready to install."}
+          ? "Installerer ny appversjon og starter på nytt..."
+          : "En ny versjon er tilgjengelig og klar til installasjon."}
       </p>
       {updateReady ? (
         <button className="primary" type="button" onClick={applyUpdateAndRestart}>
-          Dismiss and restart app
+          Start appen på nytt
         </button>
       ) : null}
     </aside>

@@ -5,28 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const pageTitleByPath: Record<string, string> = {
-  "/": "Dashboard",
-  "/log": "Log Today",
-  "/check-in": "Check-in",
-  "/settings": "Settings"
+  "/": "Oversikt",
+  "/log": "Logg i dag",
+  "/check-in": "Ukentlig innsjekk",
+  "/settings": "Innstillinger"
 };
 
 export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const pageTitle = pageTitleByPath[pathname] ?? "Health tracker";
+  const pageTitle = pageTitleByPath[pathname] ?? "Helseloggen";
 
   return (
     <header className="topbar-wrap">
-      <nav className="topbar" aria-label="Main navigation">
-        <strong className="topbar-brand">Health tracker</strong>
+      <nav className="topbar" aria-label="Hovednavigasjon">
+        <strong className="topbar-brand">Helseloggen</strong>
         <strong className="topbar-page-title" aria-live="polite">
           {pageTitle}
         </strong>
         <button
           className="topbar-menu-button"
           type="button"
-          aria-label="Open menu"
+          aria-label="Åpne meny"
           aria-expanded={menuOpen}
           aria-controls="main-menu-panel"
           onClick={() => setMenuOpen((open) => !open)}
@@ -38,16 +38,16 @@ export function Nav() {
       {menuOpen ? (
         <div id="main-menu-panel" className="topbar-menu-panel" role="menu">
           <Link className="topbar-menu-link" href="/" role="menuitem" onClick={() => setMenuOpen(false)}>
-            Dashboard
+            Oversikt
           </Link>
           <Link className="topbar-menu-link" href="/log" role="menuitem" onClick={() => setMenuOpen(false)}>
-            Log Today
+            Logg i dag
           </Link>
           <Link className="topbar-menu-link" href="/check-in" role="menuitem" onClick={() => setMenuOpen(false)}>
-            Check-in
+            Ukentlig innsjekk
           </Link>
           <Link className="topbar-menu-link" href="/settings" role="menuitem" onClick={() => setMenuOpen(false)}>
-            Settings
+            Innstillinger
           </Link>
         </div>
       ) : null}

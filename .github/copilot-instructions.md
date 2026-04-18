@@ -31,6 +31,7 @@ Not yet implemented (potential next steps):
 ## 2) Tech stack (actual, as implemented)
 - Frontend: **Next.js 15 (App Router)** + **TypeScript strict** + **React**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
+- UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
 - Local storage: **Dexie 4 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
 - PWA: **next-pwa 5.6.0** (Workbox); config in `next.config.ts`:
@@ -61,7 +62,7 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 > For workouts logged on past dates, `dateTime` is set to `${date}T12:00:00.000Z` for stable ordering.
 
 ## 5) Implemented UX patterns (preserve these when extending)
-- **Auto-save**: `/log` page saves on every field change (radio `onChange`, input `onBlur`). `/check-in` auto-saves on blur as well. No manual save button. Transient "Changes saved" message appears for 1800ms.
+- **Auto-save**: `/log` page saves on every field change (radio `onChange`, input `onBlur`). `/check-in` auto-saves on blur as well. No manual save button. Transient "Endringer lagret" message appears for 1800ms.
 - **Date navigation** on Log Today: `useLogToday` exposes `selectedDate`, `canGoBack`, `canGoForward`, `goBack()`, `goForward()`. `MAX_PAST_DAYS = 13` (14 days including today).
 - **Date navigation** on Weekly Check-In: `useWeeklyCheckIn` exposes bounded Monday-based navigation for the current week and the 2 preceding weeks.
 - **Workout delete**: workouts are removed via per-item delete actions; no separate undo button is present.

@@ -17,13 +17,13 @@ description: "Frontend + UI rules"
 ## Auto-save pattern (already implemented on /log)
 - Save on every field change: radio buttons use `onChange`, text inputs use `onBlur`.
 - No manual Save button on Log Today or Weekly Check-In.
-- Show a transient "Changes saved" message for 1800ms via a `messageTimer` ref.
+- Show a transient "Endringer lagret" message for 1800ms via a `messageTimer` ref.
 - Render the save toast through `src/components/FloatingSaveNotice.tsx` so it remains fixed to the visible viewport on mobile.
 
 ## Date navigation pattern (already implemented on /log)
 - `useLogToday` hook owns `selectedDate` state, bounded by `[minDate, today]`.
 - Expose `canGoBack`, `canGoForward`, `goBack()`, `goForward()` from the hook.
-- Use `‹` / `›` buttons disabled when at boundary. Show date or "Today" label.
+- Use `‹` / `›` buttons disabled when at boundary. Show date or "I dag" label.
 - `MAX_PAST_DAYS = 13` (14 days including today).
 - Past-date workout `dateTime` must be `${date}T12:00:00.000Z` for stable ordering.
 

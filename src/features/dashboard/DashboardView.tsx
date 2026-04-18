@@ -12,7 +12,7 @@ interface DashboardViewProps {
 
 function Sparkline({ values }: { values: number[] }) {
   if (values.length === 0) {
-    return <small className="muted">No data yet.</small>;
+    return <small className="muted">Ingen data enda.</small>;
   }
 
   const min = Math.min(...values);
@@ -29,10 +29,30 @@ function Sparkline({ values }: { values: number[] }) {
     .join(" ");
 
   return (
-    <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Trend chart">
+    <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Trendgraf">
       <polyline fill="none" stroke="#24595a" strokeWidth="2.5" points={points} />
     </svg>
   );
+}
+
+function formatStatus(status: "green" | "yellow" | "red") {
+  if (status === "green") {
+    return "grønn";
+  }
+  if (status === "yellow") {
+    return "gul";
+  }
+  return "rød";
+}
+
+function formatWorkoutType(type: WorkoutLog["type"]) {
+  if (type === "strengthA") {
+    return "Styrke A";
+  }
+  if (type === "strengthB") {
+    return "Styrke B";
+  }
+  return "Gåtur";
 }
 
 export function DashboardView({ adherencePercent, status, trendPoints, recentWorkouts, nextActions }: DashboardViewProps) {
@@ -45,37 +65,37 @@ export function DashboardView({ adherencePercent, status, trendPoints, recentWor
   return (
     <div className="grid">
       <section className="card appear">
-        <h1>This week</h1>
+        <h1>Denne uken</h1>
         <p>
-          <strong>{adherencePercent}% adherence</strong> <span className={`pill ${status}`}>{status}</span>
+          <strong>{adherencePercent}% etterlevelse</strong> <span className={`pill ${status}`}>{formatStatus(status)}</span>
         </p>
       </section>
 
       <section className="grid grid-3">
         <article className="card">
-          <h2>Weight trend</h2>
+          <h2>Vekttrend</h2>
           <Sparkline values={weightSeries} />
         </article>
         <article className="card">
-          <h2>Energy average</h2>
+          <h2>Energisnitt</h2>
           <Sparkline values={energySeries} />
         </article>
         <article className="card">
-          <h2>Sleep-ok nights</h2>
+          <h2>Netter med godkjent søvn</h2>
           <Sparkline values={sleepSeries} />
         </article>
       </section>
 
       <section className="grid grid-2">
         <article className="card">
-          <h2>Recent workouts</h2>
+          <h2>Nylige økter</h2>
           {recentWorkouts.length === 0 ? (
-            <small className="muted">No workouts logged yet.</small>
+            <small className="muted">Ingen økter loggført enda.</small>
           ) : (
             <ul>
               {recentWorkouts.map((item) => (
                 <li key={`${item.dateTime}-${item.type}`}>
-                  {item.date} - {item.type}
+                  {item.date} - {formatWorkoutType(item.type)}
                   {item.durationMin ? ` (${item.durationMin}m)` : ""}
                 </li>
               ))}
@@ -84,9 +104,9 @@ export function DashboardView({ adherencePercent, status, trendPoints, recentWor
         </article>
 
         <article className="card">
-          <h2>Next actions</h2>
+          <h2>Neste tiltak</h2>
           {nextActions.length === 0 ? (
-            <small className="muted">Great job. You are on track this week.</small>
+            <small className="muted">Bra jobba. Du er i rute denne uken.</small>
           ) : (
             <ul>
               {nextActions.map((action) => (

@@ -23,7 +23,7 @@ export default function SettingsPage() {
       const nextSummary = await getStorageSummary();
       setSummary(nextSummary);
     } catch {
-      setMessage("Could not read local storage summary.");
+      setMessage("Kunne ikke lese oppsummering av lokal lagring.");
     }
   }
 
@@ -34,7 +34,7 @@ export default function SettingsPage() {
 
   async function enableNotifications() {
     const permission = await requestNotificationPermission();
-    setMessage(`Notification permission: ${permission}`);
+    setMessage(`Varslingstillatelse: ${permission}`);
   }
 
   async function handleExport() {
@@ -47,16 +47,16 @@ export default function SettingsPage() {
       const objectUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = objectUrl;
-      link.download = `leader-health-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `helseloggen-sikkerhetskopi-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(objectUrl);
 
-      setMessage("Backup exported and file download started.");
+      setMessage("Sikkerhetskopi eksportert og nedlasting startet.");
       await refreshSummary();
     } catch {
-      setMessage("Backup export failed. Please verify local data is valid.");
+      setMessage("Eksport av sikkerhetskopi mislyktes. Kontroller at lokale data er gyldige.");
     } finally {
       setBusy(false);
     }
@@ -70,10 +70,10 @@ export default function SettingsPage() {
     setBusy(true);
     try {
       await importBackup(jsonPreview);
-      setMessage("Backup imported successfully.");
+      setMessage("Sikkerhetskopi importert.");
       await refreshSummary();
     } catch {
-      setMessage("Backup import failed. Verify JSON format.");
+      setMessage("Import av sikkerhetskopi mislyktes. Kontroller JSON-formatet.");
     } finally {
       setBusy(false);
     }
@@ -81,18 +81,18 @@ export default function SettingsPage() {
 
   return (
     <section className="card appear" aria-labelledby="settings-title">
-      <h1 id="settings-title">Settings</h1>
+      <h1 id="settings-title">Innstillinger</h1>
 
       <div className="grid" style={{ marginTop: "1rem" }}>
         <fieldset style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem" }}>
-          <legend>Reminders (opt-in)</legend>
+          <legend>Påminninger (valgfritt)</legend>
           <label>
             <input
               type="checkbox"
               checked={settings.energyReminderEnabled}
               onChange={(event) => updateSettings({ ...settings, energyReminderEnabled: event.target.checked })}
             />{" "}
-            Daily energy reminder at 15:00
+            Daglig energipåminnelse kl. 15:00
           </label>
           <label>
             <input
@@ -100,9 +100,9 @@ export default function SettingsPage() {
               checked={settings.strengthMorningEnabled}
               onChange={(event) => updateSettings({ ...settings, strengthMorningEnabled: event.target.checked })}
             />{" "}
-            Morning Strength A/B reminder
+            Morgenpåminnelse for Styrke A/B
           </label>
-          <label htmlFor="strength-hour">Strength reminder hour (0-23)</label>
+          <label htmlFor="strength-hour">Klokkeslett for styrkepåminnelse (0-23)</label>
           <input
             id="strength-hour"
             type="number"
@@ -112,29 +112,29 @@ export default function SettingsPage() {
             onChange={(event) => updateSettings({ ...settings, strengthReminderHour: Number(event.target.value) })}
           />
           <button className="secondary" type="button" disabled={!canUseNotifications} onClick={enableNotifications}>
-            Enable browser notifications
+            Aktiver nettleservarsler
           </button>
         </fieldset>
 
         <fieldset style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem" }}>
-          <legend>Backup</legend>
+          <legend>Sikkerhetskopi</legend>
           <p>
             <small className="muted">
-              Stored now: daily logs {summary?.dailyLogs ?? "-"}, weekly check-ins {summary?.weeklyCheckIns ?? "-"}, workouts {summary?.workoutLogs ?? "-"}
+              Lagret nå: daglige logger {summary?.dailyLogs ?? "-"}, ukentlige innsjekker {summary?.weeklyCheckIns ?? "-"}, økter {summary?.workoutLogs ?? "-"}
             </small>
           </p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <button className="secondary" type="button" onClick={() => void refreshSummary()} disabled={busy}>
-              Refresh stored counts
+              Oppdater antall lagrede
             </button>
             <button className="secondary" type="button" onClick={handleExport} disabled={busy}>
-              {busy ? "Working..." : "Export backup (JSON)"}
+              {busy ? "Jobber..." : "Eksporter sikkerhetskopi (JSON)"}
             </button>
           </div>
-          <label htmlFor="backup-json">Import backup JSON</label>
+          <label htmlFor="backup-json">Importer sikkerhetskopi-JSON</label>
           <textarea id="backup-json" value={jsonPreview} onChange={handleJsonChange} />
           <button className="primary" type="button" onClick={handleImport} disabled={busy || jsonPreview.trim().length === 0}>
-            {busy ? "Working..." : "Import from text area"}
+            {busy ? "Jobber..." : "Importer fra tekstfelt"}
           </button>
         </fieldset>
 

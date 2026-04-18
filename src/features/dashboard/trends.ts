@@ -22,16 +22,16 @@ export function getDashboardSnapshot(
 
   const actions: string[] = [];
   if (!workouts.some((item) => item.type === "strengthA" && item.date >= weekStartDate)) {
-    actions.push("Strength A tomorrow morning 07:15");
+    actions.push("Styrke A i morgen tidlig kl. 07:15");
   }
   if (!workouts.some((item) => item.type === "strengthB" && item.date >= weekStartDate)) {
-    actions.push("Strength B in 2 days 07:15");
+    actions.push("Styrke B om to dager kl. 07:15");
   }
   if (!workouts.some((item) => item.type === "walk" && item.date >= weekStartDate)) {
-    actions.push("Walk 20-30m this afternoon");
+    actions.push("Gå tur 20-30 min i ettermiddag");
   }
   if (weeklyCheckIns.length === 0) {
-    actions.push("Do your weekly weigh-in");
+    actions.push("Gjennomfør ukentlig veiing");
   }
 
   return {

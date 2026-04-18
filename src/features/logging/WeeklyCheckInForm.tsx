@@ -26,24 +26,24 @@ export function WeeklyCheckInForm() {
   return (
     <section className="card appear" aria-labelledby="checkin-title">
       <div className="week-nav" style={{ marginBottom: "0.5rem" }}>
-        <button type="button" onClick={goBack} disabled={!canGoBack} aria-label="Previous week">
+        <button type="button" onClick={goBack} disabled={!canGoBack} aria-label="Forrige uke">
           ‹
         </button>
-        <span>{isCurrentWeek ? <strong>Current week</strong> : selectedWeekStart}</span>
-        <button type="button" onClick={goForward} disabled={!canGoForward} aria-label="Next week">
+        <span>{isCurrentWeek ? <strong>Denne uken</strong> : selectedWeekStart}</span>
+        <button type="button" onClick={goForward} disabled={!canGoForward} aria-label="Neste uke">
           ›
         </button>
       </div>
 
-      <h1 id="checkin-title">Weekly weigh-in</h1>
-      <small>Week starting {selectedWeekStart} (Monday)</small>
+      <h1 id="checkin-title">Ukentlig veiing</h1>
+      <small>Uke som starter {selectedWeekStart} (mandag)</small>
       <div className="grid" style={{ marginTop: "1rem" }}>
         <div>
-          <label htmlFor="weight">Weight (kg)</label>
+          <label htmlFor="weight">Vekt (kg)</label>
           <input
             id="weight"
             type="text"
-            placeholder={`e.g. 75${getDecimalSeparator()}5`}
+            placeholder={`f.eks. 75${getDecimalSeparator()}5`}
             value={weightFocused ? weightInput : formatLocalNumber(state.weightKg)}
             onFocus={(event) => {
               setWeightFocused(true);
@@ -65,7 +65,7 @@ export function WeeklyCheckInForm() {
         </div>
 
         <div>
-          <label htmlFor="checkin-notes">Notes</label>
+          <label htmlFor="checkin-notes">Notater</label>
           <textarea
             id="checkin-notes"
             value={state.notes}
@@ -75,7 +75,7 @@ export function WeeklyCheckInForm() {
         </div>
 
         <div>
-          <label htmlFor="adjustment">One adjustment for next week</label>
+          <label htmlFor="adjustment">En justering for neste uke</label>
           <input
             id="adjustment"
             type="text"
@@ -86,7 +86,7 @@ export function WeeklyCheckInForm() {
         </div>
 
         <FloatingSaveNotice message={message} />
-        {saving ? <small className="muted">Saving...</small> : null}
+        {saving ? <small className="muted">Lagrer...</small> : null}
       </div>
     </section>
   );
