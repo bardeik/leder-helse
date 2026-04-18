@@ -2,21 +2,24 @@
 
 Offline-first PWA for a 6-week health loop:
 - Weekly weigh-in (1x/week) + weekly review — `/check-in` page
+- Weekly Check-In date navigation: current week plus up to 2 previous weeks
 - Daily energy score (1–5), auto-saved on change
 - Daily sleep check (yes/no + optional hours), auto-saved on change
-- Workouts: Strength A, Strength B, Walk; with delete + undo
+- Workouts: Strength A, Strength B, Walk; with per-item delete
 - Date navigation on Log Today: up to 14 days back, stops at today
 - Dashboard: current week adherence (green/yellow/red), 6-week trends, next actions
 - Optional browser notifications (localStorage-persisted toggle)
 - Settings: JSON export/import backup of all data
 - 100% offline PWA via next-pwa (Workbox), with user-visible update banner
+- Locale-aware numeric inputs for weight and sleep hours
+- Save confirmation toast fixed to the visible viewport on mobile
 
 ## Tech Stack
 - **Next.js 15 (App Router)** + **TypeScript strict**
 - **Dexie 4 (IndexedDB)** for local persistence — DB name: `leader-health-loop`
 - **next-pwa 5.6.0** (Workbox) for build-time precaching and offline app shell
 - **Zod** for validation
-- **Vitest 4** for unit tests (3 test files, 7 tests)
+- **Vitest 4** for unit tests and **Playwright** for mobile E2E tests
 
 ## Project Structure
 - `src/domain/` — framework-agnostic types, Zod schemas, pure calculations
@@ -54,7 +57,13 @@ npm run lint
 npm run test
 ```
 
-5. Run production build:
+5. Run mobile E2E tests:
+
+```bash
+npm run test:e2e
+```
+
+6. Run production build:
 
 ```bash
 npm run build
@@ -63,10 +72,11 @@ npm run build
 ## Verification Steps
 1. Open the app at `http://localhost:3000`.
 2. Go to `/log` (Log Today):
-	- Change energy or sleep — verify "Saved" appears briefly (no save button needed).
+	- Change energy or sleep — verify "Changes saved" appears briefly (no save button needed).
 	- Use `‹` / `›` navigation to go back to previous days and edit them.
-	- Add a workout, then delete it and undo.
+	- Add a workout, then delete it.
 3. Go to `/check-in` and save a weekly weight.
+	- Use week navigation to move between current week and up to two earlier weeks.
 4. Return to `/` (Dashboard) and verify:
 	- Adherence percent and green/yellow/red status for current week.
 	- Weight, energy, and sleep trend rows for recent weeks.
@@ -79,6 +89,41 @@ npm run build
 	- Run `npm run build && npm run start` for a production build.
 	- Open DevTools → Network → set to Offline, then reload.
 	- Verify the app shell and all pages load without network.
+
+## Fly.io Deployment
+This app fits Fly.io well as a small stateless web service because all user data stays in browser IndexedDB.
+
+1. Install Fly CLI and authenticate:
+
+```bash
+fly auth login
+```
+
+2. Create the Fly app if needed:
+
+```bash
+fly apps create leader-health-loop
+```
+
+3. Review `fly.toml` and change the `app` value if your preferred name differs.
+
+4. Deploy:
+
+```bash
+fly deploy
+```
+
+5. Open the deployed app:
+
+```bash
+fly open
+```
+
+Notes:
+- The app listens on `0.0.0.0:3000` for Fly compatibility.
+- Deployment uses Next.js standalone output for a smaller production image.
+- No Fly volume or external database is required for the current MVP.
+- HTTPS is important for PWA installability and browser notification support.
 
 ## Security and Safety Notes
 - Treat AI-generated code as third-party code: review, test, and verify licenses before shipping.

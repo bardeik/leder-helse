@@ -1,0 +1,10 @@
+node_modules
+.next
+coverage
+playwright-report
+test-results
+.git
+.github
+npm-debug.log*
+public/sw.js
+public/workbox-*.js
