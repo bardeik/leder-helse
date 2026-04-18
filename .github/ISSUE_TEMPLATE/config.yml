@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Support"
+    url: "https://cli.github.com/manual/gh_issue_create"
+    about: "Hvordan opprette issues via CLI"

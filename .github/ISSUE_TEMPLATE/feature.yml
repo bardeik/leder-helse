@@ -1,0 +1,52 @@
+name: "Feature (MVP backlog)"
+description: "Bruk for MVP-oppgaver til Leader Health Loop"
+title: "[MVP] "
+labels: ["mvp"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Takk! Fyll inn kort og presist. Husk akseptansekriterier.
+  - type: textarea
+    id: background
+    attributes:
+      label: Bakgrunn
+      description: Hvorfor trengs dette?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Omfang / Leveranser
+      description: Hva skal leveres? (skjermbilder, moduler, API, etc.)
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Oppgaver
+      description: Sjekkliste
+      value: |
+        - [ ]
+        - [ ]
+  - type: textarea
+    id: ac
+    attributes:
+      label: Akseptansekriterier
+      description: Hvordan vet vi at dette er ferdig?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Område
+      options:
+        - frontend
+        - domain
+        - data
+        - pwa
+        - docs
+        - test
+        - security/privacy
+    validations:
+      required: true
