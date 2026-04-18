@@ -1,0 +1,7 @@
+node_modules
+.next
+coverage
+public/sw.js
+public/workbox-*.js
+playwright-report
+test-results
