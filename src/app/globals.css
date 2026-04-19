@@ -233,31 +233,6 @@ small.muted {
   text-align: center;
 }
 
-.pwa-update-banner {
-  position: fixed;
-  right: 0.75rem;
-  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-  left: 0.75rem;
-  z-index: 1000;
-  background: #24595a;
-  color: #ffffff;
-  border-radius: 12px;
-  padding: 0.8rem;
-  box-shadow: 0 8px 22px rgb(0 0 0 / 22%);
-  display: grid;
-  gap: 0.55rem;
-}
-
-.pwa-update-banner p {
-  margin: 0;
-}
-
-.pwa-update-banner button.primary {
-  justify-self: start;
-  background: #ffffff;
-  color: #1f1c18;
-}
-
 @media (min-width: 800px) {
   .pwa-update-banner {
     left: auto;

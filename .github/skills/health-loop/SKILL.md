@@ -19,7 +19,7 @@ All MVP features are implemented. Key things already in place:
 - Date navigation on Log Today (useLogToday: selectedDate, goBack/goForward, MAX_PAST_DAYS=13)
 - Date navigation on Weekly Check-In (current week plus 2 previous Monday-based weeks)
 - Workout delete actions on Log Today (no undo button)
-- PWA offline via next-pwa; update banner via PwaRegister.tsx
+- Local-first data storage via Dexie (IndexedDB)
 - Export/import backup in Settings
 - Locale-aware number input parsing/formatting for weight and sleep hours
 - Portal-based save toast fixed to the visible mobile viewport

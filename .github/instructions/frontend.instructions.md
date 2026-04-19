@@ -39,6 +39,5 @@ description: "Frontend + UI rules"
 ## PWA / mobile
 - `main` element must keep `padding-bottom: env(safe-area-inset-bottom, 0px)` for iPhone home-bar.
 - Body min-height is `100svh` (with `100vh` fallback).
-- `PwaRegister.tsx` must only register the SW in production (`process.env.NODE_ENV === 'production'`).
 - Use Playwright mobile tests when changing toast positioning or other viewport-sensitive UI.
 - Do not add `console.log` statements.

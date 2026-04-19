@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
-import { PwaRegister } from "@/components/PwaRegister";
 import { ReminderEngine } from "@/components/ReminderEngine";
 
 export const metadata: Metadata = {
@@ -18,7 +17,6 @@ export default function RootLayout({
   return (
     <html lang="no">
       <body>
-        <PwaRegister />
         <ReminderEngine />
         <Nav />
         <main>{children}</main>

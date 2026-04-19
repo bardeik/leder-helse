@@ -17,8 +17,7 @@ The MVP is **fully implemented**. Features marked [x] are complete and working.
 - [x] Workout logging: Strength A, Strength B, Walk; individual delete actions
 - [x] Date navigation on Log Today: navigate up to 14 days back, stops at today
 - [x] Dashboard: current week adherence (green/yellow/red), 6-week trends, next actions, recent workouts
-- [x] PWA: 100% offline via next-pwa (Workbox) build-time precaching; app shell loads without network
-- [x] SW update lifecycle: startup check, long-interval polling, user-visible update banner, controlled restart
+- [x] Local-first storage: all user data persisted in IndexedDB (Dexie) in the browser
 - [x] Reminders: browser notifications toggle persisted in localStorage, ReminderEngine component
 - [x] Settings: export/import JSON backup of all IndexedDB data
 - [x] Locale-aware numeric inputs for weight and sleep hours, with raw editing on focus and localized formatting on blur
@@ -34,10 +33,6 @@ Not yet implemented (potential next steps):
 - UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
 - Local storage: **Dexie 4 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
-- PWA: **next-pwa 5.6.0** (Workbox); config in `next.config.ts`:
-  - `dest: "public"`, `register: false`, `skipWaiting: false`
-  - `public/sw.js` and `public/workbox-*.js` are **generated at build time** (gitignored — do NOT edit manually)
-  - SW registration handled by `src/components/PwaRegister.tsx` (production-only guard)
 - Validation: **Zod** — schemas in `src/domain/schemas.ts`
 - Testing: **Vitest 4** for unit tests and **Playwright** for mobile viewport E2E checks
 - Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `tests/e2e/save-message-mobile.spec.ts`
@@ -68,7 +63,6 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 - **Workout delete**: workouts are removed via per-item delete actions; no separate undo button is present.
 - **Localized numeric editing**: weight and sleep-hours inputs accept both `.` and `,`, keep raw text while focused, and format using the user's locale on blur.
 - **Save toast placement**: save confirmation is rendered through a portal to `document.body` so it stays fixed to the visible viewport on mobile while scrolling.
-- **Update banner**: `PwaRegister.tsx` shows a fixed banner at the bottom when a new SW version is waiting; user clicks to restart and apply the update.
 - **Safe-area padding**: `main` uses `padding-bottom: env(safe-area-inset-bottom, 0px)` for iPhone home-bar clearance. Body uses `min-height: 100svh`.
 
 ## 6) Engineering standards

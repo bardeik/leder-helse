@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import withPWAInit from "next-pwa";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const contentSecurityPolicy = [
@@ -27,22 +26,6 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" }
 ];
 
-const withPWA = withPWAInit({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-  register: false,
-  skipWaiting: false,
-  // Exclude internal Next.js build manifests not served publicly
-  // (prevents bad-precaching-response 404 errors with standalone output)
-  buildExcludes: [
-    /app-build-manifest\.json$/,
-    /middleware-manifest\.json$/,
-    /middleware-build-manifest\.js$/,
-    /_buildManifest\.js$/,
-    /_ssgManifest\.js$/
-  ]
-});
-
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -57,4 +40,4 @@ const nextConfig: NextConfig = {
   reactStrictMode: true
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;
