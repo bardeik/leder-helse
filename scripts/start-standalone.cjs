@@ -2,7 +2,22 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
 
-const standaloneEntry = path.join(process.cwd(), ".next", "standalone", "server.js");
+const projectRoot = process.cwd();
+const standaloneDir = path.join(projectRoot, ".next", "standalone");
+const standaloneEntry = path.join(standaloneDir, "server.js");
+const sourceStaticDir = path.join(projectRoot, ".next", "static");
+const targetStaticDir = path.join(standaloneDir, ".next", "static");
+const sourcePublicDir = path.join(projectRoot, "public");
+const targetPublicDir = path.join(standaloneDir, "public");
+
+function ensureJunction(targetPath, sourcePath) {
+  if (fs.existsSync(targetPath)) {
+    return;
+  }
+
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  fs.symlinkSync(sourcePath, targetPath, "junction");
+}
 
 if (!fs.existsSync(standaloneEntry)) {
   console.error("[start] Missing .next/standalone/server.js");
@@ -10,7 +25,17 @@ if (!fs.existsSync(standaloneEntry)) {
   process.exit(1);
 }
 
-const child = spawn(process.execPath, [standaloneEntry], {
+if (!fs.existsSync(sourceStaticDir)) {
+  console.error("[start] Missing .next/static assets.");
+  console.error("[start] Run `npm run build` first, then run `npm run start` again.");
+  process.exit(1);
+}
+
+ensureJunction(targetStaticDir, sourceStaticDir);
+ensureJunction(targetPublicDir, sourcePublicDir);
+
+const child = spawn(process.execPath, ["server.js"], {
+  cwd: standaloneDir,
   stdio: "inherit",
   env: process.env
 });

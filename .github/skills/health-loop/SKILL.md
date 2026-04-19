@@ -1,4 +1,9 @@
-# Skill: Leader Health Loop
+---
+name: health-loop
+description: Guidance for implementing and extending the Leader Health Loop app safely and consistently.
+---
+
+# Leader Health Loop
 
 When the user asks for health-loop features, load this skill.
 
