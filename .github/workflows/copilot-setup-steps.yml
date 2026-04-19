@@ -24,6 +24,12 @@ jobs:
           node-version: 20
           cache: 'npm'
 
+      - name: Pin npm 11
+        run: npm install -g npm@11.12.1
+
+      - name: Show npm version
+        run: npm --version
+
       - name: Install dependencies
         run: npm ci || npm install
 
