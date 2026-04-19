@@ -31,7 +31,16 @@ const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: false,
-  skipWaiting: false
+  skipWaiting: false,
+  // Exclude internal Next.js build manifests not served publicly
+  // (prevents bad-precaching-response 404 errors with standalone output)
+  buildExcludes: [
+    /app-build-manifest\.json$/,
+    /middleware-manifest\.json$/,
+    /middleware-build-manifest\.js$/,
+    /_buildManifest\.js$/,
+    /_ssgManifest\.js$/
+  ]
 });
 
 const nextConfig: NextConfig = {
