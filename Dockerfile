@@ -2,6 +2,7 @@ FROM node:20-bookworm-slim AS base
 WORKDIR /app
 
 FROM base AS deps
+RUN npm install -g npm@11.12.1
 COPY package.json package-lock.json ./
 RUN npm ci
 
