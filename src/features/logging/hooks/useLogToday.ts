@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { dailyLogsRepo } from "@/data/repositories/dailyLogsRepo";
 import { workoutLogsRepo } from "@/data/repositories/workoutLogsRepo";
-import { dailyLogSchema } from "@/domain/schemas";
 import type { WorkoutLog, WorkoutType } from "@/domain/types";
 
 export interface LogTodayState {
@@ -111,15 +110,13 @@ export function useLogToday() {
     setSaving(true);
 
     try {
-      const validated = dailyLogSchema.parse({
+      await dailyLogsRepo.upsert({
         date: nextState.date,
         energy: nextState.energy,
         sleepOk: nextState.sleepOk,
         sleepHours: nextState.sleepHours,
         notes: nextState.notes?.trim() || undefined
       });
-
-      await dailyLogsRepo.upsert(validated);
       setTransientMessage("Endringer lagret");
       return true;
     } catch {

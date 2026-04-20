@@ -1,5 +1,5 @@
 import { db } from "@/data/db";
-import { backupSchema } from "@/domain/schemas";
+import { parseBackupData } from "@/domain/validation";
 
 export interface BackupDataSource {
   dailyLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
@@ -17,15 +17,13 @@ export interface StorageSummary {
 export type BackupImportMode = "merge" | "overwrite";
 
 export async function exportBackup(source: BackupDataSource = db as unknown as BackupDataSource): Promise<string> {
-  const backup = {
+  const validated = parseBackupData({
     version: 1 as const,
     exportedAt: new Date().toISOString(),
     dailyLogs: await source.dailyLogs.toArray(),
     weeklyCheckIns: await source.weeklyCheckIns.toArray(),
     workoutLogs: await source.workoutLogs.toArray()
-  };
-
-  const validated = backupSchema.parse(backup);
+  });
   return JSON.stringify(validated, null, 2);
 }
 
@@ -34,7 +32,7 @@ export async function importBackup(
   source: BackupDataSource = db as unknown as BackupDataSource,
   options: { mode?: BackupImportMode } = {}
 ): Promise<void> {
-  const parsed = backupSchema.parse(JSON.parse(json));
+  const parsed = parseBackupData(JSON.parse(json));
   const mode = options.mode ?? "merge";
 
   await source.transaction("rw", source.dailyLogs, source.weeklyCheckIns, source.workoutLogs, async () => {

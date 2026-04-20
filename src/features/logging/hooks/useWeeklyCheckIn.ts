@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { weeklyCheckInsRepo } from "@/data/repositories/weeklyCheckInsRepo";
 import { addDays, getWeekStartDate } from "@/domain/calc";
-import { weeklyCheckInSchema } from "@/domain/schemas";
 
 interface WeeklyCheckInState {
   weekStartDate: string;
@@ -86,14 +85,12 @@ export function useWeeklyCheckIn() {
     setSaving(true);
 
     try {
-      const checkIn = weeklyCheckInSchema.parse({
+      await weeklyCheckInsRepo.upsert({
         weekStartDate: nextState.weekStartDate,
         weightKg: nextState.weightKg,
         notes: nextState.notes.trim() || undefined,
         adjustment: nextState.adjustment.trim() || undefined
       });
-
-      await weeklyCheckInsRepo.upsert(checkIn);
       setTransientMessage("Endringer lagret");
       return true;
     } catch {

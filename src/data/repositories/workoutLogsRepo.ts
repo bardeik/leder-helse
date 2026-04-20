@@ -1,10 +1,10 @@
 import { db } from "@/data/db";
-import { workoutLogSchema } from "@/domain/schemas";
 import type { WorkoutLog } from "@/domain/types";
+import { validateWorkoutLog } from "@/domain/validation";
 
 export const workoutLogsRepo = {
   async upsert(input: WorkoutLog): Promise<number> {
-    const log = workoutLogSchema.parse(input);
+    const log = validateWorkoutLog(input);
     return db.workoutLogs.put(log);
   },
 

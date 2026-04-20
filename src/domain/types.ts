@@ -25,6 +25,14 @@ export interface WorkoutLog {
   notes?: string;
 }
 
+export interface BackupData {
+  version: 1;
+  exportedAt: string;
+  dailyLogs: DailyLog[];
+  weeklyCheckIns: WeeklyCheckIn[];
+  workoutLogs: WorkoutLog[];
+}
+
 export interface WeeklyAdherence {
   weekStartDate: string;
   energyDays: number;

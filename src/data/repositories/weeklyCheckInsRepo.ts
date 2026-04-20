@@ -1,10 +1,10 @@
 import { db } from "@/data/db";
-import { weeklyCheckInSchema } from "@/domain/schemas";
 import type { WeeklyCheckIn } from "@/domain/types";
+import { validateWeeklyCheckIn } from "@/domain/validation";
 
 export const weeklyCheckInsRepo = {
   async upsert(input: WeeklyCheckIn): Promise<void> {
-    const item = weeklyCheckInSchema.parse(input);
+    const item = validateWeeklyCheckIn(input);
     await db.weeklyCheckIns.put(item);
   },
 

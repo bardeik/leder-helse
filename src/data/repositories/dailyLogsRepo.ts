@@ -1,10 +1,10 @@
 import { db } from "@/data/db";
-import { dailyLogSchema } from "@/domain/schemas";
 import type { DailyLog } from "@/domain/types";
+import { validateDailyLog } from "@/domain/validation";
 
 export const dailyLogsRepo = {
   async upsert(input: DailyLog): Promise<void> {
-    const log = dailyLogSchema.parse(input);
+    const log = validateDailyLog(input);
     await db.dailyLogs.put(log);
   },
 
