@@ -9,15 +9,18 @@ function createMockDb(): BackupDataSource {
   return {
     dailyLogs: {
       toArray: vi.fn(async () => dailyLogsData),
-      bulkPut: vi.fn(async () => undefined)
+      bulkPut: vi.fn(async () => undefined),
+      clear: vi.fn(async () => undefined)
     },
     weeklyCheckIns: {
       toArray: vi.fn(async () => weeklyCheckInData),
-      bulkPut: vi.fn(async () => undefined)
+      bulkPut: vi.fn(async () => undefined),
+      clear: vi.fn(async () => undefined)
     },
     workoutLogs: {
       toArray: vi.fn(async () => workoutData),
-      bulkPut: vi.fn(async () => undefined)
+      bulkPut: vi.fn(async () => undefined),
+      clear: vi.fn(async () => undefined)
     },
     transaction: vi.fn(async (_mode, _a, _b, _c, scope: () => Promise<void>) => {
       await scope();
@@ -37,12 +40,29 @@ describe("backup import/export", () => {
     expect(parsed.workoutLogs).toHaveLength(1);
   });
 
-  it("imports backup and writes all tables", async () => {
+  it("imports backup and merges into existing tables by default", async () => {
     const mockDb = createMockDb();
     const payload = await exportBackup(mockDb);
 
     await importBackup(payload, mockDb);
 
+    expect(mockDb.dailyLogs.clear).not.toHaveBeenCalled();
+    expect(mockDb.weeklyCheckIns.clear).not.toHaveBeenCalled();
+    expect(mockDb.workoutLogs.clear).not.toHaveBeenCalled();
+    expect(mockDb.dailyLogs.bulkPut).toHaveBeenCalledOnce();
+    expect(mockDb.weeklyCheckIns.bulkPut).toHaveBeenCalledOnce();
+    expect(mockDb.workoutLogs.bulkPut).toHaveBeenCalledOnce();
+  });
+
+  it("clears existing tables before import when overwrite mode is selected", async () => {
+    const mockDb = createMockDb();
+    const payload = await exportBackup(mockDb);
+
+    await importBackup(payload, mockDb, { mode: "overwrite" });
+
+    expect(mockDb.dailyLogs.clear).toHaveBeenCalledOnce();
+    expect(mockDb.weeklyCheckIns.clear).toHaveBeenCalledOnce();
+    expect(mockDb.workoutLogs.clear).toHaveBeenCalledOnce();
     expect(mockDb.dailyLogs.bulkPut).toHaveBeenCalledOnce();
     expect(mockDb.weeklyCheckIns.bulkPut).toHaveBeenCalledOnce();
     expect(mockDb.workoutLogs.bulkPut).toHaveBeenCalledOnce();

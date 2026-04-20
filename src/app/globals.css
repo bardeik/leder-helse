@@ -211,6 +211,55 @@ small.muted {
   color: var(--risk);
 }
 
+.dashboard-summary-grid {
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.dashboard-summary-item {
+  padding: 0.85rem;
+  border-radius: 12px;
+  background: #faf4eb;
+  border: 1px solid var(--line);
+}
+
+.dashboard-summary-item dt {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.dashboard-summary-item dd {
+  margin: 0.35rem 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dashboard-metric-value {
+  margin: 0 0 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.dashboard-checkin-details {
+  gap: 0.35rem;
+}
+
+.dashboard-checkin-details p {
+  margin: 0;
+}
+
+.dashboard-action-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+@media (min-width: 700px) {
+  .dashboard-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .floating-save-notice-viewport {
   position: fixed;
   top: 0;

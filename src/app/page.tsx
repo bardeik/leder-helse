@@ -48,7 +48,7 @@ export default function HomePage() {
   const currentWeek = getWeekStartDate(today);
 
   const trends = buildWeeklyTrends(weekStarts, dailyLogs, weeklyCheckIns);
-  const snapshot = getDashboardSnapshot(currentWeek, dailyLogs, weeklyCheckIns, workouts);
+  const snapshot = getDashboardSnapshot(currentWeek, dailyLogs, weeklyCheckIns, workouts, trends);
 
   return (
     <DashboardView
@@ -57,6 +57,9 @@ export default function HomePage() {
       trendPoints={trends}
       recentWorkouts={snapshot.recentWorkouts}
       nextActions={snapshot.nextActions}
+      weekSummary={snapshot.weekSummary}
+      latestCheckIn={snapshot.latestCheckIn}
+      trendHighlights={snapshot.trendHighlights}
     />
   );
 }

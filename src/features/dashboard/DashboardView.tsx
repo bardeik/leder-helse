@@ -1,6 +1,8 @@
 "use client";
 
+import { formatLocalNumber } from "@/domain/localeNumber";
 import type { WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
+import type { DashboardTrendHighlights, DashboardWeekSummary } from "@/features/dashboard/trends";
 
 interface DashboardViewProps {
   adherencePercent: number;
@@ -8,6 +10,14 @@ interface DashboardViewProps {
   trendPoints: WeeklyTrendPoint[];
   recentWorkouts: WorkoutLog[];
   nextActions: string[];
+  weekSummary: DashboardWeekSummary;
+  latestCheckIn?: {
+    weekStartDate: string;
+    weightKg: number;
+    notes?: string;
+    adjustment?: string;
+  };
+  trendHighlights: DashboardTrendHighlights;
 }
 
 function Sparkline({ values }: { values: number[] }) {
@@ -55,7 +65,57 @@ function formatWorkoutType(type: WorkoutLog["type"]) {
   return "Gåtur";
 }
 
-export function DashboardView({ adherencePercent, status, trendPoints, recentWorkouts, nextActions }: DashboardViewProps) {
+function formatSignedValue(value: number, fractionDigits: number) {
+  const abs = Math.abs(value);
+  const prefix = value >= 0 ? "+" : "-";
+  return `${prefix}${formatLocalNumber(abs, fractionDigits)}`;
+}
+
+function formatTrendValue(kind: keyof DashboardTrendHighlights, value: number | undefined) {
+  if (typeof value !== "number") {
+    return "Ingen data enda.";
+  }
+
+  if (kind === "weight") {
+    return `${formatLocalNumber(value, 1)} kg`;
+  }
+  if (kind === "energy") {
+    return `${formatLocalNumber(value, 1)} i snitt`;
+  }
+  return `${value} netter`;
+}
+
+function formatTrendChange(kind: keyof DashboardTrendHighlights, delta: number | undefined) {
+  if (typeof delta !== "number") {
+    return "Ingen sammenlignbar uke enda.";
+  }
+
+  if (kind === "weight") {
+    return `${formatSignedValue(delta, 1)} kg siden forrige veiing`;
+  }
+  if (kind === "energy") {
+    return `${formatSignedValue(delta, 1)} siden forrige sammenlignbare uke`;
+  }
+  return `${formatSignedValue(delta, 0)} netter siden forrige sammenlignbare uke`;
+}
+
+function formatWeekStart(isoDate: string) {
+  return new Intl.DateTimeFormat("nb-NO", {
+    day: "numeric",
+    month: "short"
+  }).format(new Date(`${isoDate}T12:00:00.000Z`));
+}
+
+export function DashboardView({
+  adherencePercent,
+  status,
+  trendPoints,
+  recentWorkouts,
+  nextActions,
+  weekSummary,
+  latestCheckIn,
+  trendHighlights
+}: DashboardViewProps) {
   const weightSeries = trendPoints.map((item) => item.weightKg).filter((item): item is number => typeof item === "number");
   const energySeries = trendPoints
     .map((item) => item.energyAverage)
@@ -69,19 +129,61 @@ export function DashboardView({ adherencePercent, status, trendPoints, recentWor
         <p>
           <strong>{adherencePercent}% etterlevelse</strong> <span className={`pill ${status}`}>{formatStatus(status)}</span>
         </p>
+        <dl className="dashboard-summary-grid">
+          <div className="dashboard-summary-item">
+            <dt>Energi</dt>
+            <dd>{weekSummary.energyDays} av 7 dager</dd>
+            <small className="muted">
+              {weekSummary.missingEnergyDays === 0
+                ? "Komplett denne uken."
+                : `${weekSummary.missingEnergyDays} ${weekSummary.missingEnergyDays === 1 ? "dag mangler" : "dager mangler"}.`}
+            </small>
+          </div>
+          <div className="dashboard-summary-item">
+            <dt>Søvn</dt>
+            <dd>{weekSummary.sleepDays} av 7 dager</dd>
+            <small className="muted">
+              {weekSummary.missingSleepDays === 0
+                ? "Komplett denne uken."
+                : `${weekSummary.missingSleepDays} ${weekSummary.missingSleepDays === 1 ? "dag mangler" : "dager mangler"}.`}
+            </small>
+          </div>
+          <div className="dashboard-summary-item">
+            <dt>Økter</dt>
+            <dd>{weekSummary.workouts} av 3 planlagte</dd>
+            <small className="muted">
+              {weekSummary.remainingWorkouts === 0
+                ? "Ukens mål er nådd."
+                : `${weekSummary.remainingWorkouts} ${weekSummary.remainingWorkouts === 1 ? "økt gjenstår" : "økter gjenstår"}.`}
+            </small>
+          </div>
+          <div className="dashboard-summary-item">
+            <dt>Ukentlig check-in</dt>
+            <dd>{weekSummary.weightLogged ? "Registrert" : "Mangler"}</dd>
+            <small className="muted">
+              {weekSummary.weightLogged ? "Veiing er lagret for denne uken." : "Legg inn vekt og refleksjon for å fullføre uken."}
+            </small>
+          </div>
+        </dl>
       </section>
 
       <section className="grid grid-3">
         <article className="card">
           <h2>Vekttrend</h2>
+          <p className="dashboard-metric-value">{formatTrendValue("weight", trendHighlights.weight.currentValue)}</p>
+          <small className="muted">{formatTrendChange("weight", trendHighlights.weight.delta)}</small>
           <Sparkline values={weightSeries} />
         </article>
         <article className="card">
           <h2>Energisnitt</h2>
+          <p className="dashboard-metric-value">{formatTrendValue("energy", trendHighlights.energy.currentValue)}</p>
+          <small className="muted">{formatTrendChange("energy", trendHighlights.energy.delta)}</small>
           <Sparkline values={energySeries} />
         </article>
         <article className="card">
           <h2>Netter med godkjent søvn</h2>
+          <p className="dashboard-metric-value">{formatTrendValue("sleep", trendHighlights.sleep.currentValue)}</p>
+          <small className="muted">{formatTrendChange("sleep", trendHighlights.sleep.delta)}</small>
           <Sparkline values={sleepSeries} />
         </article>
       </section>
@@ -104,11 +206,33 @@ export function DashboardView({ adherencePercent, status, trendPoints, recentWor
         </article>
 
         <article className="card">
+          <h2>Siste ukentlige refleksjon</h2>
+          {latestCheckIn ? (
+            <div className="grid dashboard-checkin-details">
+              <p>
+                <strong>{formatLocalNumber(latestCheckIn.weightKg, 1)} kg</strong> registrert for uken fra{" "}
+                {formatWeekStart(latestCheckIn.weekStartDate)}.
+              </p>
+              <p>
+                <strong>Justering:</strong> {latestCheckIn.adjustment?.trim() ? latestCheckIn.adjustment : "Ingen justering lagret."}
+              </p>
+              <p>
+                <strong>Notat:</strong> {latestCheckIn.notes?.trim() ? latestCheckIn.notes : "Ingen refleksjon lagret."}
+              </p>
+            </div>
+          ) : (
+            <small className="muted">Ingen ukentlig check-in registrert enda.</small>
+          )}
+        </article>
+      </section>
+
+      <section className="grid grid-2">
+        <article className="card">
           <h2>Neste tiltak</h2>
           {nextActions.length === 0 ? (
             <small className="muted">Bra jobba. Du er i rute denne uken.</small>
           ) : (
-            <ul>
+            <ul className="dashboard-action-list">
               {nextActions.map((action) => (
                 <li key={action}>{action}</li>
               ))}

@@ -1,7 +1,13 @@
 "use client";
 
 import { ChangeEvent, useMemo, useState } from "react";
-import { exportBackup, getStorageSummary, importBackup, type StorageSummary } from "@/data/backup";
+import {
+  exportBackup,
+  getStorageSummary,
+  importBackup,
+  type BackupImportMode,
+  type StorageSummary
+} from "@/data/backup";
 import {
   getReminderSettings,
   requestNotificationPermission,
@@ -15,6 +21,7 @@ export default function SettingsPage() {
   const [jsonPreview, setJsonPreview] = useState("");
   const [summary, setSummary] = useState<StorageSummary | null>(null);
   const [busy, setBusy] = useState(false);
+  const [importMode, setImportMode] = useState<BackupImportMode>("overwrite");
 
   const canUseNotifications = useMemo(() => typeof window !== "undefined" && "Notification" in window, []);
 
@@ -67,10 +74,21 @@ export default function SettingsPage() {
   }
 
   async function handleImport() {
+    if (
+      importMode === "overwrite" &&
+      !window.confirm("Dette vil overskrive alle lokale data med innholdet i sikkerhetskopien. Vil du fortsette?")
+    ) {
+      return;
+    }
+
     setBusy(true);
     try {
-      await importBackup(jsonPreview);
-      setMessage("Sikkerhetskopi importert.");
+      await importBackup(jsonPreview, undefined, { mode: importMode });
+      setMessage(
+        importMode === "overwrite"
+          ? "Sikkerhetskopi importert og eksisterende data overskrevet."
+          : "Sikkerhetskopi importert og slått sammen med eksisterende data."
+      );
       await refreshSummary();
     } catch {
       setMessage("Import av sikkerhetskopi mislyktes. Kontroller JSON-formatet.");
@@ -133,8 +151,34 @@ export default function SettingsPage() {
           </div>
           <label htmlFor="backup-json">Importer sikkerhetskopi-JSON</label>
           <textarea id="backup-json" value={jsonPreview} onChange={handleJsonChange} />
+          <fieldset style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem", margin: "0 0 0.75rem" }}>
+            <legend>Importmodus</legend>
+            <label>
+              <input
+                type="radio"
+                name="backup-import-mode"
+                value="overwrite"
+                checked={importMode === "overwrite"}
+                onChange={() => setImportMode("overwrite")}
+              />{" "}
+              Overskriv eksisterende data med sikkerhetskopien
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="backup-import-mode"
+                value="merge"
+                checked={importMode === "merge"}
+                onChange={() => setImportMode("merge")}
+              />{" "}
+              Slå sammen med eksisterende data
+            </label>
+            <small className="muted">
+              Overskriv sletter dagens lokale data før import. Slå sammen beholder eksisterende data og oppdaterer poster med samme nøkkel.
+            </small>
+          </fieldset>
           <button className="primary" type="button" onClick={handleImport} disabled={busy || jsonPreview.trim().length === 0}>
-            {busy ? "Jobber..." : "Importer fra tekstfelt"}
+            {busy ? "Jobber..." : importMode === "overwrite" ? "Importer og overskriv" : "Importer og slå sammen"}
           </button>
         </fieldset>
 

@@ -2,9 +2,9 @@ import { db } from "@/data/db";
 import { backupSchema } from "@/domain/schemas";
 
 export interface BackupDataSource {
-  dailyLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown> };
-  weeklyCheckIns: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown> };
-  workoutLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown> };
+  dailyLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
+  weeklyCheckIns: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
+  workoutLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
   transaction: (mode: "rw", ...tablesAndScope: unknown[]) => Promise<unknown>;
 }
 
@@ -13,6 +13,8 @@ export interface StorageSummary {
   weeklyCheckIns: number;
   workoutLogs: number;
 }
+
+export type BackupImportMode = "merge" | "overwrite";
 
 export async function exportBackup(source: BackupDataSource = db as unknown as BackupDataSource): Promise<string> {
   const backup = {
@@ -29,11 +31,19 @@ export async function exportBackup(source: BackupDataSource = db as unknown as B
 
 export async function importBackup(
   json: string,
-  source: BackupDataSource = db as unknown as BackupDataSource
+  source: BackupDataSource = db as unknown as BackupDataSource,
+  options: { mode?: BackupImportMode } = {}
 ): Promise<void> {
   const parsed = backupSchema.parse(JSON.parse(json));
+  const mode = options.mode ?? "merge";
 
   await source.transaction("rw", source.dailyLogs, source.weeklyCheckIns, source.workoutLogs, async () => {
+    if (mode === "overwrite") {
+      await source.dailyLogs.clear();
+      await source.weeklyCheckIns.clear();
+      await source.workoutLogs.clear();
+    }
+
     await source.dailyLogs.bulkPut(parsed.dailyLogs);
     await source.weeklyCheckIns.bulkPut(parsed.weeklyCheckIns);
     await source.workoutLogs.bulkPut(parsed.workoutLogs);
