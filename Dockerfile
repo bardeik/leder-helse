@@ -1,8 +1,8 @@
 FROM node:20-bookworm-slim AS base
 WORKDIR /app
+RUN npm install -g npm@11.12.1
 
 FROM base AS deps
-RUN npm install -g npm@11.12.1
 COPY package.json package-lock.json ./
 RUN npm ci
 
@@ -12,8 +12,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM node:20-bookworm-slim AS runner
-WORKDIR /app
+FROM base AS runner
 ENV NODE_ENV=production
 ENV PORT=3000
 
