@@ -1,4 +1,4 @@
-export type WorkoutType = "strengthA" | "strengthB" | "walk";
+export type WorkoutType = "strength" | "walk";
 export type HealthStatus = "green" | "yellow" | "red";
 
 export interface DailyLog {

@@ -1,8 +1,15 @@
 "use client";
 
+import { WEEKLY_STRENGTH_GOAL, WEEKLY_WALK_GOAL } from "@/domain/calc";
 import { formatLocalNumber } from "@/domain/localeNumber";
+import { formatWorkoutType } from "@/domain/workouts";
 import type { WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
 import type { DashboardTrendHighlights, DashboardWeekSummary } from "@/features/dashboard/trends";
+
+interface MotivationalQuote {
+  text: string;
+  author: string;
+}
 
 interface DashboardViewProps {
   adherencePercent: number;
@@ -18,6 +25,7 @@ interface DashboardViewProps {
     adjustment?: string;
   };
   trendHighlights: DashboardTrendHighlights;
+  motivationalQuote: MotivationalQuote;
 }
 
 function Sparkline({ values }: { values: number[] }) {
@@ -53,16 +61,6 @@ function formatStatus(status: "green" | "yellow" | "red") {
     return "gul";
   }
   return "rød";
-}
-
-function formatWorkoutType(type: WorkoutLog["type"]) {
-  if (type === "strengthA") {
-    return "Styrke A";
-  }
-  if (type === "strengthB") {
-    return "Styrke B";
-  }
-  return "Gåtur";
 }
 
 function formatSignedValue(value: number, fractionDigits: number) {
@@ -114,7 +112,8 @@ export function DashboardView({
   nextActions,
   weekSummary,
   latestCheckIn,
-  trendHighlights
+  trendHighlights,
+  motivationalQuote
 }: DashboardViewProps) {
   const weightSeries = trendPoints.map((item) => item.weightKg).filter((item): item is number => typeof item === "number");
   const energySeries = trendPoints
@@ -124,6 +123,14 @@ export function DashboardView({
 
   return (
     <div className="grid">
+      <section className="card appear dashboard-quote-card" aria-label="Dagens motivasjon">
+        <p className="dashboard-quote-eyebrow">Dagens motivasjon</p>
+        <blockquote className="dashboard-quote">
+          &ldquo;{motivationalQuote.text}&rdquo;
+        </blockquote>
+        <p className="dashboard-quote-author">- {motivationalQuote.author}</p>
+      </section>
+
       <section className="card appear">
         <h1>Denne uken</h1>
         <p>
@@ -149,12 +156,23 @@ export function DashboardView({
             </small>
           </div>
           <div className="dashboard-summary-item">
-            <dt>Økter</dt>
-            <dd>{weekSummary.workouts} av 3 planlagte</dd>
+            <dt>Styrkeøkter</dt>
+            <dd>{weekSummary.strengthWorkouts} av {WEEKLY_STRENGTH_GOAL}</dd>
             <small className="muted">
-              {weekSummary.remainingWorkouts === 0
-                ? "Ukens mål er nådd."
-                : `${weekSummary.remainingWorkouts} ${weekSummary.remainingWorkouts === 1 ? "økt gjenstår" : "økter gjenstår"}.`}
+              {weekSummary.remainingStrengthWorkouts === 0
+                ? "Ukens styrkemål er nådd."
+                : `${weekSummary.remainingStrengthWorkouts} ${
+                    weekSummary.remainingStrengthWorkouts === 1 ? "styrkeøkt gjenstår" : "styrkeøkter gjenstår"
+                  }.`}
+            </small>
+          </div>
+          <div className="dashboard-summary-item">
+            <dt>Gåturer</dt>
+            <dd>{weekSummary.walks} av {WEEKLY_WALK_GOAL}</dd>
+            <small className="muted">
+              {weekSummary.remainingWalks === 0
+                ? "Ukens gåturer er registrert."
+                : `${weekSummary.remainingWalks} ${weekSummary.remainingWalks === 1 ? "gåtur gjenstår" : "gåturer gjenstår"}.`}
             </small>
           </div>
           <div className="dashboard-summary-item">

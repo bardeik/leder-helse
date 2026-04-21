@@ -78,7 +78,7 @@ export function maybeSendScheduledReminders(now = new Date()) {
   if (settings.strengthMorningEnabled && now.getHours() === settings.strengthReminderHour && now.getMinutes() < 2) {
     const sentAt = window.localStorage.getItem(STRENGTH_SENT_KEY);
     if (sentAt !== dateKey) {
-      sendNotification("Styrkepåminnelse", "Planlegg enten Styrke A eller Styrke B i morgen tidlig.");
+      sendNotification("Styrkepåminnelse", "Planlegg en styrkeøkt i morgen tidlig.");
       window.localStorage.setItem(STRENGTH_SENT_KEY, dateKey);
     }
   }

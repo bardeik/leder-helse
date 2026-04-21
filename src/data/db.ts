@@ -1,5 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type { DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
+import { normalizeWorkoutType } from "@/domain/workouts";
 
 export class LeaderHealthDb extends Dexie {
   dailyLogs!: Table<DailyLog, string>;
@@ -14,6 +15,24 @@ export class LeaderHealthDb extends Dexie {
       weeklyCheckIns: "&weekStartDate",
       workoutLogs: "++id,date,dateTime,type"
     });
+
+    this.version(2)
+      .stores({
+        dailyLogs: "&date",
+        weeklyCheckIns: "&weekStartDate",
+        workoutLogs: "++id,date,dateTime,type"
+      })
+      .upgrade((tx) =>
+        tx
+          .table("workoutLogs")
+          .toCollection()
+          .modify((item: { type?: string }) => {
+            const normalizedType = normalizeWorkoutType(String(item.type ?? ""));
+            if (normalizedType) {
+              item.type = normalizedType;
+            }
+          })
+      );
   }
 }
 

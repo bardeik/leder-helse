@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { WorkoutType } from "@/domain/types";
 
 export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -17,7 +18,9 @@ export const weeklyCheckInSchema = z.object({
   adjustment: z.string().max(280).optional()
 });
 
-export const workoutTypeSchema = z.enum(["strengthA", "strengthB", "walk"]);
+export const workoutTypeSchema = z
+  .enum(["strength", "walk", "strengthA", "strengthB"])
+  .transform<WorkoutType>((type) => (type === "strengthA" || type === "strengthB" ? "strength" : type));
 
 export const workoutLogSchema = z.object({
   id: z.number().int().positive().optional(),

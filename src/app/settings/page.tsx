@@ -118,7 +118,7 @@ export default function SettingsPage() {
               checked={settings.strengthMorningEnabled}
               onChange={(event) => updateSettings({ ...settings, strengthMorningEnabled: event.target.checked })}
             />{" "}
-            Morgenpåminnelse for Styrke A/B
+            Morgenpåminnelse for styrkeøkt
           </label>
           <label htmlFor="strength-hour">Klokkeslett for styrkepåminnelse (0-23)</label>
           <input

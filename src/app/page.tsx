@@ -7,6 +7,7 @@ import { workoutLogsRepo } from "@/data/repositories/workoutLogsRepo";
 import { buildWeeklyTrends, getRecentWeekStarts, getWeekStartDate } from "@/domain/calc";
 import type { DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
 import { DashboardView } from "@/features/dashboard/DashboardView";
+import { getRandomMotivationalQuote } from "@/features/dashboard/motivationalQuotes";
 import { getDashboardSnapshot } from "@/features/dashboard/trends";
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
   const [dailyLogs, setDailyLogs] = useState<DailyLog[]>([]);
   const [weeklyCheckIns, setWeeklyCheckIns] = useState<WeeklyCheckIn[]>([]);
   const [workouts, setWorkouts] = useState<WorkoutLog[]>([]);
+  const [motivationalQuote] = useState(() => getRandomMotivationalQuote());
 
   useEffect(() => {
     const now = new Date().toISOString().slice(0, 10);
@@ -60,6 +62,7 @@ export default function HomePage() {
       weekSummary={snapshot.weekSummary}
       latestCheckIn={snapshot.latestCheckIn}
       trendHighlights={snapshot.trendHighlights}
+      motivationalQuote={motivationalQuote}
     />
   );
 }

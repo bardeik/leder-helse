@@ -1,6 +1,18 @@
 import type { DailyLog, HealthStatus, WeeklyAdherence, WeeklyCheckIn, WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
 
 const MS_PER_DAY = 86_400_000;
+export const WEEKLY_STRENGTH_GOAL = 2;
+export const WEEKLY_WALK_GOAL = 5;
+export const WEEKLY_WORKOUT_GOAL = WEEKLY_STRENGTH_GOAL + WEEKLY_WALK_GOAL;
+
+export interface WeeklyWorkoutProgress {
+  strengthWorkouts: number;
+  walks: number;
+  completedGoals: number;
+  remainingStrengthWorkouts: number;
+  remainingWalks: number;
+  remainingGoals: number;
+}
 
 /** Returns Monday-based week start as ISO date. */
 export function getWeekStartDate(isoDate: string): string {
@@ -28,6 +40,26 @@ export function getHealthStatus(adherencePercent: number): HealthStatus {
   return "red";
 }
 
+/** Calculates weekly workout progress against 2 strength sessions and 5 walks. */
+export function calculateWeeklyWorkoutProgress(weekStartDate: string, workoutLogs: WorkoutLog[]): WeeklyWorkoutProgress {
+  const weekEndDate = addDays(weekStartDate, 6);
+  const weekWorkouts = workoutLogs.filter((item) => item.date >= weekStartDate && item.date <= weekEndDate);
+  const strengthWorkouts = weekWorkouts.filter((item) => item.type === "strength").length;
+  const walks = weekWorkouts.filter((item) => item.type === "walk").length;
+  const completedGoals = Math.min(strengthWorkouts, WEEKLY_STRENGTH_GOAL) + Math.min(walks, WEEKLY_WALK_GOAL);
+  const remainingStrengthWorkouts = Math.max(0, WEEKLY_STRENGTH_GOAL - strengthWorkouts);
+  const remainingWalks = Math.max(0, WEEKLY_WALK_GOAL - walks);
+
+  return {
+    strengthWorkouts,
+    walks,
+    completedGoals,
+    remainingStrengthWorkouts,
+    remainingWalks,
+    remainingGoals: remainingStrengthWorkouts + remainingWalks
+  };
+}
+
 /** Calculates weekly adherence from daily and workout logs. */
 export function calculateWeeklyAdherence(
   weekStartDate: string,
@@ -36,14 +68,14 @@ export function calculateWeeklyAdherence(
 ): WeeklyAdherence {
   const weekEndDate = addDays(weekStartDate, 6);
   const weekDailyLogs = dailyLogs.filter((item) => item.date >= weekStartDate && item.date <= weekEndDate);
-  const weekWorkouts = workoutLogs.filter((item) => item.date >= weekStartDate && item.date <= weekEndDate);
+  const workoutProgress = calculateWeeklyWorkoutProgress(weekStartDate, workoutLogs);
 
   const energyDays = weekDailyLogs.filter((item) => item.energy >= 1 && item.energy <= 5).length;
   const sleepDays = weekDailyLogs.filter((item) => typeof item.sleepOk === "boolean").length;
-  const workouts = weekWorkouts.length;
+  const workouts = workoutProgress.completedGoals;
 
-  const completed = energyDays + sleepDays + Math.min(workouts, 3);
-  const total = 7 + 7 + 3;
+  const completed = energyDays + sleepDays + workouts;
+  const total = 7 + 7 + WEEKLY_WORKOUT_GOAL;
   const adherencePercent = Math.round((completed / total) * 100);
 
   return {

@@ -14,6 +14,10 @@ describe("domain validation helpers", () => {
     expect(() =>
       validateWorkoutLog({ dateTime: "2026-04-20T12:00:00.000Z", date: "2026-04-20", type: "walk", durationMin: 30 })
     ).not.toThrow();
+
+    expect(() =>
+      validateWorkoutLog({ dateTime: "2026-04-20T12:00:00.000Z", date: "2026-04-20", type: "strength", durationMin: 45 })
+    ).not.toThrow();
   });
 
   it("parses backup data from plain json-compatible objects", () => {
@@ -22,10 +26,11 @@ describe("domain validation helpers", () => {
       exportedAt: "2026-04-20T08:24:30.102Z",
       dailyLogs: [{ date: "2026-04-20", energy: 3, sleepOk: true, notes: "" }],
       weeklyCheckIns: [],
-      workoutLogs: []
+      workoutLogs: [{ dateTime: "2026-04-20T12:00:00.000Z", date: "2026-04-20", type: "strengthA" }]
     });
 
     expect(parsed.dailyLogs).toHaveLength(1);
     expect(parsed.dailyLogs[0]?.date).toBe("2026-04-20");
+    expect(parsed.workoutLogs[0]?.type).toBe("strength");
   });
 });

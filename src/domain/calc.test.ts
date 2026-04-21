@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildWeeklyTrends, calculateWeeklyAdherence, getHealthStatus, getRecentWeekStarts, getWeekStartDate } from "@/domain/calc";
+import {
+  buildWeeklyTrends,
+  calculateWeeklyAdherence,
+  calculateWeeklyWorkoutProgress,
+  getHealthStatus,
+  getRecentWeekStarts,
+  getWeekStartDate
+} from "@/domain/calc";
 import type { DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
 
 describe("domain calculations", () => {
@@ -20,7 +27,7 @@ describe("domain calculations", () => {
       { date: "2026-04-15", energy: 3, sleepOk: false }
     ];
     const workouts: WorkoutLog[] = [
-      { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "strengthA" },
+      { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "strength" },
       { dateTime: "2026-04-15T07:00:00.000Z", date: "2026-04-15", type: "walk" }
     ];
 
@@ -29,8 +36,23 @@ describe("domain calculations", () => {
     expect(result.energyDays).toBe(3);
     expect(result.sleepDays).toBe(3);
     expect(result.workouts).toBe(2);
-    expect(result.adherencePercent).toBe(47);
+    expect(result.adherencePercent).toBe(38);
     expect(result.status).toBe("red");
+  });
+
+  it("counts up to two strength sessions and five walks toward the weekly workout goal", () => {
+    const progress = calculateWeeklyWorkoutProgress("2026-04-13", [
+      { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "strength" },
+      { dateTime: "2026-04-14T07:00:00.000Z", date: "2026-04-14", type: "strength" },
+      { dateTime: "2026-04-15T07:00:00.000Z", date: "2026-04-15", type: "strength" },
+      { dateTime: "2026-04-16T07:00:00.000Z", date: "2026-04-16", type: "walk" }
+    ]);
+
+    expect(progress.strengthWorkouts).toBe(3);
+    expect(progress.walks).toBe(1);
+    expect(progress.completedGoals).toBe(3);
+    expect(progress.remainingStrengthWorkouts).toBe(0);
+    expect(progress.remainingWalks).toBe(4);
   });
 
   it("builds weekly trends", () => {

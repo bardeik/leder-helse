@@ -14,7 +14,9 @@ describe("dashboard trend helpers", () => {
     expect(snapshot.weekSummary.energyDays).toBe(1);
     expect(snapshot.weekSummary.missingEnergyDays).toBe(6);
     expect(snapshot.weekSummary.weightLogged).toBe(false);
-    expect(snapshot.nextActions.some((item) => item.includes("Styrke A"))).toBe(true);
+    expect(snapshot.weekSummary.walks).toBe(1);
+    expect(snapshot.nextActions.some((item) => item.includes("styrkeøkt"))).toBe(true);
+    expect(snapshot.nextActions.some((item) => item.includes("4 gåturer"))).toBe(true);
     expect(snapshot.nextActions.some((item) => item.includes("søvn"))).toBe(true);
     expect(snapshot.nextActions.some((item) => item.includes("veiing"))).toBe(true);
   });
@@ -31,7 +33,7 @@ describe("dashboard trend helpers", () => {
         { weekStartDate: "2026-04-07", weightKg: 85.1, notes: "Holdt planen" },
         { weekStartDate: "2026-04-13", weightKg: 84.7, adjustment: "Legge meg tidligere" }
       ],
-      [{ dateTime: "2026-04-14T06:00:00.000Z", date: "2026-04-14", type: "strengthA" }],
+      [{ dateTime: "2026-04-14T06:00:00.000Z", date: "2026-04-14", type: "strength" }],
       [
         { weekStartDate: "2026-04-07", weightKg: 85.1, energyAverage: 3.4, sleepOkCount: 4 },
         { weekStartDate: "2026-04-13", weightKg: 84.7, weightDeltaKg: -0.4, energyAverage: 4.5, sleepOkCount: 5 }

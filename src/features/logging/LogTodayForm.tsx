@@ -4,17 +4,8 @@ import { useState } from "react";
 import { useLogToday } from "@/features/logging/hooks/useLogToday";
 import type { LogTodayState } from "@/features/logging/hooks/useLogToday";
 import { parseLocalNumber, formatLocalNumber, getDecimalSeparator } from "@/domain/localeNumber";
+import { formatWorkoutType } from "@/domain/workouts";
 import { FloatingSaveNotice } from "@/components/FloatingSaveNotice";
-
-function formatWorkoutType(type: "strengthA" | "strengthB" | "walk") {
-  if (type === "strengthA") {
-    return "Styrke A";
-  }
-  if (type === "strengthB") {
-    return "Styrke B";
-  }
-  return "Gåtur";
-}
 
 export function LogTodayForm() {
   const { state, setState, save, addQuickWorkout, todayWorkouts, removeWorkout, saving, message, selectedDate, today, canGoBack, canGoForward, goBack, goForward } = useLogToday();
@@ -156,11 +147,8 @@ export function LogTodayForm() {
           <button className="secondary" type="button" onClick={() => addQuickWorkout("walk", 20)}>
             + Gåtur 20 min
           </button>
-          <button className="secondary" type="button" onClick={() => addQuickWorkout("strengthA")}> 
-            + Styrke A
-          </button>
-          <button className="secondary" type="button" onClick={() => addQuickWorkout("strengthB")}> 
-            + Styrke B
+          <button className="secondary" type="button" onClick={() => addQuickWorkout("strength")}>
+            + Styrkeøkt
           </button>
         </div>
 

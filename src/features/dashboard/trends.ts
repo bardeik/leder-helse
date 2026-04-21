@@ -1,14 +1,20 @@
-import { addDays, calculateWeeklyAdherence } from "@/domain/calc";
+import {
+  addDays,
+  calculateWeeklyAdherence,
+  calculateWeeklyWorkoutProgress
+} from "@/domain/calc";
 import type { DailyLog, WeeklyCheckIn, WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
 
 export interface DashboardWeekSummary {
   energyDays: number;
   sleepDays: number;
-  workouts: number;
+  strengthWorkouts: number;
+  walks: number;
   weightLogged: boolean;
   missingEnergyDays: number;
   missingSleepDays: number;
-  remainingWorkouts: number;
+  remainingStrengthWorkouts: number;
+  remainingWalks: number;
 }
 
 export interface DashboardMetricHighlight {
@@ -76,11 +82,10 @@ export function getDashboardSnapshot(
 ): DashboardSnapshot {
   const adherence = calculateWeeklyAdherence(weekStartDate, dailyLogs, workouts);
   const weekEndDate = addDays(weekStartDate, 6);
-  const weekWorkouts = workouts.filter((item) => item.date >= weekStartDate && item.date <= weekEndDate);
+  const workoutProgress = calculateWeeklyWorkoutProgress(weekStartDate, workouts);
   const weightLogged = weeklyCheckIns.some((item) => item.weekStartDate === weekStartDate);
   const missingEnergyDays = Math.max(0, 7 - adherence.energyDays);
   const missingSleepDays = Math.max(0, 7 - adherence.sleepDays);
-  const remainingWorkouts = Math.max(0, 3 - adherence.workouts);
 
   const recentWorkouts = [...workouts]
     .sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1))
@@ -93,14 +98,19 @@ export function getDashboardSnapshot(
   if (missingSleepDays > 0) {
     actions.push(`Logg søvn for ${missingSleepDays} ${missingSleepDays === 1 ? "dag" : "dager"} til`);
   }
-  if (!weekWorkouts.some((item) => item.type === "strengthA")) {
-    actions.push("Mangler Styrke A denne uken");
+  if (workoutProgress.remainingStrengthWorkouts > 0) {
+    actions.push(
+      `Mangler ${workoutProgress.remainingStrengthWorkouts} ${
+        workoutProgress.remainingStrengthWorkouts === 1 ? "styrkeøkt" : "styrkeøkter"
+      } denne uken`
+    );
   }
-  if (!weekWorkouts.some((item) => item.type === "strengthB")) {
-    actions.push("Mangler Styrke B denne uken");
-  }
-  if (!weekWorkouts.some((item) => item.type === "walk")) {
-    actions.push("Mangler en gåtur denne uken");
+  if (workoutProgress.remainingWalks > 0) {
+    actions.push(
+      `Mangler ${workoutProgress.remainingWalks} ${
+        workoutProgress.remainingWalks === 1 ? "gåtur" : "gåturer"
+      } denne uken`
+    );
   }
   if (!weightLogged) {
     actions.push("Ukentlig veiing og refleksjon mangler");
@@ -118,11 +128,13 @@ export function getDashboardSnapshot(
     weekSummary: {
       energyDays: adherence.energyDays,
       sleepDays: adherence.sleepDays,
-      workouts: adherence.workouts,
+      strengthWorkouts: workoutProgress.strengthWorkouts,
+      walks: workoutProgress.walks,
       weightLogged,
       missingEnergyDays,
       missingSleepDays,
-      remainingWorkouts
+      remainingStrengthWorkouts: workoutProgress.remainingStrengthWorkouts,
+      remainingWalks: workoutProgress.remainingWalks
     },
     latestCheckIn,
     trendHighlights: {

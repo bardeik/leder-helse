@@ -1,4 +1,5 @@
 import type { BackupData, DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
+import { normalizeWorkoutType } from "@/domain/workouts";
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -78,11 +79,13 @@ function parseWeeklyCheckIn(input: unknown): WeeklyCheckIn {
 
 function parseWorkoutLog(input: unknown): WorkoutLog {
   assert(isRecord(input), "Aktivitetslogg må være et objekt.");
+  const normalizedType = normalizeWorkoutType(String(input.type ?? ""));
+  assert(normalizedType, "Aktivitetstype er ugyldig.");
 
   const workout: WorkoutLog = {
     dateTime: input.dateTime as string,
     date: input.date as string,
-    type: input.type as WorkoutLog["type"]
+    type: normalizedType
   };
 
   if ("id" in input) {
@@ -125,10 +128,7 @@ export function validateWeeklyCheckIn(input: WeeklyCheckIn): WeeklyCheckIn {
 export function validateWorkoutLog(input: WorkoutLog): WorkoutLog {
   assertIsoTimestamp(input.dateTime, "Tidspunkt må være en ISO-tidsstreng.");
   assertIsoDate(input.date, "Dato må være på formatet YYYY-MM-DD.");
-  assert(
-    input.type === "strengthA" || input.type === "strengthB" || input.type === "walk",
-    "Aktivitetstype er ugyldig."
-  );
+  assert(normalizeWorkoutType(input.type) !== undefined, "Aktivitetstype er ugyldig.");
 
   if (input.id !== undefined) {
     assert(Number.isInteger(input.id) && input.id > 0, "Id må være et positivt heltall.");
