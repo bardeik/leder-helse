@@ -12,9 +12,9 @@ description: "Testing rules"
 - For date-sensitive logic, freeze time using `vi.setSystemTime()` in a `beforeEach` / `afterEach`.
 
 ## Existing test files
-- `src/domain/calc.test.ts` — 4 tests: adherence percent + status (green/yellow/red)
+- `src/domain/calc.test.ts` — 6 tests: adherence percent + status (green/yellow/red) + prorated adherence
 - `src/domain/localeNumber.test.ts` — locale-aware number parsing and formatting
-- `src/features/dashboard/trends.test.ts` — 1 test: weekly trend point calculation
+- `src/features/dashboard/trends.test.ts` — 3 tests: weekly trend point calculation + prorated snapshot
 - `src/data/backup.test.ts` — 2 tests: export and import roundtrip
 - `tests/e2e/save-message-mobile.spec.ts` — mobile viewport checks for save-toast visibility on `/log` and `/check-in`
 

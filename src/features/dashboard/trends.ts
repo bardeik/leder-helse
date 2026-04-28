@@ -78,14 +78,29 @@ export function getDashboardSnapshot(
   dailyLogs: DailyLog[],
   weeklyCheckIns: WeeklyCheckIn[],
   workouts: WorkoutLog[],
-  trendPoints: WeeklyTrendPoint[]
+  trendPoints: WeeklyTrendPoint[],
+  todayIsoDate?: string
 ): DashboardSnapshot {
-  const adherence = calculateWeeklyAdherence(weekStartDate, dailyLogs, workouts);
+  const adherence = calculateWeeklyAdherence(weekStartDate, dailyLogs, workouts, todayIsoDate);
   const weekEndDate = addDays(weekStartDate, 6);
   const workoutProgress = calculateWeeklyWorkoutProgress(weekStartDate, workouts);
   const weightLogged = weeklyCheckIns.some((item) => item.weekStartDate === weekStartDate);
-  const missingEnergyDays = Math.max(0, 7 - adherence.energyDays);
-  const missingSleepDays = Math.max(0, 7 - adherence.sleepDays);
+
+  const isCurrentWeek =
+    typeof todayIsoDate === "string" && todayIsoDate >= weekStartDate && todayIsoDate <= weekEndDate;
+  const daysElapsed = isCurrentWeek
+    ? Math.min(
+        7,
+        Math.floor(
+          (new Date(`${todayIsoDate}T00:00:00.000Z`).getTime() -
+            new Date(`${weekStartDate}T00:00:00.000Z`).getTime()) /
+            86_400_000
+        ) + 1
+      )
+    : 7;
+
+  const missingEnergyDays = Math.max(0, daysElapsed - adherence.energyDays);
+  const missingSleepDays = Math.max(0, daysElapsed - adherence.sleepDays);
 
   const recentWorkouts = [...workouts]
     .sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1))

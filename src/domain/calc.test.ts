@@ -55,6 +55,44 @@ describe("domain calculations", () => {
     expect(progress.remainingWalks).toBe(4);
   });
 
+  it("prorates adherence to elapsed days for the current week", () => {
+    // day 3 of week: Monday 2026-04-13, today 2026-04-15 → daysElapsed = 3
+    const dailyLogs: DailyLog[] = [
+      { date: "2026-04-13", energy: 4, sleepOk: true },
+      { date: "2026-04-14", energy: 3, sleepOk: true },
+      { date: "2026-04-15", energy: 5, sleepOk: true }
+    ];
+    const workouts: WorkoutLog[] = [
+      { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "walk" },
+      { dateTime: "2026-04-14T07:00:00.000Z", date: "2026-04-14", type: "walk" },
+      { dateTime: "2026-04-15T07:00:00.000Z", date: "2026-04-15", type: "walk" }
+    ];
+
+    const result = calculateWeeklyAdherence("2026-04-13", dailyLogs, workouts, "2026-04-15");
+
+    // completed = 3 energy + 3 sleep + 3 walks = 9; total = 3 + 3 + 7 = 13
+    expect(result.adherencePercent).toBe(Math.round((9 / 13) * 100));
+    expect(result.status).toBe("yellow");
+  });
+
+  it("uses full 7-day denominator when today is not in the current week", () => {
+    const dailyLogs: DailyLog[] = [
+      { date: "2026-04-13", energy: 4, sleepOk: true },
+      { date: "2026-04-14", energy: 4, sleepOk: true },
+      { date: "2026-04-15", energy: 3, sleepOk: false }
+    ];
+    const workouts: WorkoutLog[] = [
+      { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "strength" },
+      { dateTime: "2026-04-15T07:00:00.000Z", date: "2026-04-15", type: "walk" }
+    ];
+
+    // No todayIsoDate → denominator stays at 7 + 7 + WEEKLY_WORKOUT_GOAL
+    const result = calculateWeeklyAdherence("2026-04-13", dailyLogs, workouts);
+
+    expect(result.adherencePercent).toBe(38);
+    expect(result.status).toBe("red");
+  });
+
   it("builds weekly trends", () => {
     vi.setSystemTime(new Date("2026-04-18T12:00:00Z"));
     const weeks = getRecentWeekStarts("2026-04-18", 2);

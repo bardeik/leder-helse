@@ -21,6 +21,29 @@ describe("dashboard trend helpers", () => {
     expect(snapshot.nextActions.some((item) => item.includes("veiing"))).toBe(true);
   });
 
+  it("prorates missing days to elapsed days for current week", () => {
+    // weekStart = Monday 2026-04-13, today = Wednesday 2026-04-15 → daysElapsed = 3
+    // 3 energy + 3 sleep + 2 workouts = 8 completed; total = 3+3+7 = 13 → 62%
+    const snapshot = getDashboardSnapshot(
+      "2026-04-13",
+      [
+        { date: "2026-04-13", energy: 4, sleepOk: true },
+        { date: "2026-04-14", energy: 3, sleepOk: true },
+        { date: "2026-04-15", energy: 5, sleepOk: true }
+      ],
+      [],
+      [
+        { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "walk" },
+        { dateTime: "2026-04-14T07:00:00.000Z", date: "2026-04-14", type: "strength" }
+      ],
+      [{ weekStartDate: "2026-04-13", energyAverage: 4, sleepOkCount: 3 }],
+      "2026-04-15"
+    );
+
+    expect(snapshot.weekSummary.missingEnergyDays).toBe(0);
+    expect(snapshot.adherencePercent).toBeGreaterThan(50);
+  });
+
   it("derives current highlights and latest check-in details", () => {
     const snapshot = getDashboardSnapshot(
       "2026-04-13",
