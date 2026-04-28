@@ -28,5 +28,5 @@ WeeklyTrendPoint:{ weekStartDate, weightKg?, weightDeltaKg?, energyAverage?, sle
 - red: < 50%
 
 ## Test coverage
-- `src/domain/calc.test.ts` — 5 tests for adherence + status calculations (including prorated adherence)
+- `src/domain/calc.test.ts` — 7 tests for adherence + status calculations (including prorated adherence), workout progress, and weekly trends
 - Provide unit tests for any non-trivial calculation added.
