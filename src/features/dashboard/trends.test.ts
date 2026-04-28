@@ -34,7 +34,7 @@ describe("dashboard trend helpers", () => {
       [],
       [
         { dateTime: "2026-04-13T07:00:00.000Z", date: "2026-04-13", type: "walk" },
-        { dateTime: "2026-04-14T07:00:00.000Z", date: "2026-04-14", type: "strength" }
+        { dateTime: "2026-04-14T07:00:00.000Z", date: "2026-04-14", type: "strengthA" }
       ],
       [{ weekStartDate: "2026-04-13", energyAverage: 4, sleepOkCount: 3 }],
       "2026-04-15"
