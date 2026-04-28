@@ -8,7 +8,8 @@ Local-first web app for a 6-week health loop:
 - Daily sleep check (yes/no + optional hours), auto-saved on change
 - Workouts: Strength A, Strength B, Walk; with per-item delete
 - Date navigation on Log Today: up to 14 days back, stops at today
-- Dashboard: current week adherence (green/yellow/red), 6-week trends, next actions
+- Dashboard: current week adherence (green/yellow/red), prorated to days elapsed this week, 6-week trends, next actions
+- [x] Trend graphs with data point labels for weight, energy, and sleep
 - Optional browser notifications (localStorage-persisted toggle)
 - Settings: JSON export/import backup of all data
 - Local browser data storage via IndexedDB (Dexie), no cloud required

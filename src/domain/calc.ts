@@ -60,11 +60,14 @@ export function calculateWeeklyWorkoutProgress(weekStartDate: string, workoutLog
   };
 }
 
-/** Calculates weekly adherence from daily and workout logs. */
+/** Calculates weekly adherence from daily and workout logs.
+ *  Pass `todayIsoDate` to prorate the denominator to elapsed days when inside the current week.
+ */
 export function calculateWeeklyAdherence(
   weekStartDate: string,
   dailyLogs: DailyLog[],
-  workoutLogs: WorkoutLog[]
+  workoutLogs: WorkoutLog[],
+  todayIsoDate?: string
 ): WeeklyAdherence {
   const weekEndDate = addDays(weekStartDate, 6);
   const weekDailyLogs = dailyLogs.filter((item) => item.date >= weekStartDate && item.date <= weekEndDate);
@@ -74,8 +77,21 @@ export function calculateWeeklyAdherence(
   const sleepDays = weekDailyLogs.filter((item) => typeof item.sleepOk === "boolean").length;
   const workouts = workoutProgress.completedGoals;
 
+  const isCurrentWeek =
+    typeof todayIsoDate === "string" && todayIsoDate >= weekStartDate && todayIsoDate <= weekEndDate;
+  const daysElapsed = isCurrentWeek
+    ? Math.min(
+        7,
+        Math.floor(
+          (new Date(`${todayIsoDate}T00:00:00.000Z`).getTime() -
+            new Date(`${weekStartDate}T00:00:00.000Z`).getTime()) /
+            MS_PER_DAY
+        ) + 1
+      )
+    : 7;
+
   const completed = energyDays + sleepDays + workouts;
-  const total = 7 + 7 + WEEKLY_WORKOUT_GOAL;
+  const total = daysElapsed + daysElapsed + WEEKLY_WORKOUT_GOAL;
   const adherencePercent = Math.round((completed / total) * 100);
 
   return {

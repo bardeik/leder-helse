@@ -50,7 +50,7 @@ export default function HomePage() {
   const currentWeek = getWeekStartDate(today);
 
   const trends = buildWeeklyTrends(weekStarts, dailyLogs, weeklyCheckIns);
-  const snapshot = getDashboardSnapshot(currentWeek, dailyLogs, weeklyCheckIns, workouts, trends);
+  const snapshot = getDashboardSnapshot(currentWeek, dailyLogs, weeklyCheckIns, workouts, trends, today);
 
   return (
     <DashboardView

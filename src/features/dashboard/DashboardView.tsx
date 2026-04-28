@@ -28,7 +28,7 @@ interface DashboardViewProps {
   motivationalQuote: MotivationalQuote;
 }
 
-function Sparkline({ values }: { values: number[] }) {
+function Sparkline({ values, formatLabel }: { values: number[]; formatLabel?: (value: number) => string }) {
   if (values.length === 0) {
     return <small className="muted">Ingen data enda.</small>;
   }
@@ -36,19 +36,29 @@ function Sparkline({ values }: { values: number[] }) {
   const min = Math.min(...values);
   const max = Math.max(...values);
   const width = 260;
-  const height = 60;
+  const chartHeight = 60;
+  const height = formatLabel ? 80 : 60;
 
-  const points = values
-    .map((value, index) => {
-      const x = (index / Math.max(values.length - 1, 1)) * width;
-      const y = max === min ? height / 2 : height - ((value - min) / (max - min)) * (height - 10) - 5;
-      return `${x},${y}`;
-    })
-    .join(" ");
+  const pointCoords = values.map((value, index) => {
+    const x = (index / Math.max(values.length - 1, 1)) * width;
+    const y = max === min ? chartHeight / 2 : chartHeight - ((value - min) / (max - min)) * (chartHeight - 10) - 5;
+    return { x, y, value };
+  });
+
+  const points = pointCoords.map(({ x, y }) => `${x},${y}`).join(" ");
 
   return (
     <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Trendgraf">
       <polyline fill="none" stroke="#24595a" strokeWidth="2.5" points={points} />
+      {pointCoords.map(({ x, y }, index) => (
+        <circle key={index} cx={x} cy={y} r={3} fill="#24595a" />
+      ))}
+      {formatLabel &&
+        pointCoords.map(({ x, value }, index) => (
+          <text key={index} x={x} y={75} textAnchor="middle" fontSize="10" fill="#6d6458">
+            {formatLabel(value)}
+          </text>
+        ))}
     </svg>
   );
 }
@@ -190,19 +200,19 @@ export function DashboardView({
           <h2>Vekttrend</h2>
           <p className="dashboard-metric-value">{formatTrendValue("weight", trendHighlights.weight.currentValue)}</p>
           <small className="muted">{formatTrendChange("weight", trendHighlights.weight.delta)}</small>
-          <Sparkline values={weightSeries} />
+          <Sparkline values={weightSeries} formatLabel={(v) => formatLocalNumber(v, 1)} />
         </article>
         <article className="card">
           <h2>Energisnitt</h2>
           <p className="dashboard-metric-value">{formatTrendValue("energy", trendHighlights.energy.currentValue)}</p>
           <small className="muted">{formatTrendChange("energy", trendHighlights.energy.delta)}</small>
-          <Sparkline values={energySeries} />
+          <Sparkline values={energySeries} formatLabel={(v) => formatLocalNumber(v, 1)} />
         </article>
         <article className="card">
           <h2>Netter med godkjent søvn</h2>
           <p className="dashboard-metric-value">{formatTrendValue("sleep", trendHighlights.sleep.currentValue)}</p>
           <small className="muted">{formatTrendChange("sleep", trendHighlights.sleep.delta)}</small>
-          <Sparkline values={sleepSeries} />
+          <Sparkline values={sleepSeries} formatLabel={(v) => String(v)} />
         </article>
       </section>
 
