@@ -1,6 +1,6 @@
 FROM node:20-bookworm-slim AS base
 WORKDIR /app
-RUN npm install -g npm@11.12.1
+RUN npm install -g npm@11.13.0
 
 FROM base AS deps
 COPY package.json package-lock.json ./
