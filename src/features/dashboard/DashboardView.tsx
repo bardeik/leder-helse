@@ -35,12 +35,14 @@ function Sparkline({ values, formatLabel }: { values: number[]; formatLabel?: (v
 
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const width = 260;
+  const chartWidth = 260;
+  const horizontalPadding = 14;
+  const width = chartWidth + horizontalPadding * 2;
   const chartHeight = 60;
   const height = formatLabel ? 80 : 60;
 
   const pointCoords = values.map((value, index) => {
-    const x = (index / Math.max(values.length - 1, 1)) * width;
+    const x = horizontalPadding + (index / Math.max(values.length - 1, 1)) * chartWidth;
     const y = max === min ? chartHeight / 2 : chartHeight - ((value - min) / (max - min)) * (chartHeight - 10) - 5;
     return { x, y, value };
   });
@@ -55,7 +57,14 @@ function Sparkline({ values, formatLabel }: { values: number[]; formatLabel?: (v
       ))}
       {formatLabel &&
         pointCoords.map(({ x, value }, index) => (
-          <text key={index} x={x} y={75} textAnchor="middle" fontSize="10" fill="#6d6458">
+          <text
+            key={index}
+            x={x}
+            y={75}
+            textAnchor={index === 0 ? "start" : index === pointCoords.length - 1 ? "end" : "middle"}
+            fontSize="10"
+            fill="#6d6458"
+          >
             {formatLabel(value)}
           </text>
         ))}
