@@ -35,7 +35,7 @@ Not yet implemented (potential next steps):
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
 - Validation: **Zod** — schemas in `src/domain/schemas.ts`
 - Testing: **Vitest 4** for unit tests and **Playwright** for mobile viewport E2E checks
-- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `tests/e2e/save-message-mobile.spec.ts`
+- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/domain/workouts.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`
 
 ## 3) Architecture rules
 - Domain logic in `/src/domain` — pure functions + types, no React, no browser APIs.
@@ -64,6 +64,7 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 - **Localized numeric editing**: weight and sleep-hours inputs accept both `.` and `,`, keep raw text while focused, and format using the user's locale on blur.
 - **Save toast placement**: save confirmation is rendered through a portal to `document.body` so it stays fixed to the visible viewport on mobile while scrolling.
 - **Safe-area padding**: `main` uses `padding-bottom: env(safe-area-inset-bottom, 0px)` for iPhone home-bar clearance. Body uses `min-height: 100svh`.
+- **Sparkline labels**: The `Sparkline` component in `DashboardView.tsx` uses 14px horizontal padding inside the SVG viewBox and edge-aware `textAnchor` (`start` / `middle` / `end`) so that first and last data-point labels never clip on narrow mobile viewports.
 
 ## 6) Engineering standards
 - Use TypeScript strict mode.
