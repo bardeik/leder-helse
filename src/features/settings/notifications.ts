@@ -7,26 +7,40 @@ export interface ReminderSettings {
 const STORAGE_KEY = "leader-health-reminders";
 const ENERGY_SENT_KEY = "leader-health-energy-sent";
 const STRENGTH_SENT_KEY = "leader-health-strength-sent";
+const DEFAULT_REMINDER_HOUR = 7;
+
+function clampReminderHour(value: unknown) {
+  const numericValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numericValue)) {
+    return DEFAULT_REMINDER_HOUR;
+  }
+
+  return Math.min(23, Math.max(0, Math.trunc(numericValue)));
+}
+
+function normalizeReminderSettings(input: Partial<ReminderSettings> | null | undefined): ReminderSettings {
+  return {
+    energyReminderEnabled: Boolean(input?.energyReminderEnabled),
+    strengthMorningEnabled: Boolean(input?.strengthMorningEnabled),
+    strengthReminderHour: clampReminderHour(input?.strengthReminderHour)
+  };
+}
 
 export function getReminderSettings(): ReminderSettings {
   if (typeof window === "undefined") {
-    return { energyReminderEnabled: false, strengthMorningEnabled: false, strengthReminderHour: 7 };
+    return normalizeReminderSettings(undefined);
   }
 
   const raw = window.localStorage.getItem(STORAGE_KEY);
   if (!raw) {
-    return { energyReminderEnabled: false, strengthMorningEnabled: false, strengthReminderHour: 7 };
+    return normalizeReminderSettings(undefined);
   }
 
   try {
-    const parsed = JSON.parse(raw) as ReminderSettings;
-    return {
-      energyReminderEnabled: Boolean(parsed.energyReminderEnabled),
-      strengthMorningEnabled: Boolean(parsed.strengthMorningEnabled),
-      strengthReminderHour: Number.isFinite(parsed.strengthReminderHour) ? parsed.strengthReminderHour : 7
-    };
+    const parsed = JSON.parse(raw) as Partial<ReminderSettings>;
+    return normalizeReminderSettings(parsed);
   } catch {
-    return { energyReminderEnabled: false, strengthMorningEnabled: false, strengthReminderHour: 7 };
+    return normalizeReminderSettings(undefined);
   }
 }
 
@@ -34,7 +48,8 @@ export function saveReminderSettings(settings: ReminderSettings) {
   if (typeof window === "undefined") {
     return;
   }
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalizeReminderSettings(settings)));
 }
 
 export async function requestNotificationPermission(): Promise<NotificationPermission | "unsupported"> {

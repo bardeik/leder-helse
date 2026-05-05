@@ -39,6 +39,14 @@ export default function SettingsPage() {
     saveReminderSettings(next);
   }
 
+  function getErrorMessage(error: unknown, fallback: string) {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+
+    return fallback;
+  }
+
   async function enableNotifications() {
     const permission = await requestNotificationPermission();
     setMessage(`Varslingstillatelse: ${permission}`);
@@ -90,8 +98,8 @@ export default function SettingsPage() {
           : "Sikkerhetskopi importert og slått sammen med eksisterende data."
       );
       await refreshSummary();
-    } catch {
-      setMessage("Import av sikkerhetskopi mislyktes. Kontroller JSON-formatet.");
+    } catch (error) {
+      setMessage(getErrorMessage(error, "Import av sikkerhetskopi mislyktes."));
     } finally {
       setBusy(false);
     }
@@ -138,7 +146,8 @@ export default function SettingsPage() {
           <legend>Sikkerhetskopi</legend>
           <p>
             <small className="muted">
-              Lagret nå: daglige logger {summary?.dailyLogs ?? "-"}, ukentlige innsjekker {summary?.weeklyCheckIns ?? "-"}, økter {summary?.workoutLogs ?? "-"}
+              Lagret nå: daglige logger {summary?.dailyLogs ?? "-"}, ukentlige innsjekker{" "}
+              {summary?.weeklyCheckIns ?? "-"}, økter {summary?.workoutLogs ?? "-"}
             </small>
           </p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -151,7 +160,9 @@ export default function SettingsPage() {
           </div>
           <label htmlFor="backup-json">Importer sikkerhetskopi-JSON</label>
           <textarea id="backup-json" value={jsonPreview} onChange={handleJsonChange} />
-          <fieldset style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem", margin: "0 0 0.75rem" }}>
+          <fieldset
+            style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem", margin: "0 0 0.75rem" }}
+          >
             <legend>Importmodus</legend>
             <label>
               <input
@@ -174,10 +185,16 @@ export default function SettingsPage() {
               Slå sammen med eksisterende data
             </label>
             <small className="muted">
-              Overskriv sletter dagens lokale data før import. Slå sammen beholder eksisterende data og oppdaterer poster med samme nøkkel.
+              Overskriv sletter dagens lokale data før import. Slå sammen beholder eksisterende data og oppdaterer
+              poster med samme nøkkel.
             </small>
           </fieldset>
-          <button className="primary" type="button" onClick={handleImport} disabled={busy || jsonPreview.trim().length === 0}>
+          <button
+            className="primary"
+            type="button"
+            onClick={handleImport}
+            disabled={busy || jsonPreview.trim().length === 0}
+          >
             {busy ? "Jobber..." : importMode === "overwrite" ? "Importer og overskriv" : "Importer og slå sammen"}
           </button>
         </fieldset>

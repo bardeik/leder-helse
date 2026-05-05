@@ -134,7 +134,9 @@ export function DashboardView({
   trendHighlights,
   motivationalQuote
 }: DashboardViewProps) {
-  const weightSeries = trendPoints.map((item) => item.weightKg).filter((item): item is number => typeof item === "number");
+  const weightSeries = trendPoints
+    .map((item) => item.weightKg)
+    .filter((item): item is number => typeof item === "number");
   const energySeries = trendPoints
     .map((item) => item.energyAverage)
     .filter((item): item is number => typeof item === "number");
@@ -144,16 +146,15 @@ export function DashboardView({
     <div className="grid">
       <section className="card appear dashboard-quote-card" aria-label="Dagens motivasjon">
         <p className="dashboard-quote-eyebrow">Dagens motivasjon</p>
-        <blockquote className="dashboard-quote">
-          &ldquo;{motivationalQuote.text}&rdquo;
-        </blockquote>
+        <blockquote className="dashboard-quote">&ldquo;{motivationalQuote.text}&rdquo;</blockquote>
         <p className="dashboard-quote-author">- {motivationalQuote.author}</p>
       </section>
 
       <section className="card appear">
         <h1>Denne uken</h1>
         <p>
-          <strong>{adherencePercent}% etterlevelse</strong> <span className={`pill ${status}`}>{formatStatus(status)}</span>
+          <strong>{adherencePercent}% etterlevelse</strong>{" "}
+          <span className={`pill ${status}`}>{formatStatus(status)}</span>
         </p>
         <dl className="dashboard-summary-grid">
           <div className="dashboard-summary-item">
@@ -176,7 +177,9 @@ export function DashboardView({
           </div>
           <div className="dashboard-summary-item">
             <dt>Styrkeøkter</dt>
-            <dd>{weekSummary.strengthWorkouts} av {WEEKLY_STRENGTH_GOAL}</dd>
+            <dd>
+              {weekSummary.strengthWorkouts} av {WEEKLY_STRENGTH_GOAL}
+            </dd>
             <small className="muted">
               {weekSummary.remainingStrengthWorkouts === 0
                 ? "Ukens styrkemål er nådd."
@@ -187,7 +190,9 @@ export function DashboardView({
           </div>
           <div className="dashboard-summary-item">
             <dt>Gåturer</dt>
-            <dd>{weekSummary.walks} av {WEEKLY_WALK_GOAL}</dd>
+            <dd>
+              {weekSummary.walks} av {WEEKLY_WALK_GOAL}
+            </dd>
             <small className="muted">
               {weekSummary.remainingWalks === 0
                 ? "Ukens gåturer er registrert."
@@ -198,7 +203,9 @@ export function DashboardView({
             <dt>Ukentlig check-in</dt>
             <dd>{weekSummary.weightLogged ? "Registrert" : "Mangler"}</dd>
             <small className="muted">
-              {weekSummary.weightLogged ? "Veiing er lagret for denne uken." : "Legg inn vekt og refleksjon for å fullføre uken."}
+              {weekSummary.weightLogged
+                ? "Veiing er lagret for denne uken."
+                : "Legg inn vekt og refleksjon for å fullføre uken."}
             </small>
           </div>
         </dl>
@@ -251,7 +258,8 @@ export function DashboardView({
                 {formatWeekStart(latestCheckIn.weekStartDate)}.
               </p>
               <p>
-                <strong>Justering:</strong> {latestCheckIn.adjustment?.trim() ? latestCheckIn.adjustment : "Ingen justering lagret."}
+                <strong>Justering:</strong>{" "}
+                {latestCheckIn.adjustment?.trim() ? latestCheckIn.adjustment : "Ingen justering lagret."}
               </p>
               <p>
                 <strong>Notat:</strong> {latestCheckIn.notes?.trim() ? latestCheckIn.notes : "Ingen refleksjon lagret."}

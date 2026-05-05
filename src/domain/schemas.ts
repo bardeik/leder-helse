@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_BACKUP_ITEMS_PER_TABLE } from "@/domain/backupLimits";
 import type { WorkoutType } from "@/domain/types";
 
 export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -34,9 +35,21 @@ export const workoutLogSchema = z.object({
 export const backupSchema = z.object({
   version: z.literal(1),
   exportedAt: z.string().datetime(),
-  dailyLogs: z.array(dailyLogSchema),
-  weeklyCheckIns: z.array(weeklyCheckInSchema),
-  workoutLogs: z.array(workoutLogSchema)
+  dailyLogs: z
+    .array(dailyLogSchema)
+    .max(
+      MAX_BACKUP_ITEMS_PER_TABLE,
+      `Daglige logger kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`
+    ),
+  weeklyCheckIns: z
+    .array(weeklyCheckInSchema)
+    .max(
+      MAX_BACKUP_ITEMS_PER_TABLE,
+      `Ukentlige innsjekker kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`
+    ),
+  workoutLogs: z
+    .array(workoutLogSchema)
+    .max(MAX_BACKUP_ITEMS_PER_TABLE, `Aktiviteter kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`)
 });
 
 export type DailyLogInput = z.infer<typeof dailyLogSchema>;

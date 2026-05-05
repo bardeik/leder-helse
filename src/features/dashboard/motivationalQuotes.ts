@@ -18,12 +18,18 @@ export const motivationalQuotes: MotivationalQuote[] = [
   { text: "I am not bothered when I am not understood. I am bothered when I do not know others.", author: "Confucius" },
   { text: "Reviewing what you have learned and learning anew, you are fit to be a teacher.", author: "Confucius" },
   { text: "To study and not think is a waste. To think and not study is dangerous.", author: "Confucius" },
-  { text: "What you know, you know; what you do not know, you do not know. This is true knowledge.", author: "Confucius" },
+  {
+    text: "What you know, you know; what you do not know, you do not know. This is true knowledge.",
+    author: "Confucius"
+  },
   { text: "Be loyal and trustworthy.", author: "Confucius" },
   { text: "When making a mistake, do not be afraid to correct it.", author: "Confucius" },
   { text: "If you see what is right and fail to act on it, you lack courage.", author: "Confucius" },
   { text: "Men do not stumble over mountains, but over molehills.", author: "Confucius" },
-  { text: "By three methods we may learn wisdom: by reflection, by imitation, and by experience.", author: "Confucius" },
+  {
+    text: "By three methods we may learn wisdom: by reflection, by imitation, and by experience.",
+    author: "Confucius"
+  },
   { text: "It is difficulties that show what men are.", author: "Epictetus" },
   { text: "First say to yourself what you would be; and then do what you have to do.", author: "Epictetus" },
   { text: "No thing great is created suddenly.", author: "Epictetus" },
@@ -39,13 +45,19 @@ export const motivationalQuotes: MotivationalQuote[] = [
   { text: "Perform every act in life as though it were your last.", author: "Marcus Aurelius" },
   { text: "You see how few things you have to do to live a satisfying life?", author: "Marcus Aurelius" },
   { text: "Give yourself time to learn something new and good.", author: "Marcus Aurelius" },
-  { text: "You could leave life right now. Let that determine what you do and say and think.", author: "Marcus Aurelius" },
+  {
+    text: "You could leave life right now. Let that determine what you do and say and think.",
+    author: "Marcus Aurelius"
+  },
   { text: "Remember that all is opinion.", author: "Marcus Aurelius" },
   { text: "A man should be upright, not kept upright.", author: "Marcus Aurelius" },
   { text: "Never esteem anything as an advantage that makes you lose your self-respect.", author: "Marcus Aurelius" },
   { text: "We are made for mutual assistance.", author: "Marcus Aurelius" },
   { text: "Lay hold of today's task, and you will not need to depend so much upon tomorrow's.", author: "Seneca" },
-  { text: "The primary indication of a well-ordered mind is the ability to remain in one place and linger in your own company.", author: "Seneca" },
+  {
+    text: "The primary indication of a well-ordered mind is the ability to remain in one place and linger in your own company.",
+    author: "Seneca"
+  },
   { text: "It is not the man who has too little, but the man who craves more, that is poor.", author: "Seneca" },
   { text: "The best ideas are common property.", author: "Seneca" },
   { text: "Place value on your time and reckon the worth of each day.", author: "Seneca" },

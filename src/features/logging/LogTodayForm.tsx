@@ -3,12 +3,27 @@
 import { useState } from "react";
 import { useLogToday } from "@/features/logging/hooks/useLogToday";
 import type { LogTodayState } from "@/features/logging/hooks/useLogToday";
-import { parseLocalNumber, formatLocalNumber, getDecimalSeparator } from "@/domain/localeNumber";
+import { parseLocalNumber, formatLocalNumber } from "@/domain/localeNumber";
 import { formatWorkoutType } from "@/domain/workouts";
 import { FloatingSaveNotice } from "@/components/FloatingSaveNotice";
 
 export function LogTodayForm() {
-  const { state, setState, save, addQuickWorkout, todayWorkouts, removeWorkout, saving, message, selectedDate, today, canGoBack, canGoForward, goBack, goForward } = useLogToday();
+  const {
+    state,
+    setState,
+    save,
+    addQuickWorkout,
+    todayWorkouts,
+    removeWorkout,
+    saving,
+    message,
+    selectedDate,
+    today,
+    canGoBack,
+    canGoForward,
+    goBack,
+    goForward
+  } = useLogToday();
   const [sleepHoursFocused, setSleepHoursFocused] = useState(false);
   const [sleepHoursInput, setSleepHoursInput] = useState("");
 
@@ -112,8 +127,8 @@ export function LogTodayForm() {
           <input
             id="sleep-hours"
             type="text"
-            placeholder={`f.eks. 7${getDecimalSeparator()}5`}
-            value={sleepHoursFocused ? sleepHoursInput : (state.sleepHours ? formatLocalNumber(state.sleepHours) : "")}
+            placeholder="f.eks. 7,5"
+            value={sleepHoursFocused ? sleepHoursInput : state.sleepHours ? formatLocalNumber(state.sleepHours) : ""}
             onFocus={(event) => {
               setSleepHoursFocused(true);
               setSleepHoursInput(state.sleepHours ? String(state.sleepHours) : "");

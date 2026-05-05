@@ -1,4 +1,11 @@
-import type { DailyLog, HealthStatus, WeeklyAdherence, WeeklyCheckIn, WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
+import type {
+  DailyLog,
+  HealthStatus,
+  WeeklyAdherence,
+  WeeklyCheckIn,
+  WeeklyTrendPoint,
+  WorkoutLog
+} from "@/domain/types";
 
 const MS_PER_DAY = 86_400_000;
 export const WEEKLY_STRENGTH_GOAL = 2;
@@ -41,7 +48,10 @@ export function getHealthStatus(adherencePercent: number): HealthStatus {
 }
 
 /** Calculates weekly workout progress against 2 strength sessions and 5 walks. */
-export function calculateWeeklyWorkoutProgress(weekStartDate: string, workoutLogs: WorkoutLog[]): WeeklyWorkoutProgress {
+export function calculateWeeklyWorkoutProgress(
+  weekStartDate: string,
+  workoutLogs: WorkoutLog[]
+): WeeklyWorkoutProgress {
   const weekEndDate = addDays(weekStartDate, 6);
   const weekWorkouts = workoutLogs.filter((item) => item.date >= weekStartDate && item.date <= weekEndDate);
   const strengthWorkouts = weekWorkouts.filter((item) => item.type === "strength").length;
@@ -83,8 +93,7 @@ export function calculateWeeklyAdherence(
     ? Math.min(
         7,
         Math.floor(
-          (new Date(`${todayIsoDate}T00:00:00.000Z`).getTime() -
-            new Date(`${weekStartDate}T00:00:00.000Z`).getTime()) /
+          (new Date(`${todayIsoDate}T00:00:00.000Z`).getTime() - new Date(`${weekStartDate}T00:00:00.000Z`).getTime()) /
             MS_PER_DAY
         ) + 1
       )

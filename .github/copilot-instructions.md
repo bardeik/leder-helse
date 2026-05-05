@@ -3,11 +3,13 @@
 > Purpose: help GitHub Copilot plan and implement a small, secure, offline-first app that tracks a 6-week health loop (weight, energy, sleep) plus workouts (Strength A/B, walks).
 
 ## 0) Ground rules (quality + safety)
-- Treat any Copilot-generated code as *third-party code*: review carefully, run tests, and ensure licensing compatibility before merging.
+
+- Treat any Copilot-generated code as _third-party code_: review carefully, run tests, and ensure licensing compatibility before merging.
 - Do **not** include or paste sensitive company data, secrets, credentials, tokens, customer information, or internal confidential material into prompts, issues, or code comments.
 - Prefer local-first storage. Cloud sync must be opt-in and must not require using company-internal systems.
 
 ## 1) Product scope — implementation status
+
 The MVP is **fully implemented**. Features marked [x] are complete and working.
 
 - [x] Weekly weigh-in (1x/week) + weekly review — `/check-in` page
@@ -24,10 +26,12 @@ The MVP is **fully implemented**. Features marked [x] are complete and working.
 - [x] Save confirmation toast anchored to the visible viewport via portal rendering
 
 Not yet implemented (potential next steps):
+
 - Push notifications (requires server-side)
 - Cloud sync / multi-device
 
 ## 2) Tech stack (actual, as implemented)
+
 - Frontend: **Next.js 15 (App Router)** + **TypeScript strict** + **React**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
 - UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
@@ -38,6 +42,7 @@ Not yet implemented (potential next steps):
 - Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/domain/workouts.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`
 
 ## 3) Architecture rules
+
 - Domain logic in `/src/domain` — pure functions + types, no React, no browser APIs.
 - Persistence in `/src/data` — Dexie db setup (`db.ts`) + per-entity repositories in `repositories/`.
 - Pages in `/src/app` — Next.js App Router pages.
@@ -46,6 +51,7 @@ Not yet implemented (potential next steps):
 - Every new feature must have: types + validation, repository methods, UI components, at least 1 unit test.
 
 ## 4) Key domain model
+
 ```ts
 DailyLog:      { date: string; energy: number; sleepOk: boolean; sleepHours?: number; notes?: string }
 WeeklyCheckIn: { weekStartDate: string; weightKg: number; notes?: string; adjustment?: string }
@@ -53,10 +59,12 @@ WorkoutLog:    { id?: number; dateTime: string; date: string; type: 'strengthA'|
 WeeklyAdherence: { weekStartDate: string; energyDays: number; sleepDays: number; workouts: number; adherencePercent: number; status: 'green'|'yellow'|'red' }
 WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: number; energyAverage?: number; sleepOkCount: number }
 ```
+
 > `WorkoutLog.date` (YYYY-MM-DD) is indexed for efficient per-day queries. `dateTime` is used for chronological ordering.
 > For workouts logged on past dates, `dateTime` is set to `${date}T12:00:00.000Z` for stable ordering.
 
 ## 5) Implemented UX patterns (preserve these when extending)
+
 - **Auto-save**: `/log` page saves on every field change (radio `onChange`, input `onBlur`). `/check-in` auto-saves on blur as well. No manual save button. Transient "Endringer lagret" message appears for 1800ms.
 - **Date navigation** on Log Today: `useLogToday` exposes `selectedDate`, `canGoBack`, `canGoForward`, `goBack()`, `goForward()`. `MAX_PAST_DAYS = 13` (14 days including today).
 - **Date navigation** on Weekly Check-In: `useWeeklyCheckIn` exposes bounded Monday-based navigation for the current week and the 2 preceding weeks.
@@ -67,6 +75,7 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 - **Sparkline labels**: The `Sparkline` component in `DashboardView.tsx` uses 14px horizontal padding inside the SVG viewBox and edge-aware `textAnchor` (`start` / `middle` / `end`) so that first and last data-point labels never clip on narrow mobile viewports.
 
 ## 6) Engineering standards
+
 - Use TypeScript strict mode.
 - Prefer named exports.
 - Functions should be small and testable.
@@ -76,7 +85,9 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 - Always run `npm run lint` and `npm run test` after implementing changes.
 
 ## 7) Output expectations from Copilot
+
 When asked to implement a feature:
+
 1. Read the relevant existing files before writing any code.
 2. Propose a short plan (list of files to touch).
 3. Implement in small increments.

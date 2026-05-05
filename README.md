@@ -24,10 +24,10 @@ Local-first web app for a 6-week health loop:
 
 ## Tech Stack
 
-- **Next.js 15 (App Router)** + **TypeScript strict**
-- **Dexie 4 (IndexedDB)** for local persistence — DB name: `leader-health-loop`
-- **Zod** for validation
-- **Vitest 4** for unit tests and **Playwright** for mobile E2E tests
+- **Next.js 16.2** (App Router) + **React 19.2** + **TypeScript strict**
+- **Dexie 4.4** (IndexedDB) for local persistence — DB name: `leader-health-loop`
+- **Zod 4.3** for schema intent and form/domain validation
+- **Vitest 4.1** for unit tests and **Playwright 1.59** for Mobile Chrome + Desktop Chrome E2E coverage
 
 ## Project Structure
 
@@ -65,7 +65,7 @@ Step 4: Run unit tests:
 npm run test
 ```
 
-Step 5: Run mobile E2E tests:
+Step 5: Run E2E tests across Mobile Chrome and Desktop Chrome:
 
 ```bash
 npm run test:e2e
@@ -156,3 +156,6 @@ Notes:
 - Treat AI-generated code as third-party code: review, test, and verify licenses before shipping.
 - Do not add secrets, credentials, tokens, or private company/customer data.
 - App is local-first by default; no server-side data collection is required.
+- Backup import is user-initiated, stays local, rejects malformed JSON, and enforces a 5 MB payload limit plus 10,000-item collection limits.
+- Persisted timestamps are validated against the app's canonical ISO-8601 UTC format (`YYYY-MM-DDTHH:mm:ss.sssZ`).
+- Production builds serve stricter security headers and CSP than development builds.

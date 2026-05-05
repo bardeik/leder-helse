@@ -13,8 +13,15 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     exclude: ["tests/e2e/**", "node_modules/**", ".next/**"],
     coverage: {
+      enabled: true,
       provider: "v8",
-      reporter: ["text", "html"]
+      reporter: ["text", "html"],
+      thresholds: {
+        lines: 92,
+        functions: 94,
+        branches: 79,
+        statements: 93
+      }
     }
   }
 });

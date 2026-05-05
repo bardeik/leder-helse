@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { exportBackup, importBackup, type BackupDataSource } from "@/data/backup";
+import { exportBackup, getStorageSummary, importBackup, type BackupDataSource } from "@/data/backup";
+import { MAX_BACKUP_JSON_BYTES, MAX_BACKUP_SIZE_LABEL } from "@/domain/backupLimits";
 
 function createMockDb(): BackupDataSource {
   const dailyLogsData = [{ date: "2026-04-18", energy: 4, sleepOk: true }];
@@ -40,6 +41,16 @@ describe("backup import/export", () => {
     expect(parsed.workoutLogs).toHaveLength(1);
   });
 
+  it("summarizes stored item counts", async () => {
+    const mockDb = createMockDb();
+
+    await expect(getStorageSummary(mockDb)).resolves.toEqual({
+      dailyLogs: 1,
+      weeklyCheckIns: 1,
+      workoutLogs: 1
+    });
+  });
+
   it("imports backup and merges into existing tables by default", async () => {
     const mockDb = createMockDb();
     const payload = await exportBackup(mockDb);
@@ -66,5 +77,26 @@ describe("backup import/export", () => {
     expect(mockDb.dailyLogs.bulkPut).toHaveBeenCalledOnce();
     expect(mockDb.weeklyCheckIns.bulkPut).toHaveBeenCalledOnce();
     expect(mockDb.workoutLogs.bulkPut).toHaveBeenCalledOnce();
+  });
+
+  it("rejects malformed backup json before importing", async () => {
+    const mockDb = createMockDb();
+
+    await expect(importBackup("{", mockDb)).rejects.toThrow("Sikkerhetskopien må være gyldig JSON.");
+
+    expect(mockDb.transaction).not.toHaveBeenCalled();
+    expect(mockDb.dailyLogs.bulkPut).not.toHaveBeenCalled();
+  });
+
+  it("rejects oversized backup payloads before parsing", async () => {
+    const mockDb = createMockDb();
+    const oversizedPayload = " ".repeat(MAX_BACKUP_JSON_BYTES + 1);
+
+    await expect(importBackup(oversizedPayload, mockDb)).rejects.toThrow(
+      `Sikkerhetskopien er for stor. Maks størrelse er ${MAX_BACKUP_SIZE_LABEL}.`
+    );
+
+    expect(mockDb.transaction).not.toHaveBeenCalled();
+    expect(mockDb.dailyLogs.bulkPut).not.toHaveBeenCalled();
   });
 });

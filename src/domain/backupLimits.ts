@@ -1,0 +1,3 @@
+export const MAX_BACKUP_JSON_BYTES = 5 * 1024 * 1024;
+export const MAX_BACKUP_ITEMS_PER_TABLE = 10_000;
+export const MAX_BACKUP_SIZE_LABEL = "5 MB";

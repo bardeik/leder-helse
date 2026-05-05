@@ -49,34 +49,36 @@ export function useLogToday() {
   useEffect(() => {
     let mounted = true;
 
-    Promise.all([dailyLogsRepo.get(selectedDate), workoutLogsRepo.listByDate(selectedDate)]).then(([dailyLog, workoutList]) => {
-      if (!mounted) {
-        return;
+    Promise.all([dailyLogsRepo.get(selectedDate), workoutLogsRepo.listByDate(selectedDate)]).then(
+      ([dailyLog, workoutList]) => {
+        if (!mounted) {
+          return;
+        }
+
+        const defaultState: LogTodayState = {
+          date: selectedDate,
+          energy: 3,
+          sleepOk: true,
+          sleepHours: undefined,
+          notes: ""
+        };
+
+        setState({
+          date: selectedDate,
+          energy: dailyLog?.energy ?? defaultState.energy,
+          sleepOk: dailyLog?.sleepOk ?? defaultState.sleepOk,
+          sleepHours: dailyLog?.sleepHours,
+          notes: dailyLog?.notes ?? defaultState.notes
+        });
+
+        setTodayWorkouts(workoutList);
+        setMessage("");
+
+        if (!dailyLog) {
+          void dailyLogsRepo.upsert(defaultState);
+        }
       }
-
-      const defaultState: LogTodayState = {
-        date: selectedDate,
-        energy: 3,
-        sleepOk: true,
-        sleepHours: undefined,
-        notes: ""
-      };
-
-      setState({
-        date: selectedDate,
-        energy: dailyLog?.energy ?? defaultState.energy,
-        sleepOk: dailyLog?.sleepOk ?? defaultState.sleepOk,
-        sleepHours: dailyLog?.sleepHours,
-        notes: dailyLog?.notes ?? defaultState.notes
-      });
-
-      setTodayWorkouts(workoutList);
-      setMessage("");
-
-      if (!dailyLog) {
-        void dailyLogsRepo.upsert(defaultState);
-      }
-    });
+    );
 
     return () => {
       mounted = false;
@@ -130,9 +132,7 @@ export function useLogToday() {
   async function addQuickWorkout(type: WorkoutType, durationMin?: number) {
     const now = new Date();
     // For past dates use noon of that day as the dateTime so ordering is stable
-    const dateTime = state.date === today
-      ? now.toISOString()
-      : `${state.date}T12:00:00.000Z`;
+    const dateTime = state.date === today ? now.toISOString() : `${state.date}T12:00:00.000Z`;
     const id = await workoutLogsRepo.upsert({
       dateTime,
       date: state.date,

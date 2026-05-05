@@ -1,10 +1,23 @@
 import { db } from "@/data/db";
+import { MAX_BACKUP_JSON_BYTES, MAX_BACKUP_SIZE_LABEL } from "@/domain/backupLimits";
 import { parseBackupData } from "@/domain/validation";
 
 export interface BackupDataSource {
-  dailyLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
-  weeklyCheckIns: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
-  workoutLogs: { toArray: () => Promise<unknown[]>; bulkPut: (...args: unknown[]) => Promise<unknown>; clear: () => Promise<unknown> };
+  dailyLogs: {
+    toArray: () => Promise<unknown[]>;
+    bulkPut: (...args: unknown[]) => Promise<unknown>;
+    clear: () => Promise<unknown>;
+  };
+  weeklyCheckIns: {
+    toArray: () => Promise<unknown[]>;
+    bulkPut: (...args: unknown[]) => Promise<unknown>;
+    clear: () => Promise<unknown>;
+  };
+  workoutLogs: {
+    toArray: () => Promise<unknown[]>;
+    bulkPut: (...args: unknown[]) => Promise<unknown>;
+    clear: () => Promise<unknown>;
+  };
   transaction: (mode: "rw", ...tablesAndScope: unknown[]) => Promise<unknown>;
 }
 
@@ -15,6 +28,19 @@ export interface StorageSummary {
 }
 
 export type BackupImportMode = "merge" | "overwrite";
+
+function parseBackupJson(json: string): unknown {
+  const jsonSizeBytes = new TextEncoder().encode(json).length;
+  if (jsonSizeBytes > MAX_BACKUP_JSON_BYTES) {
+    throw new Error(`Sikkerhetskopien er for stor. Maks størrelse er ${MAX_BACKUP_SIZE_LABEL}.`);
+  }
+
+  try {
+    return JSON.parse(json);
+  } catch {
+    throw new Error("Sikkerhetskopien må være gyldig JSON.");
+  }
+}
 
 export async function exportBackup(source: BackupDataSource = db as unknown as BackupDataSource): Promise<string> {
   const validated = parseBackupData({
@@ -32,7 +58,7 @@ export async function importBackup(
   source: BackupDataSource = db as unknown as BackupDataSource,
   options: { mode?: BackupImportMode } = {}
 ): Promise<void> {
-  const parsed = parseBackupData(JSON.parse(json));
+  const parsed = parseBackupData(parseBackupJson(json));
   const mode = options.mode ?? "merge";
 
   await source.transaction("rw", source.dailyLogs, source.weeklyCheckIns, source.workoutLogs, async () => {

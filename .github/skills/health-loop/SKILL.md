@@ -8,12 +8,15 @@ description: Guidance for implementing and extending the Leader Health Loop app 
 When the user asks for health-loop features, load this skill.
 
 ## What this skill knows
+
 - The 6-week loop metrics: weight (weekly), energy 1–5, sleep ok yes/no.
 - Workouts: Strength A, Strength B, Walk.
 - Status thresholds: green >=80%, yellow 50–79%, red <50% adherence.
 
 ## Implementation status
+
 All MVP features are implemented. Key things already in place:
+
 - Auto-save on Log Today (no Save button needed — don't add one)
 - Auto-save on Weekly Check-In via input blur
 - Date navigation on Log Today (useLogToday: selectedDate, goBack/goForward, MAX_PAST_DAYS=13)
@@ -27,10 +30,12 @@ All MVP features are implemented. Key things already in place:
 - Auto-save toast text in UI: "Endringer lagret"
 
 ## Not yet built (valid next features)
+
 - Push notifications (needs server component)
 - Cloud sync
 
 ## How to respond
+
 - Before implementing: read the relevant existing files to avoid duplicating patterns.
 - Preserve auto-save, date navigation, and safe-area padding conventions.
 - Preserve the portal-based save toast so it remains visible while mobile users scroll.

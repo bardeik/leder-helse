@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useWeeklyCheckIn } from "@/features/logging/hooks/useWeeklyCheckIn";
-import { parseLocalNumber, formatLocalNumber, getDecimalSeparator } from "@/domain/localeNumber";
+import { parseLocalNumber, formatLocalNumber } from "@/domain/localeNumber";
 import { FloatingSaveNotice } from "@/components/FloatingSaveNotice";
 
 export function WeeklyCheckInForm() {
@@ -43,7 +43,7 @@ export function WeeklyCheckInForm() {
           <input
             id="weight"
             type="text"
-            placeholder={`f.eks. 75${getDecimalSeparator()}5`}
+            placeholder="f.eks. 75,5"
             value={weightFocused ? weightInput : formatLocalNumber(state.weightKg)}
             onFocus={(event) => {
               setWeightFocused(true);

@@ -3,6 +3,7 @@
 Create the IndexedDB schema and repositories.
 
 ## Requirements
+
 - Database name: leader-health-loop
 - Tables:
   - dailyLogs (primary key: date)
@@ -13,6 +14,7 @@ Create the IndexedDB schema and repositories.
 - Provide export/import JSON for all tables.
 
 ## Deliverables
+
 - `src/data/db.ts`
 - `src/data/repositories/*.ts`
 - `src/data/backup.ts`

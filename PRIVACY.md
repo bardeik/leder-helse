@@ -16,18 +16,18 @@
 
 - No automatic cloud sync is enabled in the MVP.
 - Backup/export is user-initiated JSON.
-- Import is user-initiated and local.
+- Import is user-initiated, local, and validated before IndexedDB is updated.
 
 ## User Control
 
 - Users can export their data from Settings.
-- Users can re-import backups.
+- Users can re-import backups that meet the app's local validation rules (including size and structure limits).
 - Users can clear browser storage manually through browser settings.
 
 ## Notification Permissions
 
 - Browser notifications are opt-in.
-- Notification reminders are local and do not send data externally.
+- Notification reminders and reminder settings stay local and do not send data externally.
 
 ## Future Changes
 

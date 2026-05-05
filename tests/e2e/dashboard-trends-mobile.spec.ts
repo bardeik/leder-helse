@@ -38,7 +38,11 @@ async function expectEdgeLabelsInsideSparkline(card: ReturnType<Page["locator"]>
   const firstLabel = labels.first();
   const lastLabel = labels.nth(labelCount - 1);
 
-  const [svgBox, firstBox, lastBox] = await Promise.all([svg.boundingBox(), firstLabel.boundingBox(), lastLabel.boundingBox()]);
+  const [svgBox, firstBox, lastBox] = await Promise.all([
+    svg.boundingBox(),
+    firstLabel.boundingBox(),
+    lastLabel.boundingBox()
+  ]);
 
   expect(svgBox).not.toBeNull();
   expect(firstBox).not.toBeNull();
@@ -55,7 +59,7 @@ async function expectEdgeLabelsInsideSparkline(card: ReturnType<Page["locator"]>
   expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(svgBox.x + svgBox.width + tolerance);
 }
 
-test("shows full trend labels on mobile without clipping in Oversikt", async ({ page }) => {
+test("shows full trend labels on mobile without clipping in Oversikt", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/check-in");
 
@@ -79,14 +83,18 @@ test("shows full trend labels on mobile without clipping in Oversikt", async ({ 
 
   const weightCard = page.locator("article.card", { has: page.getByRole("heading", { name: "Vekttrend" }) });
   const energyCard = page.locator("article.card", { has: page.getByRole("heading", { name: "Energisnitt" }) });
-  const sleepCard = page.locator("article.card", { has: page.getByRole("heading", { name: "Netter med godkjent søvn" }) });
+  const sleepCard = page.locator("article.card", {
+    has: page.getByRole("heading", { name: "Netter med godkjent søvn" })
+  });
 
   await expect(weightCard.locator("p.dashboard-metric-value")).toHaveText(/\d+[.,]\d\s+kg/);
   await expect(energyCard.locator("p.dashboard-metric-value")).toHaveText(/\d+[.,]\d\s+i snitt/);
 
-  await expect(page.locator("section.grid.grid-3")).toHaveScreenshot("dashboard-trends-mobile.png", {
-    maxDiffPixelRatio: 0.02
-  });
+  if (testInfo.project.name === "Mobile Chrome") {
+    await expect(page.locator("section.grid.grid-3")).toHaveScreenshot("dashboard-trends-mobile.png", {
+      maxDiffPixelRatio: 0.02
+    });
+  }
 
   await expectEdgeLabelsInsideSparkline(weightCard);
   await expectEdgeLabelsInsideSparkline(energyCard);

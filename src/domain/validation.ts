@@ -1,7 +1,9 @@
+import { MAX_BACKUP_ITEMS_PER_TABLE } from "@/domain/backupLimits";
 import type { BackupData, DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
 import { normalizeWorkoutType } from "@/domain/workouts";
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_UTC_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -26,6 +28,16 @@ function assertOptionalString(value: unknown, maxLength: number, message: string
   assert(value.length <= maxLength, message);
 }
 
+function assertArrayWithLimit(
+  value: unknown,
+  max: number,
+  invalidMessage: string,
+  maxMessage: string
+): asserts value is unknown[] {
+  assert(Array.isArray(value), invalidMessage);
+  assert(value.length <= max, maxMessage);
+}
+
 function assertIsoDate(value: unknown, message: string): asserts value is string {
   assertString(value, message);
   assert(ISO_DATE_PATTERN.test(value), message);
@@ -33,11 +45,22 @@ function assertIsoDate(value: unknown, message: string): asserts value is string
 
 function assertIsoTimestamp(value: unknown, message: string): asserts value is string {
   assertString(value, message);
-  assert(value.includes("T") && !Number.isNaN(Date.parse(value)), message);
+  assert(ISO_UTC_TIMESTAMP_PATTERN.test(value) && !Number.isNaN(Date.parse(value)), message);
 }
 
 function assertPositiveNumber(value: unknown, max: number, message: string): asserts value is number {
   assert(typeof value === "number" && Number.isFinite(value) && value > 0 && value <= max, message);
+}
+
+function parseBackupCollection<T>(items: unknown[], label: string, parseItem: (item: unknown) => T): T[] {
+  return items.map((item, index) => {
+    try {
+      return parseItem(item);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Ugyldig verdi i sikkerhetskopien.";
+      throw new Error(`${label} inneholder ugyldig element ${index + 1}: ${message}`);
+    }
+  });
 }
 
 function parseDailyLog(input: unknown): DailyLog {
@@ -104,7 +127,10 @@ function parseWorkoutLog(input: unknown): WorkoutLog {
 /** Validates a daily log object and returns it when the shape is valid. */
 export function validateDailyLog(input: DailyLog): DailyLog {
   assertIsoDate(input.date, "Dato må være på formatet YYYY-MM-DD.");
-  assert(Number.isInteger(input.energy) && input.energy >= 1 && input.energy <= 5, "Energi må være et heltall mellom 1 og 5.");
+  assert(
+    Number.isInteger(input.energy) && input.energy >= 1 && input.energy <= 5,
+    "Energi må være et heltall mellom 1 og 5."
+  );
   assert(typeof input.sleepOk === "boolean", "Søvnstatus må være satt.");
 
   if (input.sleepHours !== undefined) {
@@ -149,15 +175,30 @@ export function parseBackupData(input: unknown): BackupData {
   assert(isRecord(input), "Sikkerhetskopi må være et objekt.");
   assert(input.version === 1, "Kun sikkerhetskopier med versjon 1 støttes.");
   assertIsoTimestamp(input.exportedAt, "Eksporttidspunkt må være en ISO-tidsstreng.");
-  assert(Array.isArray(input.dailyLogs), "Daglige logger må være en liste.");
-  assert(Array.isArray(input.weeklyCheckIns), "Ukentlige innsjekker må være en liste.");
-  assert(Array.isArray(input.workoutLogs), "Aktiviteter må være en liste.");
+  assertArrayWithLimit(
+    input.dailyLogs,
+    MAX_BACKUP_ITEMS_PER_TABLE,
+    "Daglige logger må være en liste.",
+    `Daglige logger kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`
+  );
+  assertArrayWithLimit(
+    input.weeklyCheckIns,
+    MAX_BACKUP_ITEMS_PER_TABLE,
+    "Ukentlige innsjekker må være en liste.",
+    `Ukentlige innsjekker kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`
+  );
+  assertArrayWithLimit(
+    input.workoutLogs,
+    MAX_BACKUP_ITEMS_PER_TABLE,
+    "Aktiviteter må være en liste.",
+    `Aktiviteter kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`
+  );
 
   return {
     version: 1,
     exportedAt: input.exportedAt,
-    dailyLogs: input.dailyLogs.map(parseDailyLog),
-    weeklyCheckIns: input.weeklyCheckIns.map(parseWeeklyCheckIn),
-    workoutLogs: input.workoutLogs.map(parseWorkoutLog)
+    dailyLogs: parseBackupCollection(input.dailyLogs, "Daglige logger", parseDailyLog),
+    weeklyCheckIns: parseBackupCollection(input.weeklyCheckIns, "Ukentlige innsjekker", parseWeeklyCheckIn),
+    workoutLogs: parseBackupCollection(input.workoutLogs, "Aktiviteter", parseWorkoutLog)
   };
 }

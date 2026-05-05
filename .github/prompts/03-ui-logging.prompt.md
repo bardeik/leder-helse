@@ -3,6 +3,7 @@
 Implement the primary user flows.
 
 ## Pages
+
 - /log: Log Today
   - Energy (1–5)
   - Sleep OK (yes/no) + optional hours
@@ -15,11 +16,13 @@ Implement the primary user flows.
   - "One adjustment" text field
 
 ## Rules
+
 - Mobile-first
 - Persist to repositories
 - Show confirmation toast
 - Avoid heavy UI libraries
 
 ## Deliverables
+
 - `src/app/log/page.tsx`, `src/app/check-in/page.tsx`
 - feature components/hooks under `/src/features/logging`

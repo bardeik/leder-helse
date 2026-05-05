@@ -1,8 +1,4 @@
-import {
-  addDays,
-  calculateWeeklyAdherence,
-  calculateWeeklyWorkoutProgress
-} from "@/domain/calc";
+import { addDays, calculateWeeklyAdherence, calculateWeeklyWorkoutProgress } from "@/domain/calc";
 import type { DailyLog, WeeklyCheckIn, WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
 
 export interface DashboardWeekSummary {
@@ -92,8 +88,7 @@ export function getDashboardSnapshot(
     ? Math.min(
         7,
         Math.floor(
-          (new Date(`${todayIsoDate}T00:00:00.000Z`).getTime() -
-            new Date(`${weekStartDate}T00:00:00.000Z`).getTime()) /
+          (new Date(`${todayIsoDate}T00:00:00.000Z`).getTime() - new Date(`${weekStartDate}T00:00:00.000Z`).getTime()) /
             86_400_000
         ) + 1
       )
@@ -102,9 +97,7 @@ export function getDashboardSnapshot(
   const missingEnergyDays = Math.max(0, daysElapsed - adherence.energyDays);
   const missingSleepDays = Math.max(0, daysElapsed - adherence.sleepDays);
 
-  const recentWorkouts = [...workouts]
-    .sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1))
-    .slice(0, 6);
+  const recentWorkouts = [...workouts].sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1)).slice(0, 6);
 
   const actions: string[] = [];
   if (missingEnergyDays > 0) {

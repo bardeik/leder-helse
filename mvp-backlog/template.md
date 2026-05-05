@@ -4,4 +4,5 @@ labels: "{{labels}}"
 ---
 
 ## Beskrivelse
+
 {{body}}
