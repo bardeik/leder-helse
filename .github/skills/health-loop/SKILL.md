@@ -23,11 +23,13 @@ All MVP features are implemented. Key things already in place:
 - Date navigation on Weekly Check-In (current week plus 2 previous Monday-based weeks)
 - Workout delete actions on Log Today (no undo button)
 - Local-first data storage via Dexie (IndexedDB)
-- Export/import backup in Settings
+- Export/import backup in Settings (with 5 MB size limit and 10,000-item collection limits)
 - Locale-aware number input parsing/formatting for weight and sleep hours
 - Portal-based save toast fixed to the visible mobile viewport
-- Playwright mobile E2E coverage for save-toast visibility
+- Playwright Mobile Chrome + Desktop Chrome E2E coverage for save-toast visibility, dashboard trends, and production security headers
 - Auto-save toast text in UI: "Endringer lagret"
+- CI quality gate (`.github/workflows/ci.yml`): lint + unit tests + build on every push/PR to `master`
+- Notification settings tests covering reminder-hour clamping, defaults, permission flow, and scheduled dispatch
 
 ## Not yet built (valid next features)
 
