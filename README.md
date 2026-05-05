@@ -53,31 +53,38 @@ Step 2: Run development server:
 npm run dev
 ```
 
-Step 3: Run lint:
+Step 3: Check and apply formatting:
+
+```bash
+npm run format:check   # report formatting issues
+npm run format         # apply formatting
+```
+
+Step 4: Run lint:
 
 ```bash
 npm run lint
 ```
 
-Step 4: Run unit tests:
+Step 5: Run unit tests:
 
 ```bash
 npm run test
 ```
 
-Step 5: Run E2E tests across Mobile Chrome and Desktop Chrome:
+Step 6: Run E2E tests across Mobile Chrome and Desktop Chrome:
 
 ```bash
 npm run test:e2e
 ```
 
-Step 6: Run browser error smoke check (requires app running on localhost:3000):
+Step 7: Run browser error smoke check (requires app running on localhost:3000):
 
 ```bash
 npm run test:browser-errors
 ```
 
-Step 7: Run production build:
+Step 8: Run production build:
 
 ```bash
 npm run build

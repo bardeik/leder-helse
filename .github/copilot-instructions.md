@@ -32,14 +32,14 @@ Not yet implemented (potential next steps):
 
 ## 2) Tech stack (actual, as implemented)
 
-- Frontend: **Next.js 15 (App Router)** + **TypeScript strict** + **React**
+- Frontend: **Next.js 16.2 (App Router)** + **TypeScript strict** + **React 19.2**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
 - UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
 - Local storage: **Dexie 4 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
 - Validation: **Zod** — schemas in `src/domain/schemas.ts`
-- Testing: **Vitest 4** for unit tests and **Playwright** for mobile viewport E2E checks
-- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/domain/workouts.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`
+- Testing: **Vitest 4.1** for unit tests and **Playwright 1.59** for Mobile Chrome + Desktop Chrome E2E checks
+- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/domain/workouts.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `src/features/settings/notifications.test.ts`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`, `tests/e2e/headers.spec.ts`
 
 ## 3) Architecture rules
 

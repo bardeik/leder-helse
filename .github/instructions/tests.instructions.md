@@ -16,9 +16,14 @@ description: "Testing rules"
 
 - `src/domain/calc.test.ts` — 7 tests: adherence percent + status (green/yellow/red) + prorated adherence + workout progress + weekly trends
 - `src/domain/localeNumber.test.ts` — locale-aware number parsing and formatting
-- `src/features/dashboard/trends.test.ts` — 3 tests: weekly trend point calculation + prorated snapshot
-- `src/data/backup.test.ts` — 2 tests: export and import roundtrip
-- `tests/e2e/save-message-mobile.spec.ts` — mobile viewport checks for save-toast visibility on `/log` and `/check-in`
+- `src/domain/validation.test.ts` — 7 tests: valid domain objects, canonical timestamp rejection, backup parsing, collection-limit enforcement, workout type normalization
+- `src/domain/workouts.test.ts` — 2 tests: workout type normalization, Norwegian workout labels
+- `src/features/dashboard/trends.test.ts` — 3 tests: weekly trend point calculation + prorated snapshot + highlights
+- `src/features/settings/notifications.test.ts` — 9 tests: reminder-hour clamping, defaults/fallback, permission flow, scheduled reminder dispatch
+- `src/data/backup.test.ts` — 6 tests: export, storage summary, merge import, overwrite import, malformed JSON rejection, oversized payload rejection
+- `tests/e2e/save-message-mobile.spec.ts` — Mobile Chrome + Desktop Chrome viewport checks for save-toast visibility on `/log` and `/check-in`
+- `tests/e2e/dashboard-trends-mobile.spec.ts` — Mobile Chrome + Desktop Chrome checks for dashboard trend display
+- `tests/e2e/headers.spec.ts` — production security headers and CSP smoke test (no `unsafe-inline`/`unsafe-eval`, HSTS, COOP, CORP)
 
 ## Adding new tests
 
