@@ -158,6 +158,17 @@ Notes:
 - No Fly volume or external database is required for the current MVP.
 - HTTPS is required for reliable browser notification support.
 
+## Built with
+
+- [Next.js](https://nextjs.org/) — React framework (MIT)
+- [React](https://react.dev/) — UI library (MIT)
+- [Dexie](https://dexie.org/) — IndexedDB wrapper (Apache-2.0)
+- [Zod](https://zod.dev/) — schema validation (MIT)
+
+## License
+
+MIT — see [LICENSE](./LICENSE) for details.
+
 ## Security and Safety Notes
 
 - Treat AI-generated code as third-party code: review, test, and verify licenses before shipping.
