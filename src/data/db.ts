@@ -33,6 +33,15 @@ export class LeaderHealthDb extends Dexie {
             }
           })
       );
+
+    // When another tab upgrades the database to a newer version, release this
+    // connection so the upgrade can proceed, then reload to pick up the new code.
+    this.on("versionchange", () => {
+      this.close();
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      }
+    });
   }
 }
 
