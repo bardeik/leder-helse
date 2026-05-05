@@ -11,8 +11,14 @@ interface WeeklyCheckInState {
   adjustment: string;
 }
 
+const DEFAULT_WEIGHT_KG = 80;
+
 function currentWeekStart() {
   return getWeekStartDate(new Date().toISOString().slice(0, 10));
+}
+
+export function resolveInitialWeightKg(currentWeekWeight?: number, previousWeekWeight?: number) {
+  return currentWeekWeight ?? previousWeekWeight ?? DEFAULT_WEIGHT_KG;
 }
 
 export function useWeeklyCheckIn() {
@@ -22,7 +28,7 @@ export function useWeeklyCheckIn() {
   const [selectedWeekStart, setSelectedWeekStart] = useState(maxWeekStart);
   const [state, setState] = useState<WeeklyCheckInState>({
     weekStartDate: selectedWeekStart,
-    weightKg: 80,
+    weightKg: DEFAULT_WEIGHT_KG,
     notes: "",
     adjustment: ""
   });
@@ -36,20 +42,22 @@ export function useWeeklyCheckIn() {
   useEffect(() => {
     let mounted = true;
 
-    weeklyCheckInsRepo.get(selectedWeekStart).then((checkIn) => {
-      if (!mounted) {
-        return;
+    Promise.all([weeklyCheckInsRepo.get(selectedWeekStart), weeklyCheckInsRepo.get(addDays(selectedWeekStart, -7))]).then(
+      ([checkIn, previousCheckIn]) => {
+        if (!mounted) {
+          return;
+        }
+
+        setState({
+          weekStartDate: selectedWeekStart,
+          weightKg: resolveInitialWeightKg(checkIn?.weightKg, previousCheckIn?.weightKg),
+          notes: checkIn?.notes ?? "",
+          adjustment: checkIn?.adjustment ?? ""
+        });
+
+        setMessage("");
       }
-
-      setState({
-        weekStartDate: selectedWeekStart,
-        weightKg: checkIn?.weightKg ?? 80,
-        notes: checkIn?.notes ?? "",
-        adjustment: checkIn?.adjustment ?? ""
-      });
-
-      setMessage("");
-    });
+    );
 
     return () => {
       mounted = false;
