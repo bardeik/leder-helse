@@ -174,6 +174,7 @@ MIT — see [LICENSE](./LICENSE) for details.
 - Treat AI-generated code as third-party code: review, test, and verify licenses before shipping.
 - Do not add secrets, credentials, tokens, or private company/customer data.
 - App is local-first by default; no server-side data collection is required.
+- Next.js is kept on a patched baseline (`^16.2.6`), addressing the earlier vulnerable `<16.2.5` range.
 - Backup import is user-initiated, stays local, rejects malformed JSON, and enforces a 5 MB payload limit plus 10,000-item collection limits.
 - Persisted timestamps are validated against the app's canonical ISO-8601 UTC format (`YYYY-MM-DDTHH:mm:ss.sssZ`).
 - Production builds serve stricter security headers and CSP than development builds.

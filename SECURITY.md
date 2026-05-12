@@ -14,6 +14,7 @@
 - `npm run test`
 - `npm run build`
 - Keep dependencies patched (`npm audit` + regular updates).
+- Next.js baseline is patched to `^16.2.6` (outside the previously affected `<16.2.5` range).
 - Use Zod schemas in `src/domain/schemas.ts` to define validation intent and shared data shapes.
 - Treat runtime validators in `src/domain/validation.ts` as authoritative for persistence/import boundaries.
 - Use least privilege if new APIs/services are introduced.
