@@ -33,16 +33,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Disable default CodeQL setup
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.request("PATCH /repos/{owner}/{repo}/code-scanning/default-setup", {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: "not-configured"
-            });
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@68bde559dea0fdcac2102bfdf6230c5f70eb485e
         with:
