@@ -44,12 +44,12 @@ function collectInlineHashes() {
       }
 
       const html = fs.readFileSync(fullPath, "utf8");
-      for (const match of html.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/gi)) {
+      for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script(?:\s[^>]*)?>/gi)) {
         if (match[1]) {
           scriptHashes.add(hashInlineContent(match[1]));
         }
       }
-      for (const match of html.matchAll(/<style(?:[^>]*)>([\s\S]*?)<\/style>/gi)) {
+      for (const match of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style(?:\s[^>]*)?>/gi)) {
         if (match[1]) {
           styleHashes.add(hashInlineContent(match[1]));
         }
