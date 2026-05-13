@@ -1,43 +1,31 @@
----
-name: health-loop
-description: Guidance for implementing and extending the Leader Health Loop app safely and consistently.
----
-
-# Leader Health Loop
+# Skill: Leader Health Loop
 
 When the user asks for health-loop features, load this skill.
 
 ## What this skill knows
-
 - The 6-week loop metrics: weight (weekly), energy 1–5, sleep ok yes/no.
 - Workouts: Strength A, Strength B, Walk.
 - Status thresholds: green >=80%, yellow 50–79%, red <50% adherence.
 
 ## Implementation status
-
 All MVP features are implemented. Key things already in place:
-
 - Auto-save on Log Today (no Save button needed — don't add one)
 - Auto-save on Weekly Check-In via input blur
 - Date navigation on Log Today (useLogToday: selectedDate, goBack/goForward, MAX_PAST_DAYS=13)
 - Date navigation on Weekly Check-In (current week plus 2 previous Monday-based weeks)
 - Workout delete actions on Log Today (no undo button)
-- Local-first data storage via Dexie (IndexedDB)
-- Export/import backup in Settings (with 5 MB size limit and 10,000-item collection limits)
+- PWA offline via next-pwa; update banner via PwaRegister.tsx
+- Export/import backup in Settings
 - Locale-aware number input parsing/formatting for weight and sleep hours
 - Portal-based save toast fixed to the visible mobile viewport
-- Playwright Mobile Chrome + Desktop Chrome E2E coverage for save-toast visibility, dashboard trends, and production security headers
+- Playwright mobile E2E coverage for save-toast visibility
 - Auto-save toast text in UI: "Endringer lagret"
-- CI quality gate (`.github/workflows/ci.yml`): lint + unit tests + build on every push/PR to `master`
-- Notification settings tests covering reminder-hour clamping, defaults, permission flow, and scheduled dispatch
 
 ## Not yet built (valid next features)
-
 - Push notifications (needs server component)
 - Cloud sync
 
 ## How to respond
-
 - Before implementing: read the relevant existing files to avoid duplicating patterns.
 - Preserve auto-save, date navigation, and safe-area padding conventions.
 - Preserve the portal-based save toast so it remains visible while mobile users scroll.
