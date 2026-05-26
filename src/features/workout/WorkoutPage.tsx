@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { exercises, SAMLET_VIDEO_URL } from "@/features/workout/data/exercises";
+import { exercises } from "@/features/workout/data/exercises";
 import { WorkoutControls } from "@/features/workout/components/WorkoutControls";
 import { WorkoutHeader } from "@/features/workout/components/WorkoutHeader";
 import { WorkoutSummary } from "@/features/workout/components/WorkoutSummary";
@@ -128,12 +128,6 @@ export function WorkoutPage() {
       {isWorkoutComplete ? (
         <WorkoutSummary completedRounds={completedRounds} totalCompletedSteps={totalCompletedSteps} onRestart={resetWorkout} />
       ) : null}
-
-      <section className="card workout-samlet-video">
-        <a href={SAMLET_VIDEO_URL} target="_blank" rel="noopener noreferrer">
-          Se alle øvelsene i én video ↗
-        </a>
-      </section>
     </section>
   );
 }
