@@ -8,6 +8,7 @@ const pageTitleByPath: Record<string, string> = {
   "/": "Oversikt",
   "/log": "Logg i dag",
   "/check-in": "Ukentlig innsjekk",
+  "/workout": "Intervallokt",
   "/settings": "Innstillinger"
 };
 
@@ -45,6 +46,9 @@ export function Nav() {
           </Link>
           <Link className="topbar-menu-link" href="/check-in" role="menuitem" onClick={() => setMenuOpen(false)}>
             Ukentlig innsjekk
+          </Link>
+          <Link className="topbar-menu-link" href="/workout" role="menuitem" onClick={() => setMenuOpen(false)}>
+            Intervallokt
           </Link>
           <Link className="topbar-menu-link" href="/settings" role="menuitem" onClick={() => setMenuOpen(false)}>
             Innstillinger
