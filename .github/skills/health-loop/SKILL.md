@@ -1,3 +1,12 @@
+---
+name: health-loop
+description: >-
+  Skill for implementing and extending the Leader Health Loop app with the
+  repository's existing architecture, UX patterns, and validation/test
+  standards.
+user-invocable: true
+---
+
 # Skill: Leader Health Loop
 
 When the user asks for health-loop features, load this skill.
