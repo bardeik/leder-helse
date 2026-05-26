@@ -12,6 +12,15 @@ export function ExerciseCard({ exercise, status }: ExerciseCardProps) {
         {exercise.id}. {exercise.name}
       </p>
       <p className="workout-exercise-description">{exercise.description}</p>
+      <a
+        className="workout-exercise-video-link"
+        href={exercise.videoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Se video for ${exercise.name}`}
+      >
+        Se video ↗
+      </a>
     </li>
   );
 }

@@ -458,6 +458,24 @@ small.muted {
   font-size: 0.9rem;
 }
 
+.workout-exercise-video-link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--accent, #24595a);
+  text-underline-offset: 3px;
+}
+
+.workout-samlet-video {
+  text-align: center;
+}
+
+.workout-samlet-video a {
+  color: var(--accent, #24595a);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
 .workout-summary p {
   margin: 0.2rem 0 0.75rem;
 }
