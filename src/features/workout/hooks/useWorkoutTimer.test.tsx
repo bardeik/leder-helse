@@ -82,9 +82,18 @@ describe("useWorkoutTimer", () => {
     expect(latestValue?.totalCompletedSteps).toBe(0);
     expect(latestValue?.progressPercent).toBe(0);
 
-    // Start from idle — should transition to work
+    // Start from idle — should enter the 5-second countdown first
     await act(async () => {
       latestValue?.startWorkout();
+    });
+
+    expect(latestValue?.phase).toBe("countdown");
+    expect(latestValue?.isRunning).toBe(true);
+    expect(latestValue?.timeRemaining).toBe(5);
+
+    // After the countdown expires the phase advances to work
+    await act(async () => {
+      vi.advanceTimersByTime(5000);
     });
 
     expect(latestValue?.phase).toBe("work");

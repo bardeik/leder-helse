@@ -36,7 +36,7 @@ function normalizePhase(value: unknown): WorkoutPhase {
   if (value === "idle" || value === "work" || value === "rest" || value === "roundRest" || value === "complete") {
     return value;
   }
-
+  // "countdown" is a transient pre-start phase; always restart from idle after a reload
   return "idle";
 }
 

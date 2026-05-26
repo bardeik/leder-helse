@@ -9,12 +9,16 @@ interface TimerDisplayProps {
 }
 
 export function TimerDisplay({ timeRemaining, phase, currentRound, currentExercise }: TimerDisplayProps) {
+  const isCountdown = phase === "countdown";
+  // Show a big plain digit during the startup countdown for maximum clarity
+  const timeLabel = isCountdown ? String(timeRemaining) : formatTime(timeRemaining);
+
   return (
     <section className="workout-timer card" aria-live="polite">
       <p className={`workout-phase workout-phase-${phase}`}>{PHASE_LABELS[phase]}</p>
-      <p className="workout-time">{formatTime(timeRemaining)}</p>
+      <p className={`workout-time${isCountdown ? " workout-time-countdown" : ""}`}>{timeLabel}</p>
       <p className="workout-meta">
-        Runde {currentRound} - Ovelse {currentExercise}
+        {isCountdown ? "Gjør deg klar..." : `Runde ${currentRound} - Ovelse ${currentExercise}`}
       </p>
     </section>
   );

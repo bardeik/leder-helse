@@ -36,13 +36,17 @@ export function WorkoutPage() {
   // Track previous phase to detect transitions without triggering on mount
   const previousPhaseRef = useRef<WorkoutPhase>(phase);
 
-  // Play countdown tick for the last 3 seconds of any active phase
+  // Play countdown tick:
+  // - During the startup countdown: tick at every second (5, 4, 3, 2, 1)
+  // - During work/rest intervals: tick only for the last 3 seconds
   useEffect(() => {
     if (!isRunning || isWorkoutComplete) return;
-    if (timeRemaining > 0 && timeRemaining <= 3) {
+    if (phase === "countdown" && timeRemaining > 0) {
+      playCountdownTick(timeRemaining);
+    } else if (phase !== "countdown" && timeRemaining > 0 && timeRemaining <= 3) {
       playCountdownTick(timeRemaining);
     }
-  }, [timeRemaining, isRunning, isWorkoutComplete, playCountdownTick]);
+  }, [timeRemaining, isRunning, isWorkoutComplete, phase, playCountdownTick]);
 
   // Play transition sound when the phase changes
   useEffect(() => {

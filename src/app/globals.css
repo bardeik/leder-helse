@@ -367,6 +367,22 @@ small.muted {
   font-weight: 700;
 }
 
+/* During the 5-second startup countdown, show a much larger digit for drama */
+.workout-time-countdown {
+  font-size: clamp(3.5rem, 18vw, 7rem);
+  line-height: 1;
+}
+
+.workout-article-link {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.92rem;
+}
+
+.workout-article-link a {
+  color: var(--accent, #24595a);
+  text-underline-offset: 3px;
+}
+
 .workout-meta {
   margin: 0;
   color: var(--muted);

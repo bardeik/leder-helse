@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { exercises, type WorkoutExercise } from "@/features/workout/data/exercises";
 import { useWorkoutStorage, type WorkoutStoredState } from "@/features/workout/hooks/useWorkoutStorage";
 import {
+  COUNTDOWN_SECONDS,
   EXERCISES_PER_ROUND,
   REST_SECONDS,
   ROUND_REST_SECONDS,
@@ -66,6 +67,16 @@ function resolveNextExerciseData(
 }
 
 function advanceWorkoutState(previous: WorkoutStoredState): WorkoutStoredState {
+  // Startup countdown finished — begin the first work interval
+  if (previous.phase === "countdown") {
+    return {
+      ...previous,
+      isResting: false,
+      phase: "work",
+      timeRemaining: WORK_SECONDS
+    };
+  }
+
   if (previous.phase === "work") {
     const completedExercises = Math.min(TOTAL_STEPS, previous.completedExercises + 1);
     const lastExerciseInRound = isLastExerciseInRound(previous.currentExercise, EXERCISES_PER_ROUND);
@@ -187,13 +198,14 @@ export function useWorkoutTimer() {
         return previous;
       }
 
+      // First start: enter a 5-second countdown before the first work interval
       if (previous.phase === "idle") {
         return {
           ...previous,
           isRunning: true,
           isResting: false,
-          phase: "work",
-          timeRemaining: previous.timeRemaining > 0 ? previous.timeRemaining : WORK_SECONDS
+          phase: "countdown",
+          timeRemaining: COUNTDOWN_SECONDS
         };
       }
 
