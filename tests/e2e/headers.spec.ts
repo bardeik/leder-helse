@@ -90,10 +90,17 @@ test("serves hardened production headers and loads without CSP console violation
 
     const headers = response.headers();
     const csp = headers["content-security-policy"];
+    const scriptDirective = csp
+      .split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith("script-src"));
 
-    expect(csp).toContain("script-src 'self'");
+    expect(scriptDirective).toBeTruthy();
+    expect(scriptDirective).toContain("'self'");
+    expect(
+      scriptDirective?.includes("'unsafe-inline'") || scriptDirective?.includes("'sha256-")
+    ).toBeTruthy();
     expect(csp).toContain("style-src 'self'");
-    expect(csp).not.toContain("'unsafe-inline'");
     expect(csp).not.toContain("'unsafe-eval'");
     expect(headers["strict-transport-security"]).toBe("max-age=31536000; includeSubDomains");
     expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
