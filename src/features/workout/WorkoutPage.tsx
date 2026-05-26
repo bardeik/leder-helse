@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { exercises } from "@/features/workout/data/exercises";
 import { WorkoutControls } from "@/features/workout/components/WorkoutControls";
 import { WorkoutHeader } from "@/features/workout/components/WorkoutHeader";
@@ -8,6 +9,8 @@ import { TimerDisplay } from "@/features/workout/components/TimerDisplay";
 import { ProgressBar } from "@/features/workout/components/ProgressBar";
 import { ExerciseList } from "@/features/workout/components/ExerciseList";
 import { useWorkoutTimer } from "@/features/workout/hooks/useWorkoutTimer";
+import { useWorkoutAudio } from "@/features/workout/hooks/useWorkoutAudio";
+import type { WorkoutPhase } from "@/features/workout/utils/workoutConfig";
 
 export function WorkoutPage() {
   const {
@@ -27,6 +30,36 @@ export function WorkoutPage() {
     pauseWorkout,
     resetWorkout
   } = useWorkoutTimer();
+
+  const { initAudio, playCountdownTick, playTransitionBeep, muted, toggleMute } = useWorkoutAudio();
+
+  // Track previous phase to detect transitions without triggering on mount
+  const previousPhaseRef = useRef<WorkoutPhase>(phase);
+
+  // Play countdown tick for the last 3 seconds of any active phase
+  useEffect(() => {
+    if (!isRunning || isWorkoutComplete) return;
+    if (timeRemaining > 0 && timeRemaining <= 3) {
+      playCountdownTick(timeRemaining);
+    }
+  }, [timeRemaining, isRunning, isWorkoutComplete, playCountdownTick]);
+
+  // Play transition sound when the phase changes
+  useEffect(() => {
+    const prevPhase = previousPhaseRef.current;
+    previousPhaseRef.current = phase;
+    // Skip the initial mount (prevPhase === phase since ref is initialised to phase)
+    if (prevPhase === phase) return;
+    if (phase === "work" || phase === "rest" || phase === "roundRest" || phase === "complete") {
+      playTransitionBeep(phase);
+    }
+  }, [phase, playTransitionBeep]);
+
+  function handleStart() {
+    // AudioContext must be created/resumed inside a user-gesture handler
+    initAudio();
+    startWorkout();
+  }
 
   function handleReset() {
     const confirmed = window.confirm("Vil du nullstille progresjonen for denne okten?");
@@ -72,9 +105,11 @@ export function WorkoutPage() {
       <WorkoutControls
         isRunning={isRunning}
         isWorkoutComplete={isWorkoutComplete}
-        onStart={startWorkout}
+        muted={muted}
+        onStart={handleStart}
         onPause={pauseWorkout}
         onReset={handleReset}
+        onToggleMute={toggleMute}
       />
 
       <ExerciseList

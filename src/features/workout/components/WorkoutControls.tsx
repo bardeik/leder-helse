@@ -1,12 +1,22 @@
 interface WorkoutControlsProps {
   isRunning: boolean;
   isWorkoutComplete: boolean;
+  muted: boolean;
   onStart: () => void;
   onPause: () => void;
   onReset: () => void;
+  onToggleMute: () => void;
 }
 
-export function WorkoutControls({ isRunning, isWorkoutComplete, onStart, onPause, onReset }: WorkoutControlsProps) {
+export function WorkoutControls({
+  isRunning,
+  isWorkoutComplete,
+  muted,
+  onStart,
+  onPause,
+  onReset,
+  onToggleMute
+}: WorkoutControlsProps) {
   return (
     <section className="card">
       <h2>Kontroller</h2>
@@ -19,6 +29,16 @@ export function WorkoutControls({ isRunning, isWorkoutComplete, onStart, onPause
         </button>
         <button className="secondary" type="button" onClick={onReset}>
           Reset
+        </button>
+        <button
+          className="secondary workout-mute-btn"
+          type="button"
+          onClick={onToggleMute}
+          aria-label={muted ? "Skru på lyd" : "Skru av lyd"}
+          aria-pressed={muted}
+          title={muted ? "Lyd av" : "Lyd på"}
+        >
+          {muted ? "🔇" : "🔊"}
         </button>
       </div>
     </section>

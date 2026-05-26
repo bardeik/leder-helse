@@ -401,6 +401,11 @@ small.muted {
   min-width: 6.5rem;
 }
 
+.workout-mute-btn {
+  min-width: 3rem;
+  font-size: 1.1rem;
+}
+
 .workout-exercise-list {
   margin: 0;
   padding: 0;
