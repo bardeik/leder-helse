@@ -20,11 +20,11 @@ Offline-first PWA for a 6-week health loop:
 - Auto-save toast text: **"Endringer lagret"**
 
 ## Tech Stack
-- **Next.js 15 (App Router)** + **TypeScript strict**
+- **Next.js 16 (App Router)** + **TypeScript strict**
 - **Dexie 4 (IndexedDB)** for local persistence — DB name: `leader-health-loop`
 - **next-pwa 5.6.0** (Workbox) for build-time precaching and offline app shell
 - **Zod** for validation
-- **Vitest 4** for unit tests and **Playwright** for mobile E2E tests
+- **Vitest 4** for unit tests and **Playwright** for mobile + desktop E2E tests
 
 ## Project Structure
 - `src/domain/` — framework-agnostic types, Zod schemas, pure calculations

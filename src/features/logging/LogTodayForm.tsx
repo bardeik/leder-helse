@@ -37,18 +37,18 @@ export function LogTodayForm() {
     <section className="card appear" aria-labelledby="log-title">
       <h1 id="log-title">{isToday ? "Logg i dag" : `Logg — ${selectedDate}`}</h1>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+      <div className="log-date-nav">
         <button
           className="secondary"
           type="button"
           aria-label="Forrige dag"
           onClick={goBack}
           disabled={!canGoBack}
-          style={{ padding: "0.4rem 0.75rem", fontWeight: 600 }}
+          data-testid="log-date-back"
         >
           ‹
         </button>
-        <span style={{ flex: 1, textAlign: "center", fontSize: "0.9rem" }}>
+        <span className="log-date-nav-label">
           {isToday ? <strong>I dag</strong> : selectedDate}
         </span>
         <button
@@ -57,7 +57,7 @@ export function LogTodayForm() {
           aria-label="Neste dag"
           onClick={goForward}
           disabled={!canGoForward}
-          style={{ padding: "0.4rem 0.75rem", fontWeight: 600 }}
+          data-testid="log-date-forward"
         >
           ›
         </button>
@@ -67,11 +67,11 @@ export function LogTodayForm() {
         <small className="muted">Lagrer automatisk når du går ut av feltet. Du kan gå opptil 2 uker tilbake.</small>
       </p>
 
-      <div className="grid" style={{ marginTop: "1rem" }}>
+      <div className="grid section-margin-top">
         <div>
-          <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+          <fieldset className="fieldset-reset">
             <legend>Energi kl. 15:00 (1-5)</legend>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+            <div className="inline-options">
               {[1, 2, 3, 4, 5].map((energyValue) => (
                 <label key={energyValue}>
                   <input
@@ -92,7 +92,7 @@ export function LogTodayForm() {
           </fieldset>
         </div>
 
-        <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+        <fieldset className="fieldset-reset">
           <legend>Søvn ok?</legend>
           <label>
             <input
@@ -170,19 +170,18 @@ export function LogTodayForm() {
         <div>
           <strong>{isToday ? "Dagens aktiviteter" : `Aktiviteter — ${selectedDate}`}</strong>
           {todayWorkouts.length === 0 ? (
-            <small className="muted" style={{ display: "block", marginTop: "0.4rem" }}>
+            <small className="muted log-workouts-empty">
               Ingen økter loggført enda.
             </small>
           ) : (
-            <ul style={{ marginTop: "0.5rem", paddingLeft: "1.1rem" }}>
+            <ul className="log-workouts-list">
               {todayWorkouts.map((item) => (
-                <li key={`${item.id ?? item.dateTime}-${item.type}`} style={{ marginBottom: "0.35rem" }}>
+                <li key={`${item.id ?? item.dateTime}-${item.type}`} className="log-workouts-item">
                   {formatWorkoutType(item.type)}
                   {item.durationMin ? ` (${item.durationMin}m)` : ""}
                   <button
-                    className="secondary"
+                    className="secondary log-delete-button"
                     type="button"
-                    style={{ marginLeft: "0.5rem", padding: "0.35rem 0.55rem" }}
                     onClick={() => item.id && void removeWorkout(item.id)}
                   >
                     Slett

@@ -11,9 +11,7 @@ export function ProgressBar({ totalCompletedSteps, totalSteps, progressPercent }
       <p className="workout-progress-text">
         {totalCompletedSteps} / {totalSteps} ovelser fullfort ({progressPercent}%)
       </p>
-      <div className="workout-progress-track" aria-label="Fremdrift i prosent">
-        <div className="workout-progress-fill" style={{ width: `${progressPercent}%` }} />
-      </div>
+      <progress className="workout-progress-native" aria-label="Fremdrift i prosent" value={progressPercent} max={100} />
     </section>
   );
 }

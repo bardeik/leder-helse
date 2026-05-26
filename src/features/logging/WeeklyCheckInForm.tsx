@@ -25,7 +25,7 @@ export function WeeklyCheckInForm() {
 
   return (
     <section className="card appear" aria-labelledby="checkin-title">
-      <div className="week-nav" style={{ marginBottom: "0.5rem" }}>
+      <div className="week-nav section-gap-bottom">
         <button type="button" onClick={goBack} disabled={!canGoBack} aria-label="Forrige uke">
           ‹
         </button>
@@ -37,7 +37,7 @@ export function WeeklyCheckInForm() {
 
       <h1 id="checkin-title">Ukentlig veiing</h1>
       <small>Uke som starter {selectedWeekStart} (mandag)</small>
-      <div className="grid" style={{ marginTop: "1rem" }}>
+      <div className="grid section-margin-top">
         <div>
           <label htmlFor="weight">Vekt (kg)</label>
           <input

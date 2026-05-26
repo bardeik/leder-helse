@@ -92,8 +92,7 @@ test("serves hardened production headers and loads without CSP console violation
     const csp = headers["content-security-policy"];
 
     expect(csp).toContain("script-src 'self'");
-    expect(csp).toContain("style-src 'self' 'unsafe-hashes'");
-    expect(csp).toContain("'sha256-");
+    expect(csp).toContain("style-src 'self'");
     expect(csp).not.toContain("'unsafe-inline'");
     expect(csp).not.toContain("'unsafe-eval'");
     expect(headers["strict-transport-security"]).toBe("max-age=31536000; includeSubDomains");

@@ -30,7 +30,7 @@
 - Backup import is local and user-initiated, with a 5 MB pre-parse size limit and a maximum of 10,000 imported records per collection.
 - Imported backup collections fail fast with clear validation errors when an item or collection is malformed.
 - Persisted timestamps must match the canonical UTC format `YYYY-MM-DDTHH:mm:ss.sssZ`.
-- Production responses use a stricter CSP/header set than development, including HSTS, COOP, and CORP; development keeps the looser CSP needed for hot reload.
+- Production responses use a stricter CSP/header set than development, including HSTS, COOP, and CORP, with no `unsafe-inline`/`unsafe-eval`; development keeps the looser CSP needed for hot reload.
 
 ## Data Handling
 

@@ -109,8 +109,8 @@ export default function SettingsPage() {
     <section className="card appear" aria-labelledby="settings-title">
       <h1 id="settings-title">Innstillinger</h1>
 
-      <div className="grid" style={{ marginTop: "1rem" }}>
-        <fieldset style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem" }}>
+      <div className="grid section-margin-top">
+        <fieldset className="settings-panel">
           <legend>Påminninger (valgfritt)</legend>
           <label>
             <input
@@ -142,7 +142,7 @@ export default function SettingsPage() {
           </button>
         </fieldset>
 
-        <fieldset style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem" }}>
+        <fieldset className="settings-panel">
           <legend>Sikkerhetskopi</legend>
           <p>
             <small className="muted">
@@ -150,7 +150,7 @@ export default function SettingsPage() {
               {summary?.weeklyCheckIns ?? "-"}, økter {summary?.workoutLogs ?? "-"}
             </small>
           </p>
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <div className="settings-actions">
             <button className="secondary" type="button" onClick={() => void refreshSummary()} disabled={busy}>
               Oppdater antall lagrede
             </button>
@@ -160,9 +160,7 @@ export default function SettingsPage() {
           </div>
           <label htmlFor="backup-json">Importer sikkerhetskopi-JSON</label>
           <textarea id="backup-json" value={jsonPreview} onChange={handleJsonChange} />
-          <fieldset
-            style={{ border: "1px solid #e7ded2", borderRadius: 10, padding: "0.75rem", margin: "0 0 0.75rem" }}
-          >
+          <fieldset className="settings-panel settings-import-mode">
             <legend>Importmodus</legend>
             <label>
               <input
