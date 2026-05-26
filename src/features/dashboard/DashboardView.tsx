@@ -200,7 +200,7 @@ export function DashboardView({
             </small>
           </div>
           <div className="dashboard-summary-item">
-            <dt>Ukentlig check-in</dt>
+            <dt>Ukentlig innsjekk</dt>
             <dd>{weekSummary.weightLogged ? "Registrert" : "Mangler"}</dd>
             <small className="muted">
               {weekSummary.weightLogged
@@ -266,7 +266,7 @@ export function DashboardView({
               </p>
             </div>
           ) : (
-            <small className="muted">Ingen ukentlig check-in registrert enda.</small>
+            <small className="muted">Ingen ukentlig innsjekk registrert enda.</small>
           )}
         </article>
       </section>

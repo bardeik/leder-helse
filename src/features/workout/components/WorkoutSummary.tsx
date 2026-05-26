@@ -7,13 +7,13 @@ interface WorkoutSummaryProps {
 export function WorkoutSummary({ completedRounds, totalCompletedSteps, onRestart }: WorkoutSummaryProps) {
   return (
     <section className="card workout-summary" aria-live="polite">
-      <h2>Økten er fullfort!</h2>
-      <p>Bra jobba! Du har gjennomfort hele intervalløkten.</p>
+      <h2>Økten er fullført!</h2>
+      <p>Bra jobba! Du har gjennomført hele intervalløkten.</p>
       <p>
-        {completedRounds} runder fullfort, {totalCompletedSteps} intervaller gjennomfort.
+        {completedRounds} runder fullført, {totalCompletedSteps} intervaller gjennomført.
       </p>
       <button className="primary" type="button" onClick={onRestart}>
-        Start pa nytt
+        Start på nytt
       </button>
     </section>
   );

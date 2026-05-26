@@ -111,7 +111,7 @@ export default function SettingsPage() {
 
       <div className="grid section-margin-top">
         <fieldset className="settings-panel">
-          <legend>Påminninger (valgfritt)</legend>
+          <legend>Påminnelser (valgfritt)</legend>
           <label>
             <input
               type="checkbox"
