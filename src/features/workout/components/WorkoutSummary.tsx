@@ -7,7 +7,7 @@ interface WorkoutSummaryProps {
 export function WorkoutSummary({ completedRounds, totalCompletedSteps, onRestart }: WorkoutSummaryProps) {
   return (
     <section className="card workout-summary" aria-live="polite">
-      <h2>Okten er fullfort!</h2>
+      <h2>Økten er fullfort!</h2>
       <p>Bra jobba! Du har gjennomfort hele intervalløkten.</p>
       <p>
         {completedRounds} runder fullfort, {totalCompletedSteps} intervaller gjennomfort.

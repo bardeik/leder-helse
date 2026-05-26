@@ -74,7 +74,7 @@ export function WorkoutPage() {
   }
 
   function handleReset() {
-    const confirmed = window.confirm("Vil du nullstille progresjonen for denne okten?");
+    const confirmed = window.confirm("Vil du nullstille progresjonen for denne økten?");
     if (!confirmed) {
       return;
     }
@@ -116,7 +116,7 @@ export function WorkoutPage() {
           <p>
             Neste øvelse: <strong>{nextExerciseData?.name ?? "Ingen - siste intervall"}</strong>
           </p>
-          <small className="muted">{isRunning ? "Okten er i gang." : "Trykk Start for a fortsette."}</small>
+          <small className="muted">{isRunning ? "Økten er i gang." : "Trykk Start for å fortsette."}</small>
         </section>
       </div>
 
