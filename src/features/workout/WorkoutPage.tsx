@@ -77,7 +77,7 @@ export function WorkoutPage() {
     <section className="workout-layout">
       <WorkoutHeader
         title="Intervallokt"
-        description="3 runder, 9 ovelser per runde, 40 sekunder arbeid og 20 sekunder pause."
+        description="3 runder, 9 ovelser per runde, 40 sekunder arbeid og 20 sekunder pause. 90 sekunder pause mellom rundene."
       />
 
       <div className="workout-grid">

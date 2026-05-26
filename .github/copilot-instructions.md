@@ -29,7 +29,7 @@ Not yet implemented (potential next steps):
 - Cloud sync / multi-device
 
 ## 2) Tech stack (actual, as implemented)
-- Frontend: **Next.js 15 (App Router)** + **TypeScript strict** + **React**
+- Frontend: **Next.js 16 (App Router)** + **TypeScript strict** + **React**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
 - UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
 - Local storage: **Dexie 4 (IndexedDB)** — DB name: `leader-health-loop`
@@ -39,8 +39,8 @@ Not yet implemented (potential next steps):
   - `public/sw.js` and `public/workbox-*.js` are **generated at build time** (gitignored — do NOT edit manually)
   - SW registration handled by `src/components/PwaRegister.tsx` (production-only guard)
 - Validation: **Zod** — schemas in `src/domain/schemas.ts`
-- Testing: **Vitest 4** for unit tests and **Playwright** for mobile viewport E2E checks
-- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/features/dashboard/trends.test.ts`, `src/data/backup.test.ts`, `tests/e2e/save-message-mobile.spec.ts`
+- Testing: **Vitest 4** for unit tests and **Playwright** for mobile + desktop viewport E2E checks
+- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/features/dashboard/trends.test.ts`, `src/features/settings/notifications.test.ts`, `src/data/backup.test.ts`, `src/components/ServiceWorkerCleanup.test.tsx`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`, `tests/e2e/headers.spec.ts`
 
 ## 3) Architecture rules
 - Domain logic in `/src/domain` — pure functions + types, no React, no browser APIs.

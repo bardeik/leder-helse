@@ -1,6 +1,7 @@
 import { act, useEffect } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { useWorkoutTimer } from "@/features/workout/hooks/useWorkoutTimer";
+import { ROUND_REST_SECONDS } from "@/features/workout/utils/workoutConfig";
 
 type HookValue = ReturnType<typeof useWorkoutTimer>;
 
@@ -209,6 +210,7 @@ describe("useWorkoutTimer", () => {
     expect(latestValue?.phase).toBe("roundRest");
     expect(latestValue?.completedRounds).toBe(1);
     expect(latestValue?.totalCompletedSteps).toBe(9);
+    expect(latestValue?.timeRemaining).toBe(ROUND_REST_SECONDS);
     // Next exercise should be the first exercise of the next round
     expect(latestValue?.nextExerciseData?.id).toBe(1);
   });

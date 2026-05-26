@@ -2,6 +2,8 @@
 
 Copy and paste one prompt at a time into Copilot CLI. Complete all checks before moving to the next task.
 
+> Status snapshot (2026-05-26): Tasks 1-8 and optional Task 9 are already implemented on `master`.
+
 ---
 
 ## Task 1: Add CI quality gate workflow
@@ -111,7 +113,7 @@ Confirm cleanup still removes stale caches for this app only.
 Implement Task 7 from `.github/instructions/implementation-tasks.instructions.md`.
 Goal: Increase confidence across browser/runtime combinations.
 Files: playwright.config.ts, tests/e2e/* (as needed)
-Before coding: read playwright.config.ts to see current project setup (currently Mobile Chrome only).
+Before coding: read playwright.config.ts to see current project setup (currently Mobile Chrome + Desktop Chrome).
 Changes needed:
 1. Keep Mobile Chrome project as-is.
 2. Add one Desktop Chrome project (chromium, no mobile emulation).
@@ -162,12 +164,12 @@ Confirm formatter can be applied and checked via npm scripts.
 
 ## Execution checklist
 
-- [ ] Task 1: CI workflow added and active
-- [ ] Task 3: Backup import guardrails in place
-- [ ] Task 4: Timestamp and reminder validation tightened
-- [ ] Task 5: Production CSP/headers hardened
-- [ ] Task 2: Coverage thresholds enforced
-- [ ] Task 7: E2E test matrix expanded
-- [ ] Task 8: Docs aligned with actual stack
-- [ ] Task 6: Service worker cleanup scoped
-- [ ] Task 9 (optional): Formatter workflow added
+- [x] Task 1: CI workflow added and active
+- [x] Task 3: Backup import guardrails in place
+- [x] Task 4: Timestamp and reminder validation tightened
+- [x] Task 5: Production CSP/headers hardened
+- [x] Task 2: Coverage thresholds enforced
+- [x] Task 7: E2E test matrix expanded
+- [x] Task 8: Docs aligned with actual stack
+- [x] Task 6: Service worker cleanup scoped
+- [x] Task 9 (optional): Formatter workflow added
