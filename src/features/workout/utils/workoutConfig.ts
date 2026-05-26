@@ -13,6 +13,6 @@ export const PHASE_LABELS: Record<WorkoutPhase, string> = {
   countdown: "KLAR!",
   work: "JOBB",
   rest: "HVIL",
-  roundRest: "HVIL",
-  complete: "COMPLETE"
+  roundRest: "HVILE MELLOM RUNDER",
+  complete: "FERDIG"
 };
