@@ -32,7 +32,7 @@ export function ExerciseList({
 
   return (
     <section className="card">
-      <h2>Ovelser i runden</h2>
+      <h2>Øvelser i runden</h2>
       <ul className="workout-exercise-list">
         {exercises.map((exercise) => {
           const isCompleted = exercise.id <= completedInCurrentRound;

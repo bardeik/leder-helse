@@ -11,8 +11,8 @@ export type WorkoutPhase = "idle" | "countdown" | "work" | "rest" | "roundRest" 
 export const PHASE_LABELS: Record<WorkoutPhase, string> = {
   idle: "IDLE",
   countdown: "KLAR!",
-  work: "WORK",
-  rest: "REST",
-  roundRest: "ROUND REST",
+  work: "JOBB",
+  rest: "HVIL",
+  roundRest: "HVIL",
   complete: "COMPLETE"
 };

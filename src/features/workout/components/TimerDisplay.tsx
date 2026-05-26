@@ -18,7 +18,7 @@ export function TimerDisplay({ timeRemaining, phase, currentRound, currentExerci
       <p className={`workout-phase workout-phase-${phase}`}>{PHASE_LABELS[phase]}</p>
       <p className={`workout-time${isCountdown ? " workout-time-countdown" : ""}`}>{timeLabel}</p>
       <p className="workout-meta">
-        {isCountdown ? "Gjør deg klar..." : `Runde ${currentRound} - Ovelse ${currentExercise}`}
+        {isCountdown ? "Gjør deg klar..." : `Runde ${currentRound} - Øvelse ${currentExercise}`}
       </p>
     </section>
   );

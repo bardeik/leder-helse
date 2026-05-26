@@ -111,10 +111,10 @@ export function WorkoutPage() {
         <section className="card">
           <h2>Status</h2>
           <p>
-            Aktiv ovelse: <strong>{currentExerciseData.name}</strong>
+            Aktiv øvelse: <strong>{currentExerciseData.name}</strong>
           </p>
           <p>
-            Neste ovelse: <strong>{nextExerciseData?.name ?? "Ingen - siste intervall"}</strong>
+            Neste øvelse: <strong>{nextExerciseData?.name ?? "Ingen - siste intervall"}</strong>
           </p>
           <small className="muted">{isRunning ? "Okten er i gang." : "Trykk Start for a fortsette."}</small>
         </section>
