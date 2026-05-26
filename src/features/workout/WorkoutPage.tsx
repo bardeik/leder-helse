@@ -10,6 +10,7 @@ import { ProgressBar } from "@/features/workout/components/ProgressBar";
 import { ExerciseList } from "@/features/workout/components/ExerciseList";
 import { useWorkoutTimer } from "@/features/workout/hooks/useWorkoutTimer";
 import { useWorkoutAudio } from "@/features/workout/hooks/useWorkoutAudio";
+import { useWorkoutWakeLock } from "@/features/workout/hooks/useWorkoutWakeLock";
 import type { WorkoutPhase } from "@/features/workout/utils/workoutConfig";
 
 export function WorkoutPage() {
@@ -32,6 +33,7 @@ export function WorkoutPage() {
   } = useWorkoutTimer();
 
   const { initAudio, playCountdownTick, playTransitionBeep, muted, toggleMute } = useWorkoutAudio();
+  const { acquire: acquireWakeLock, release: releaseWakeLock } = useWorkoutWakeLock();
 
   // Track previous phase to detect transitions without triggering on mount
   const previousPhaseRef = useRef<WorkoutPhase>(phase);
@@ -63,6 +65,12 @@ export function WorkoutPage() {
     // AudioContext must be created/resumed inside a user-gesture handler
     initAudio();
     startWorkout();
+    void acquireWakeLock();
+  }
+
+  function handlePause() {
+    pauseWorkout();
+    releaseWakeLock();
   }
 
   function handleReset() {
@@ -70,13 +78,25 @@ export function WorkoutPage() {
     if (!confirmed) {
       return;
     }
+    releaseWakeLock();
     resetWorkout();
   }
+
+  function handleRestart() {
+    releaseWakeLock();
+    resetWorkout();
+  }
+
+  useEffect(() => {
+    if (isWorkoutComplete) {
+      releaseWakeLock();
+    }
+  }, [isWorkoutComplete, releaseWakeLock]);
 
   return (
     <section className="workout-layout">
       <WorkoutHeader
-        title="Intervallokt"
+        title="Intervalløkt"
         description="3 runder, 9 ovelser per runde, 40 sekunder arbeid og 20 sekunder pause. 90 sekunder pause mellom rundene."
       />
 
@@ -111,7 +131,7 @@ export function WorkoutPage() {
         isWorkoutComplete={isWorkoutComplete}
         muted={muted}
         onStart={handleStart}
-        onPause={pauseWorkout}
+        onPause={handlePause}
         onReset={handleReset}
         onToggleMute={toggleMute}
       />
@@ -126,7 +146,7 @@ export function WorkoutPage() {
       />
 
       {isWorkoutComplete ? (
-        <WorkoutSummary completedRounds={completedRounds} totalCompletedSteps={totalCompletedSteps} onRestart={resetWorkout} />
+        <WorkoutSummary completedRounds={completedRounds} totalCompletedSteps={totalCompletedSteps} onRestart={handleRestart} />
       ) : null}
     </section>
   );
