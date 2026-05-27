@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildWeeklyTrends,
   calculateWeeklyAdherence,
@@ -10,6 +10,10 @@ import {
 import type { DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
 
 describe("domain calculations", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("finds monday as week start", () => {
     expect(getWeekStartDate("2026-04-19")).toBe("2026-04-13");
   });
