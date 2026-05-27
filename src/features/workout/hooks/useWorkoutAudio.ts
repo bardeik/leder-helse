@@ -23,7 +23,7 @@ const COUNTDOWN_WORDS: Record<Locale, Partial<Record<number, string>>> = {
     1: "en",
     2: "to",
     3: "tre",
-    4: "fire",
+    4: "4",
     5: "fem"
   },
   en: {
