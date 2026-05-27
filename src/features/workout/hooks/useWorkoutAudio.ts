@@ -20,18 +20,18 @@ export type CountdownCue = "start" | "pause";
 
 const COUNTDOWN_WORDS: Record<Locale, Partial<Record<number, string>>> = {
   no: {
-    1: "en",
-    2: "to",
-    3: "tre",
+    1: "1",
+    2: "2",
+    3: "3",
     4: "4",
-    5: "fem"
+    5: "5"
   },
   en: {
-    1: "one",
-    2: "two",
-    3: "three",
-    4: "four",
-    5: "five"
+    1: "1",
+    2: "2",
+    3: "3",
+    4: "4",
+    5: "5"
   }
 };
 

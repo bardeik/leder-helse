@@ -162,7 +162,7 @@ describe("useWorkoutAudio", () => {
     expect(freqs[2]).toBe(1700);
   });
 
-  it("playCountdownTick speaks Norwegian countdown words when speech synthesis is available", () => {
+  it("playCountdownTick speaks numeric Norwegian countdown cues when speech synthesis is available", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {
       getVoices: vi.fn().mockReturnValue([norwegianVoice, englishVoice]),
@@ -178,7 +178,7 @@ describe("useWorkoutAudio", () => {
     expect(speechCancel).toHaveBeenCalledOnce();
     expect(speechSpeak).toHaveBeenCalledOnce();
     expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
-      text: "tre",
+      text: "3",
       lang: "nb-NO",
       rate: 1.15,
       pitch: 1.35,
@@ -243,13 +243,13 @@ describe("useWorkoutAudio", () => {
     act(() => result.playCountdownTick(3));
 
     expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
-      text: "tre",
+      text: "3",
       lang: "nb-NO"
     });
     expect((speechSpeak.mock.calls[0]?.[0] as MockSpeechSynthesisUtterance).voice).toBeNull();
   });
 
-  it("playCountdownTick speaks English countdown words when locale is English", () => {
+  it("playCountdownTick speaks numeric countdown cues when locale is English", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {
       getVoices: vi.fn().mockReturnValue([englishVoice, norwegianVoice]),
@@ -273,7 +273,7 @@ describe("useWorkoutAudio", () => {
     act(() => result.playCountdownTick(3));
 
     expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
-      text: "three",
+      text: "3",
       lang: "en-US"
     });
     expect((speechSpeak.mock.calls[0]?.[0] as MockSpeechSynthesisUtterance).voice).toBe(englishVoice);
