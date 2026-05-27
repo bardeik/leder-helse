@@ -9,7 +9,7 @@ export const COUNTDOWN_SECONDS = 5;
 export type WorkoutPhase = "idle" | "countdown" | "work" | "rest" | "roundRest" | "complete";
 
 export const PHASE_LABELS: Record<WorkoutPhase, string> = {
-  idle: "IDLE",
+  idle: "VENTER",
   countdown: "KLAR!",
   work: "JOBB",
   rest: "HVIL",
