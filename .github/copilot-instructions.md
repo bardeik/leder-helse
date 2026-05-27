@@ -35,7 +35,7 @@ Not yet implemented (potential next steps):
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
   - All user data persists locally without network
 - Validation: **Zod 4.4.3** — schemas in `src/domain/schemas.ts`
-- Testing: **Vitest 4.1.5** for unit tests and **Playwright 1.60.0** for mobile + desktop viewport E2E checks
+- Testing: **Vitest 4.1.7** for unit tests and **Playwright 1.60.0** for mobile + desktop viewport E2E checks
 - Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/features/dashboard/trends.test.ts`, `src/features/settings/notifications.test.ts`, `src/data/backup.test.ts`, `src/components/ServiceWorkerCleanup.test.tsx`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`, `tests/e2e/headers.spec.ts`
 
 ## ESLint Status

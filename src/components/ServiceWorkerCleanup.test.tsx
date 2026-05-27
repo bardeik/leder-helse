@@ -1,5 +1,4 @@
-import { act } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { act, cleanup, render } from "@testing-library/react";
 import {
   ServiceWorkerCleanup,
   cleanupAppServiceWorkerArtifacts,
@@ -43,20 +42,8 @@ function setCaches(value: unknown) {
 }
 
 describe("ServiceWorkerCleanup", () => {
-  let container: HTMLDivElement;
-  let root: Root;
-
-  beforeEach(() => {
-    container = document.createElement("div");
-    document.body.appendChild(container);
-    root = createRoot(container);
-  });
-
   afterEach(async () => {
-    await act(async () => {
-      root.unmount();
-    });
-    container.remove();
+    cleanup();
 
     if (serviceWorkerDescriptor) {
       Object.defineProperty(window.navigator, "serviceWorker", serviceWorkerDescriptor);
@@ -147,9 +134,7 @@ describe("ServiceWorkerCleanup", () => {
     setServiceWorker(undefined);
     setCaches(undefined);
 
-    await act(async () => {
-      root.render(<ServiceWorkerCleanup />);
-    });
+    const { container } = render(<ServiceWorkerCleanup />);
 
     expect(container.innerHTML).toBe("");
   });
@@ -171,9 +156,7 @@ describe("ServiceWorkerCleanup", () => {
     });
 
     await act(async () => {
-      root.render(<ServiceWorkerCleanup />);
-      await Promise.resolve();
-      await Promise.resolve();
+      render(<ServiceWorkerCleanup />);
     });
 
     expect(getRegistrations).toHaveBeenCalledOnce();
