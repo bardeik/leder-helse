@@ -17,8 +17,7 @@ The MVP is **fully implemented**. Features marked [x] are complete and working.
 - [x] Workout logging: Strength A, Strength B, Walk; individual delete actions
 - [x] Date navigation on Log Today: navigate up to 14 days back, stops at today
 - [x] Dashboard: current week adherence (green/yellow/red), 6-week trends, next actions, recent workouts
-- [x] PWA: 100% offline via next-pwa (Workbox) build-time precaching; app shell loads without network
-- [x] SW update lifecycle: startup check, long-interval polling, user-visible update banner, controlled restart
+- [x] Offline-first: local IndexedDB storage via Dexie (no network required for core features)
 - [x] Reminders: browser notifications toggle persisted in localStorage, ReminderEngine component
 - [x] Settings: export/import JSON backup of all IndexedDB data
 - [x] Locale-aware numeric inputs for weight and sleep hours, with raw editing on focus and localized formatting on blur
@@ -29,18 +28,20 @@ Not yet implemented (potential next steps):
 - Cloud sync / multi-device
 
 ## 2) Tech stack (actual, as implemented)
-- Frontend: **Next.js 16 (App Router)** + **TypeScript strict** + **React**
+- Frontend: **Next.js 16.2.6 (App Router)** + **TypeScript 6.0.3** + **React 19.2.6**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
 - UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
-- Local storage: **Dexie 4 (IndexedDB)** — DB name: `leader-health-loop`
+- Local storage: **Dexie 4.4.2 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
-- PWA: **next-pwa 5.6.0** (Workbox); config in `next.config.ts`:
-  - `dest: "public"`, `register: false`, `skipWaiting: false`
-  - `public/sw.js` and `public/workbox-*.js` are **generated at build time** (gitignored — do NOT edit manually)
-  - SW registration handled by `src/components/PwaRegister.tsx` (production-only guard)
-- Validation: **Zod** — schemas in `src/domain/schemas.ts`
-- Testing: **Vitest 4** for unit tests and **Playwright** for mobile + desktop viewport E2E checks
+  - All user data persists locally without network
+- Validation: **Zod 4.4.3** — schemas in `src/domain/schemas.ts`
+- Testing: **Vitest 4.1.5** for unit tests and **Playwright 1.60.0** for mobile + desktop viewport E2E checks
 - Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/features/dashboard/trends.test.ts`, `src/features/settings/notifications.test.ts`, `src/data/backup.test.ts`, `src/components/ServiceWorkerCleanup.test.tsx`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`, `tests/e2e/headers.spec.ts`
+
+## ESLint Status
+- Current: **ESLint 9.39.4** (latest in 9.x line)
+- **ESLint 10 is not yet compatible** due to TypeScript ESLint parser incompatibility (scopeManager API changes in ESLint 10)
+- Will reassess when TypeScript ESLint adds ESLint 10 support
 
 ## 3) Architecture rules
 - Domain logic in `/src/domain` — pure functions + types, no React, no browser APIs.
@@ -68,7 +69,6 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 - **Workout delete**: workouts are removed via per-item delete actions; no separate undo button is present.
 - **Localized numeric editing**: weight and sleep-hours inputs accept both `.` and `,`, keep raw text while focused, and format using the user's locale on blur.
 - **Save toast placement**: save confirmation is rendered through a portal to `document.body` so it stays fixed to the visible viewport on mobile while scrolling.
-- **Update banner**: `PwaRegister.tsx` shows a fixed banner at the bottom when a new SW version is waiting; user clicks to restart and apply the update.
 - **Safe-area padding**: `main` uses `padding-bottom: env(safe-area-inset-bottom, 0px)` for iPhone home-bar clearance. Body uses `min-height: 100svh`.
 
 ## 6) Engineering standards

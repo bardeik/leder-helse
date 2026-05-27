@@ -36,9 +36,9 @@ description: "Frontend + UI rules"
 - Weight and sleep-hours inputs must accept both `.` and `,` while editing.
 - Preserve raw user input while the field is focused; format with locale-specific separators on blur.
 
-## PWA / mobile
+## Mobile & Offline
 - `main` element must keep `padding-bottom: env(safe-area-inset-bottom, 0px)` for iPhone home-bar.
 - Body min-height is `100svh` (with `100vh` fallback).
-- `PwaRegister.tsx` must only register the SW in production (`process.env.NODE_ENV === 'production'`).
+- All offline functionality is provided by Dexie IndexedDB storage (local-first).
 - Use Playwright mobile tests when changing toast positioning or other viewport-sensitive UI.
 - Do not add `console.log` statements.
