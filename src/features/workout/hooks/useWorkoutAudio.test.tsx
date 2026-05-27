@@ -175,6 +175,34 @@ describe("useWorkoutAudio", () => {
     expect(mockCtx.createOscillator).not.toHaveBeenCalled();
   });
 
+  it("playCountdownTick speaks English countdown words when locale is English", () => {
+    vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
+    vi.stubGlobal("speechSynthesis", {
+      speak: speechSpeak,
+      cancel: speechCancel
+    });
+
+    function EnglishHookHarness({ onChange }: { onChange: (value: HookValue) => void }) {
+      const value = useWorkoutAudio("en");
+      useEffect(() => {
+        onChange(value);
+      }, [onChange, value]);
+      return null;
+    }
+
+    act(() => {
+      root.render(<EnglishHookHarness onChange={(v) => (result = v)} />);
+    });
+
+    act(() => result.initAudio());
+    act(() => result.playCountdownTick(3));
+
+    expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
+      text: "three",
+      lang: "en-US"
+    });
+  });
+
   it("playCountdownTick is silent when muted", () => {
     renderHook();
     act(() => result.initAudio());

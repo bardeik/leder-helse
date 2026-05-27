@@ -1,5 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("leader-health-language", "no");
+  });
+});
+
 async function expectInVisibleViewport(page: Page, text: string) {
   const message = page.getByText(text, { exact: true });
   await expect(message).toBeVisible();

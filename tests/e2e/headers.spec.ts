@@ -61,8 +61,9 @@ test("serves hardened production headers and loads without CSP console violation
 }, testInfo) => {
   let productionServer: ChildProcess | undefined;
   let productionLogs = "";
-  const productionPort = 3101 + testInfo.workerIndex;
-  const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
+let context: Awaited<ReturnType<typeof browser.newContext>> | undefined;
+const productionPort = 3101 + testInfo.workerIndex;
+const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
 
   try {
     productionServer = spawn(process.execPath, ["scripts/start-standalone.cjs"], {
@@ -85,6 +86,12 @@ test("serves hardened production headers and loads without CSP console violation
 
     await waitForServer(`${productionBaseUrl}/`);
 
+    context = await browser.newContext();
+    await context.addInitScript(() => {
+      window.localStorage.setItem("leader-health-language", "no");
+    });
+    const page = await context.newPage();
+
     const response = await request.get(`${productionBaseUrl}/`);
     expect(response.ok()).toBeTruthy();
 
@@ -106,7 +113,6 @@ test("serves hardened production headers and loads without CSP console violation
     expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
     expect(headers["cross-origin-resource-policy"]).toBe("same-origin");
 
-    const page = await browser.newPage();
     const consoleErrors: string[] = [];
     const pageErrors: string[] = [];
 
@@ -142,6 +148,7 @@ test("serves hardened production headers and loads without CSP console violation
     }
     throw error;
   } finally {
+    await context?.close();
     await stopServer(productionServer);
   }
 });

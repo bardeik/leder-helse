@@ -1,3 +1,4 @@
+import { useTranslation } from "@/i18n/LanguageProvider";
 import type { WorkoutExercise } from "@/features/workout/data/exercises";
 import { EXERCISES_PER_ROUND, type WorkoutPhase } from "@/features/workout/utils/workoutConfig";
 import { ExerciseCard } from "@/features/workout/components/ExerciseCard";
@@ -28,11 +29,12 @@ export function ExerciseList({
   phase,
   isWorkoutComplete
 }: ExerciseListProps) {
+  const { translations: t } = useTranslation();
   const completedInCurrentRound = getCompletedInCurrentRound(completedExercises, currentRound, isWorkoutComplete);
 
   return (
     <section className="card">
-      <h2>Øvelser i runden</h2>
+      <h2>{t.workout.exercisesInRound}</h2>
       <ul className="workout-exercise-list">
         {exercises.map((exercise) => {
           const isCompleted = exercise.id <= completedInCurrentRound;

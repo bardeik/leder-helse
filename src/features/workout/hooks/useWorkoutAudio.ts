@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import type { Locale } from "@/i18n/types";
 import type { WorkoutPhase } from "../utils/workoutConfig";
 
 export interface UseWorkoutAudioReturn {
@@ -14,15 +15,24 @@ export interface UseWorkoutAudioReturn {
   toggleMute: () => void;
 }
 
-const COUNTDOWN_WORDS: Partial<Record<number, string>> = {
-  1: "en",
-  2: "to",
-  3: "tre",
-  4: "fire",
-  5: "fem"
+const COUNTDOWN_WORDS: Record<Locale, Partial<Record<number, string>>> = {
+  no: {
+    1: "en",
+    2: "to",
+    3: "tre",
+    4: "fire",
+    5: "fem"
+  },
+  en: {
+    1: "one",
+    2: "two",
+    3: "three",
+    4: "four",
+    5: "five"
+  }
 };
 
-export function useWorkoutAudio(): UseWorkoutAudioReturn {
+export function useWorkoutAudio(locale: Locale = "no"): UseWorkoutAudioReturn {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const [muted, setMuted] = useState(false);
   // Keep a ref to avoid stale-closure issues inside useCallback
@@ -81,7 +91,7 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
       return false;
     }
 
-    const word = COUNTDOWN_WORDS[secondsLeft];
+    const word = COUNTDOWN_WORDS[locale][secondsLeft];
     if (!word) {
       return false;
     }
@@ -94,7 +104,7 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
     try {
       speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = "nb-NO";
+      utterance.lang = locale === "en" ? "en-US" : "nb-NO";
       utterance.rate = 1.15;
       utterance.pitch = 1.35;
       utterance.volume = 1;
@@ -103,7 +113,7 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
     } catch {
       return false;
     }
-  }, []);
+  }, [locale]);
 
   /** Resume or create AudioContext — must be called inside a click/touch handler. */
   const initAudio = useCallback((): void => {

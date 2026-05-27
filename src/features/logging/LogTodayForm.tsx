@@ -6,8 +6,10 @@ import type { LogTodayState } from "@/features/logging/hooks/useLogToday";
 import { parseLocalNumber, formatLocalNumber } from "@/domain/localeNumber";
 import { formatWorkoutType } from "@/domain/workouts";
 import { FloatingSaveNotice } from "@/components/FloatingSaveNotice";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 export function LogTodayForm() {
+  const { locale, translations: t } = useTranslation();
   const {
     state,
     setState,
@@ -35,13 +37,13 @@ export function LogTodayForm() {
 
   return (
     <section className="card appear" aria-labelledby="log-title">
-      <h1 id="log-title">{isToday ? "Logg i dag" : `Logg — ${selectedDate}`}</h1>
+      <h1 id="log-title">{isToday ? t.log.titleToday : t.log.titleDate(selectedDate)}</h1>
 
       <div className="log-date-nav">
         <button
           className="secondary"
           type="button"
-          aria-label="Forrige dag"
+          aria-label={t.log.prevDayLabel}
           onClick={goBack}
           disabled={!canGoBack}
           data-testid="log-date-back"
@@ -49,12 +51,12 @@ export function LogTodayForm() {
           ‹
         </button>
         <span className="log-date-nav-label">
-          {isToday ? <strong>I dag</strong> : selectedDate}
+          {isToday ? <strong>{t.log.today}</strong> : selectedDate}
         </span>
         <button
           className="secondary"
           type="button"
-          aria-label="Neste dag"
+          aria-label={t.log.nextDayLabel}
           onClick={goForward}
           disabled={!canGoForward}
           data-testid="log-date-forward"
@@ -64,13 +66,13 @@ export function LogTodayForm() {
       </div>
 
       <p>
-        <small className="muted">Lagrer automatisk når du går ut av feltet. Du kan gå opptil 2 uker tilbake.</small>
+        <small className="muted">{t.log.autoSaveHint}</small>
       </p>
 
       <div className="grid section-margin-top">
         <div>
           <fieldset className="fieldset-reset">
-            <legend>Energi kl. 15:00 (1-5)</legend>
+            <legend>{t.log.energyLabel}</legend>
             <div className="inline-options">
               {[1, 2, 3, 4, 5].map((energyValue) => (
                 <label key={energyValue}>
@@ -93,7 +95,7 @@ export function LogTodayForm() {
         </div>
 
         <fieldset className="fieldset-reset">
-          <legend>Søvn ok?</legend>
+          <legend>{t.log.sleepOkLabel}</legend>
           <label>
             <input
               name="sleep-ok"
@@ -105,7 +107,7 @@ export function LogTodayForm() {
                 void save(next);
               }}
             />{" "}
-            Ja
+            {t.common.yes}
           </label>
           <label>
             <input
@@ -118,16 +120,16 @@ export function LogTodayForm() {
                 void save(next);
               }}
             />{" "}
-            Nei
+            {t.common.no}
           </label>
         </fieldset>
 
         <div>
-          <label htmlFor="sleep-hours">Sovntimer (valgfritt)</label>
+          <label htmlFor="sleep-hours">{t.log.sleepHoursLabel}</label>
           <input
             id="sleep-hours"
             type="text"
-            placeholder="f.eks. 7,5"
+            placeholder={t.log.sleepHoursPlaceholder}
             value={sleepHoursFocused ? sleepHoursInput : state.sleepHours ? formatLocalNumber(state.sleepHours) : ""}
             onFocus={(event) => {
               setSleepHoursFocused(true);
@@ -149,7 +151,7 @@ export function LogTodayForm() {
         </div>
 
         <div>
-          <label htmlFor="notes">Notater (valgfritt)</label>
+          <label htmlFor="notes">{t.common.notesOptional}</label>
           <textarea
             id="notes"
             value={state.notes ?? ""}
@@ -160,31 +162,31 @@ export function LogTodayForm() {
 
         <div className="grid grid-3">
           <button className="secondary" type="button" onClick={() => addQuickWorkout("walk", 20)}>
-            + Gåtur 20 min
+            {t.log.addWalkButton}
           </button>
           <button className="secondary" type="button" onClick={() => addQuickWorkout("strength")}>
-            + Styrkeøkt
+            {t.log.addStrengthButton}
           </button>
         </div>
 
         <div>
-          <strong>{isToday ? "Dagens aktiviteter" : `Aktiviteter — ${selectedDate}`}</strong>
+          <strong>{isToday ? t.log.activitiesToday : t.log.activitiesDate(selectedDate)}</strong>
           {todayWorkouts.length === 0 ? (
             <small className="muted log-workouts-empty">
-              Ingen økter loggført enda.
+              {t.log.noWorkoutsYet}
             </small>
           ) : (
             <ul className="log-workouts-list">
               {todayWorkouts.map((item) => (
                 <li key={`${item.id ?? item.dateTime}-${item.type}`} className="log-workouts-item">
-                  {formatWorkoutType(item.type)}
+                  {formatWorkoutType(item.type, locale)}
                   {item.durationMin ? ` (${item.durationMin}m)` : ""}
                   <button
                     className="secondary log-delete-button"
                     type="button"
                     onClick={() => item.id && void removeWorkout(item.id)}
                   >
-                    Slett
+                    {t.common.delete}
                   </button>
                 </li>
               ))}
@@ -193,7 +195,7 @@ export function LogTodayForm() {
         </div>
 
         <FloatingSaveNotice message={message} />
-        {saving ? <small className="muted">Lagrer...</small> : null}
+        {saving ? <small className="muted">{t.common.saving}</small> : null}
       </div>
     </section>
   );

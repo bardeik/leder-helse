@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { weeklyCheckInsRepo } from "@/data/repositories/weeklyCheckInsRepo";
 import { addDays, getWeekStartDate } from "@/domain/calc";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 interface WeeklyCheckInState {
   weekStartDate: string;
@@ -22,6 +23,7 @@ export function resolveInitialWeightKg(currentWeekWeight?: number, previousWeekW
 }
 
 export function useWeeklyCheckIn() {
+  const { translations: t } = useTranslation();
   const maxWeekStart = currentWeekStart();
   const minWeekStart = addDays(maxWeekStart, -14);
 
@@ -99,10 +101,10 @@ export function useWeeklyCheckIn() {
         notes: nextState.notes.trim() || undefined,
         adjustment: nextState.adjustment.trim() || undefined
       });
-      setTransientMessage("Endringer lagret");
+      setTransientMessage(t.common.saveConfirm);
       return true;
     } catch {
-      setMessage("Skriv inn en gyldig vekt.");
+      setMessage(t.checkIn.saveFailed);
       return false;
     } finally {
       setSaving(false);

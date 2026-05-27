@@ -1,5 +1,6 @@
 import { addDays, calculateWeeklyAdherence, calculateWeeklyWorkoutProgress } from "@/domain/calc";
 import type { DailyLog, WeeklyCheckIn, WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
+import type { TranslationDict } from "@/i18n/types";
 
 export interface DashboardWeekSummary {
   energyDays: number;
@@ -33,6 +34,24 @@ export interface DashboardSnapshot {
   latestCheckIn?: WeeklyCheckIn;
   trendHighlights: DashboardTrendHighlights;
 }
+
+export type DashboardActionText = Pick<
+  TranslationDict["dashboard"],
+  | "nextActionLogEnergy"
+  | "nextActionLogSleep"
+  | "nextActionAddStrength"
+  | "nextActionAddWalk"
+  | "nextActionWeeklyCheckIn"
+>;
+
+const defaultDashboardActionText: DashboardActionText = {
+  nextActionLogEnergy: (count) => `Logg energi for ${count} ${count === 1 ? "dag" : "dager"} til`,
+  nextActionLogSleep: (count) => `Logg søvn for ${count} ${count === 1 ? "dag" : "dager"} til`,
+  nextActionAddStrength: (count) =>
+    `Mangler ${count} ${count === 1 ? "styrkeøkt" : "styrkeøkter"} denne uken`,
+  nextActionAddWalk: (count) => `Mangler ${count} ${count === 1 ? "gåtur" : "gåturer"} denne uken`,
+  nextActionWeeklyCheckIn: "Ukentlig veiing og refleksjon mangler"
+};
 
 function roundDelta(value: number, fractionDigits: number): number {
   const precision = 10 ** fractionDigits;
@@ -75,7 +94,8 @@ export function getDashboardSnapshot(
   weeklyCheckIns: WeeklyCheckIn[],
   workouts: WorkoutLog[],
   trendPoints: WeeklyTrendPoint[],
-  todayIsoDate?: string
+  todayIsoDate?: string,
+  actionText: DashboardActionText = defaultDashboardActionText
 ): DashboardSnapshot {
   const adherence = calculateWeeklyAdherence(weekStartDate, dailyLogs, workouts, todayIsoDate);
   const weekEndDate = addDays(weekStartDate, 6);
@@ -101,27 +121,19 @@ export function getDashboardSnapshot(
 
   const actions: string[] = [];
   if (missingEnergyDays > 0) {
-    actions.push(`Logg energi for ${missingEnergyDays} ${missingEnergyDays === 1 ? "dag" : "dager"} til`);
+    actions.push(actionText.nextActionLogEnergy(missingEnergyDays));
   }
   if (missingSleepDays > 0) {
-    actions.push(`Logg søvn for ${missingSleepDays} ${missingSleepDays === 1 ? "dag" : "dager"} til`);
+    actions.push(actionText.nextActionLogSleep(missingSleepDays));
   }
   if (workoutProgress.remainingStrengthWorkouts > 0) {
-    actions.push(
-      `Mangler ${workoutProgress.remainingStrengthWorkouts} ${
-        workoutProgress.remainingStrengthWorkouts === 1 ? "styrkeøkt" : "styrkeøkter"
-      } denne uken`
-    );
+    actions.push(actionText.nextActionAddStrength(workoutProgress.remainingStrengthWorkouts));
   }
   if (workoutProgress.remainingWalks > 0) {
-    actions.push(
-      `Mangler ${workoutProgress.remainingWalks} ${
-        workoutProgress.remainingWalks === 1 ? "gåtur" : "gåturer"
-      } denne uken`
-    );
+    actions.push(actionText.nextActionAddWalk(workoutProgress.remainingWalks));
   }
   if (!weightLogged) {
-    actions.push("Ukentlig veiing og refleksjon mangler");
+    actions.push(actionText.nextActionWeeklyCheckIn);
   }
 
   const latestCheckIn = [...weeklyCheckIns].sort((a, b) => (a.weekStartDate < b.weekStartDate ? 1 : -1))[0];

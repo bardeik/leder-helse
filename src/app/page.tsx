@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { dailyLogsRepo } from "@/data/repositories/dailyLogsRepo";
 import { weeklyCheckInsRepo } from "@/data/repositories/weeklyCheckInsRepo";
 import { workoutLogsRepo } from "@/data/repositories/workoutLogsRepo";
@@ -9,13 +9,15 @@ import type { DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
 import { DashboardView } from "@/features/dashboard/DashboardView";
 import { getRandomMotivationalQuote } from "@/features/dashboard/motivationalQuotes";
 import { getDashboardSnapshot } from "@/features/dashboard/trends";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 export default function HomePage() {
+  const { locale, translations: t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [dailyLogs, setDailyLogs] = useState<DailyLog[]>([]);
   const [weeklyCheckIns, setWeeklyCheckIns] = useState<WeeklyCheckIn[]>([]);
   const [workouts, setWorkouts] = useState<WorkoutLog[]>([]);
-  const [motivationalQuote] = useState(() => getRandomMotivationalQuote());
+  const motivationalQuote = useMemo(() => getRandomMotivationalQuote(locale), [locale]);
 
   useEffect(() => {
     const now = new Date().toISOString().slice(0, 10);
@@ -39,8 +41,8 @@ export default function HomePage() {
   if (loading) {
     return (
       <section className="card">
-        <h1>Oversikt</h1>
-        <small className="muted">Laster lokale data...</small>
+        <h1>{t.nav.pages.home}</h1>
+        <small className="muted">{t.dashboard.loadingData}</small>
       </section>
     );
   }
@@ -50,7 +52,7 @@ export default function HomePage() {
   const currentWeek = getWeekStartDate(today);
 
   const trends = buildWeeklyTrends(weekStarts, dailyLogs, weeklyCheckIns);
-  const snapshot = getDashboardSnapshot(currentWeek, dailyLogs, weeklyCheckIns, workouts, trends, today);
+  const snapshot = getDashboardSnapshot(currentWeek, dailyLogs, weeklyCheckIns, workouts, trends, today, t.dashboard);
 
   return (
     <DashboardView

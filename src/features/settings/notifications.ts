@@ -1,3 +1,7 @@
+import { getTranslation } from "@/i18n/locales";
+import type { Locale } from "@/i18n/types";
+import { getLanguage } from "@/features/settings/language";
+
 export interface ReminderSettings {
   energyReminderEnabled: boolean;
   strengthMorningEnabled: boolean;
@@ -74,18 +78,24 @@ function sendNotification(title: string, body: string) {
   new Notification(title, { body });
 }
 
+function getReminderText(locale: Locale) {
+  return getTranslation(locale).notifications;
+}
+
 export function maybeSendScheduledReminders(now = new Date()) {
   if (typeof window === "undefined") {
     return;
   }
 
   const settings = getReminderSettings();
+  const locale = getLanguage() ?? "no";
+  const texts = getReminderText(locale);
   const dateKey = now.toISOString().slice(0, 10);
 
   if (settings.energyReminderEnabled && now.getHours() === 15 && now.getMinutes() < 2) {
     const sentAt = window.localStorage.getItem(ENERGY_SENT_KEY);
     if (sentAt !== dateKey) {
-      sendNotification("Energi-innsjekk", "Hvordan er energien din akkurat nå på en skala fra 1 til 5?");
+      sendNotification(texts.energyTitle, texts.energyBody);
       window.localStorage.setItem(ENERGY_SENT_KEY, dateKey);
     }
   }
@@ -93,7 +103,7 @@ export function maybeSendScheduledReminders(now = new Date()) {
   if (settings.strengthMorningEnabled && now.getHours() === settings.strengthReminderHour && now.getMinutes() < 2) {
     const sentAt = window.localStorage.getItem(STRENGTH_SENT_KEY);
     if (sentAt !== dateKey) {
-      sendNotification("Styrkepåminnelse", "Planlegg en styrkeøkt i morgen tidlig.");
+      sendNotification(texts.strengthTitle, texts.strengthBody);
       window.localStorage.setItem(STRENGTH_SENT_KEY, dateKey);
     }
   }

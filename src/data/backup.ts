@@ -29,16 +29,26 @@ export interface StorageSummary {
 
 export type BackupImportMode = "merge" | "overwrite";
 
-function parseBackupJson(json: string): unknown {
+export interface BackupImportMessages {
+  tooLarge: string;
+  invalidJson: string;
+}
+
+const DEFAULT_BACKUP_IMPORT_MESSAGES: BackupImportMessages = {
+  tooLarge: `Sikkerhetskopien er for stor. Maks størrelse er ${MAX_BACKUP_SIZE_LABEL}.`,
+  invalidJson: "Sikkerhetskopien må være gyldig JSON."
+};
+
+function parseBackupJson(json: string, messages: BackupImportMessages): unknown {
   const jsonSizeBytes = new TextEncoder().encode(json).length;
   if (jsonSizeBytes > MAX_BACKUP_JSON_BYTES) {
-    throw new Error(`Sikkerhetskopien er for stor. Maks størrelse er ${MAX_BACKUP_SIZE_LABEL}.`);
+    throw new Error(messages.tooLarge);
   }
 
   try {
     return JSON.parse(json);
   } catch {
-    throw new Error("Sikkerhetskopien må være gyldig JSON.");
+    throw new Error(messages.invalidJson);
   }
 }
 
@@ -56,9 +66,9 @@ export async function exportBackup(source: BackupDataSource = db as unknown as B
 export async function importBackup(
   json: string,
   source: BackupDataSource = db as unknown as BackupDataSource,
-  options: { mode?: BackupImportMode } = {}
+  options: { mode?: BackupImportMode; messages?: BackupImportMessages } = {}
 ): Promise<void> {
-  const parsed = parseBackupData(parseBackupJson(json));
+  const parsed = parseBackupData(parseBackupJson(json, options.messages ?? DEFAULT_BACKUP_IMPORT_MESSAGES));
   const mode = options.mode ?? "merge";
 
   await source.transaction("rw", source.dailyLogs, source.weeklyCheckIns, source.workoutLogs, async () => {

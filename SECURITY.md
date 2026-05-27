@@ -1,45 +1,30 @@
-# Security Policy
+# Security Policy / Sikkerhetspolicy
 
-## Core Principles
-
+## Core principles / Grunnprinsipper
 - Never commit secrets, API keys, tokens, or customer/company confidential data.
 - Treat AI-generated output as third-party code and review before merge.
 - Keep the app local-first and offline-friendly by default.
+- Aldri commit secrets, API-nøkler, tokens eller konfidensiell kunde-/firmadata.
+- Behandle AI-generert innhold som tredjepartskode og gjennomgå før sammenslåing.
+- Hold appen lokal-først og offline-vennlig som standard.
 
-## Secure Development Checklist
+## Secure development / Sikker utvikling
+- Run `npm run lint`, `npm run test`, and `npm run build` before shipping.
+- Keep dependencies patched and current.
+- Use Zod schemas and runtime validators at persistence/import boundaries.
+- New locale text must exist in both Norwegian and English, and translation parity tests must pass.
+- Kjør `npm run lint`, `npm run test` og `npm run build` før publisering.
+- Hold avhengigheter oppdatert og patchet.
+- Bruk Zod-skjemaer og runtime-validering ved lagring/import.
+- Ny tekst må finnes både på norsk og engelsk, og paritetstester for oversettelser må passere.
 
-### Run tests and linters before committing
-
-- `npm run lint`
-- `npm run test`
-- `npm run build`
-- Keep dependencies patched (`npm audit` + regular updates).
-- Next.js baseline is patched to `^16.2.6` (outside the previously affected `<16.2.5` range).
-- Use Zod schemas in `src/domain/schemas.ts` to define validation intent and shared data shapes.
-- Treat runtime validators in `src/domain/validation.ts` as authoritative for persistence/import boundaries.
-- Use least privilege if new APIs/services are introduced.
-
-## Validation Boundaries
-
-- UI and domain code reuse Zod schemas for shape validation and normalization.
-- Persistence, backup import, and tamper-prone browser storage must still pass the runtime validation layer before data is accepted.
-- Do not bypass runtime validation for IndexedDB writes, backup restore, or localStorage-derived settings.
-
-## Current Security Constraints
-
+## Current security constraints / Gjeldende sikkerhetsgrenser
 - Backup import is local and user-initiated, with a 5 MB pre-parse size limit and a maximum of 10,000 imported records per collection.
-- Imported backup collections fail fast with clear validation errors when an item or collection is malformed.
+- Imported backup collections fail fast with clear validation errors when malformed.
 - Persisted timestamps must match the canonical UTC format `YYYY-MM-DDTHH:mm:ss.sssZ`.
-- Production responses use a stricter CSP/header set than development, including HSTS, COOP, and CORP, with no `unsafe-inline`/`unsafe-eval`; development keeps the looser CSP needed for hot reload.
+- Production responses use HSTS, COOP, CORP, and a stricter CSP than development.
+- Sikkerhetskopi-import er lokal og brukerinitiert, med 5 MB grense før parsing og maks 10 000 importerte poster per samling.
+- Importerte sikkerhetskopier feiler raskt med tydelige valideringsfeil ved feil format.
+- Lagrede tidsstempler må følge den kanoniske UTC-formen `YYYY-MM-DDTHH:mm:ss.sssZ`.
+- Produksjon bruker HSTS, COOP, CORP og en strengere CSP enn utvikling.
 
-## Data Handling
-
-- Health logs are stored in browser IndexedDB via Dexie.
-- No remote transmission is required for core features.
-- Backup/import uses JSON initiated by the user and validated locally before merge/overwrite.
-
-## Reporting a Vulnerability
-
-1. Do not publish exploit details in public issues.
-2. Share a private report with reproduction steps, impact, and affected files.
-3. Include suggested mitigation if known.

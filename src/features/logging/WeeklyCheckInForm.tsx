@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useWeeklyCheckIn } from "@/features/logging/hooks/useWeeklyCheckIn";
 import { parseLocalNumber, formatLocalNumber } from "@/domain/localeNumber";
 import { FloatingSaveNotice } from "@/components/FloatingSaveNotice";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 export function WeeklyCheckInForm() {
+  const { translations: t } = useTranslation();
   const {
     state,
     setState,
@@ -26,24 +28,24 @@ export function WeeklyCheckInForm() {
   return (
     <section className="card appear" aria-labelledby="checkin-title">
       <div className="week-nav section-gap-bottom">
-        <button type="button" onClick={goBack} disabled={!canGoBack} aria-label="Forrige uke">
+        <button type="button" onClick={goBack} disabled={!canGoBack} aria-label={t.checkIn.prevWeekLabel}>
           ‹
         </button>
-        <span>{isCurrentWeek ? <strong>Denne uken</strong> : selectedWeekStart}</span>
-        <button type="button" onClick={goForward} disabled={!canGoForward} aria-label="Neste uke">
+        <span>{isCurrentWeek ? <strong>{t.checkIn.thisWeek}</strong> : selectedWeekStart}</span>
+        <button type="button" onClick={goForward} disabled={!canGoForward} aria-label={t.checkIn.nextWeekLabel}>
           ›
         </button>
       </div>
 
-      <h1 id="checkin-title">Ukentlig veiing</h1>
-      <small>Uke som starter {selectedWeekStart} (mandag)</small>
+      <h1 id="checkin-title">{t.checkIn.title}</h1>
+      <small>{t.checkIn.weekStarting(selectedWeekStart)}</small>
       <div className="grid section-margin-top">
         <div>
-          <label htmlFor="weight">Vekt (kg)</label>
+          <label htmlFor="weight">{t.checkIn.weightLabel}</label>
           <input
             id="weight"
             type="text"
-            placeholder="f.eks. 75,5"
+            placeholder={t.checkIn.weightPlaceholder}
             value={weightFocused ? weightInput : formatLocalNumber(state.weightKg)}
             onFocus={(event) => {
               setWeightFocused(true);
@@ -65,7 +67,7 @@ export function WeeklyCheckInForm() {
         </div>
 
         <div>
-          <label htmlFor="checkin-notes">Notater</label>
+          <label htmlFor="checkin-notes">{t.common.notes}</label>
           <textarea
             id="checkin-notes"
             value={state.notes}
@@ -75,7 +77,7 @@ export function WeeklyCheckInForm() {
         </div>
 
         <div>
-          <label htmlFor="adjustment">En justering for neste uke</label>
+          <label htmlFor="adjustment">{t.checkIn.adjustmentLabel}</label>
           <input
             id="adjustment"
             type="text"
@@ -86,7 +88,7 @@ export function WeeklyCheckInForm() {
         </div>
 
         <FloatingSaveNotice message={message} />
-        {saving ? <small className="muted">Lagrer...</small> : null}
+        {saving ? <small className="muted">{t.common.saving}</small> : null}
       </div>
     </section>
   );

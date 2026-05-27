@@ -5,6 +5,8 @@ import { formatLocalNumber } from "@/domain/localeNumber";
 import { formatWorkoutType } from "@/domain/workouts";
 import type { WeeklyTrendPoint, WorkoutLog } from "@/domain/types";
 import type { DashboardTrendHighlights, DashboardWeekSummary } from "@/features/dashboard/trends";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import type { TranslationDict } from "@/i18n/types";
 
 interface MotivationalQuote {
   text: string;
@@ -28,9 +30,19 @@ interface DashboardViewProps {
   motivationalQuote: MotivationalQuote;
 }
 
-function Sparkline({ values, formatLabel }: { values: number[]; formatLabel?: (value: number) => string }) {
+function Sparkline({
+  values,
+  formatLabel,
+  emptyLabel,
+  ariaLabel
+}: {
+  values: number[];
+  formatLabel?: (value: number) => string;
+  emptyLabel: string;
+  ariaLabel: string;
+}) {
   if (values.length === 0) {
-    return <small className="muted">Ingen data enda.</small>;
+    return <small className="muted">{emptyLabel}</small>;
   }
 
   const min = Math.min(...values);
@@ -50,7 +62,7 @@ function Sparkline({ values, formatLabel }: { values: number[]; formatLabel?: (v
   const points = pointCoords.map(({ x, y }) => `${x},${y}`).join(" ");
 
   return (
-    <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Trendgraf">
+    <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={ariaLabel}>
       <polyline fill="none" stroke="#24595a" strokeWidth="2.5" points={points} />
       {pointCoords.map(({ x, y }, index) => (
         <circle key={index} cx={x} cy={y} r={3} fill="#24595a" />
@@ -72,14 +84,8 @@ function Sparkline({ values, formatLabel }: { values: number[]; formatLabel?: (v
   );
 }
 
-function formatStatus(status: "green" | "yellow" | "red") {
-  if (status === "green") {
-    return "grønn";
-  }
-  if (status === "yellow") {
-    return "gul";
-  }
-  return "rød";
+function formatStatus(status: "green" | "yellow" | "red", t: TranslationDict) {
+  return t.dashboard.statusLabel[status];
 }
 
 function formatSignedValue(value: number, fractionDigits: number) {
@@ -88,36 +94,36 @@ function formatSignedValue(value: number, fractionDigits: number) {
   return `${prefix}${formatLocalNumber(abs, fractionDigits)}`;
 }
 
-function formatTrendValue(kind: keyof DashboardTrendHighlights, value: number | undefined) {
+function formatTrendValue(kind: keyof DashboardTrendHighlights, value: number | undefined, t: TranslationDict) {
   if (typeof value !== "number") {
-    return "Ingen data enda.";
+    return t.dashboard.noDataYet;
   }
 
   if (kind === "weight") {
-    return `${formatLocalNumber(value, 1)} kg`;
+    return t.dashboard.trendValueWeight(formatLocalNumber(value, 1));
   }
   if (kind === "energy") {
-    return `${formatLocalNumber(value, 1)} i snitt`;
+    return t.dashboard.trendValueEnergy(formatLocalNumber(value, 1));
   }
-  return `${value} netter`;
+  return t.dashboard.trendValueSleep(value);
 }
 
-function formatTrendChange(kind: keyof DashboardTrendHighlights, delta: number | undefined) {
+function formatTrendChange(kind: keyof DashboardTrendHighlights, delta: number | undefined, t: TranslationDict) {
   if (typeof delta !== "number") {
-    return "Ingen sammenlignbar uke enda.";
+    return t.dashboard.noComparableWeek;
   }
 
   if (kind === "weight") {
-    return `${formatSignedValue(delta, 1)} kg siden forrige veiing`;
+    return t.dashboard.trendChangeWeight(formatSignedValue(delta, 1));
   }
   if (kind === "energy") {
-    return `${formatSignedValue(delta, 1)} siden forrige sammenlignbare uke`;
+    return t.dashboard.trendChangeEnergy(formatSignedValue(delta, 1));
   }
-  return `${formatSignedValue(delta, 0)} netter siden forrige sammenlignbare uke`;
+  return t.dashboard.trendChangeSleep(formatSignedValue(delta, 0));
 }
 
-function formatWeekStart(isoDate: string) {
-  return new Intl.DateTimeFormat("nb-NO", {
+function formatWeekStart(isoDate: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short"
   }).format(new Date(`${isoDate}T12:00:00.000Z`));
@@ -134,6 +140,7 @@ export function DashboardView({
   trendHighlights,
   motivationalQuote
 }: DashboardViewProps) {
+  const { locale, translations: t } = useTranslation();
   const weightSeries = trendPoints
     .map((item) => item.weightKg)
     .filter((item): item is number => typeof item === "number");
@@ -144,68 +151,60 @@ export function DashboardView({
 
   return (
     <div className="grid">
-      <section className="card appear dashboard-quote-card" aria-label="Dagens motivasjon">
-        <p className="dashboard-quote-eyebrow">Dagens motivasjon</p>
+      <section className="card appear dashboard-quote-card" aria-label={t.dashboard.motivationSection}>
+        <p className="dashboard-quote-eyebrow">{t.dashboard.motivationSection}</p>
         <blockquote className="dashboard-quote">&ldquo;{motivationalQuote.text}&rdquo;</blockquote>
         <p className="dashboard-quote-author">- {motivationalQuote.author}</p>
       </section>
 
       <section className="card appear">
-        <h1>Denne uken</h1>
+        <h1>{t.dashboard.thisWeek}</h1>
         <p>
-          <strong>{adherencePercent}% etterlevelse</strong>{" "}
-          <span className={`pill ${status}`}>{formatStatus(status)}</span>
+          <strong>{t.dashboard.adherenceFormat(adherencePercent)}</strong>{" "}
+          <span className={`pill ${status}`}>{formatStatus(status, t)}</span>
         </p>
         <dl className="dashboard-summary-grid">
           <div className="dashboard-summary-item">
-            <dt>Energi</dt>
-            <dd>{weekSummary.energyDays} av 7 dager</dd>
+            <dt>{t.dashboard.energyLabel}</dt>
+            <dd>{t.dashboard.daysOf7Format(weekSummary.energyDays)}</dd>
             <small className="muted">
               {weekSummary.missingEnergyDays === 0
-                ? "Komplett denne uken."
-                : `${weekSummary.missingEnergyDays} ${weekSummary.missingEnergyDays === 1 ? "dag mangler" : "dager mangler"}.`}
+                ? t.dashboard.completeThisWeek
+                : t.dashboard.daysMissing(weekSummary.missingEnergyDays)}
             </small>
           </div>
           <div className="dashboard-summary-item">
-            <dt>Søvn</dt>
-            <dd>{weekSummary.sleepDays} av 7 dager</dd>
+            <dt>{t.dashboard.sleepLabel}</dt>
+            <dd>{t.dashboard.daysOf7Format(weekSummary.sleepDays)}</dd>
             <small className="muted">
               {weekSummary.missingSleepDays === 0
-                ? "Komplett denne uken."
-                : `${weekSummary.missingSleepDays} ${weekSummary.missingSleepDays === 1 ? "dag mangler" : "dager mangler"}.`}
+                ? t.dashboard.completeThisWeek
+                : t.dashboard.daysMissing(weekSummary.missingSleepDays)}
             </small>
           </div>
           <div className="dashboard-summary-item">
-            <dt>Styrkeøkter</dt>
-            <dd>
-              {weekSummary.strengthWorkouts} av {WEEKLY_STRENGTH_GOAL}
-            </dd>
+            <dt>{t.dashboard.strengthWorkoutsLabel}</dt>
+            <dd>{t.dashboard.ofGoalFormat(weekSummary.strengthWorkouts, WEEKLY_STRENGTH_GOAL)}</dd>
             <small className="muted">
               {weekSummary.remainingStrengthWorkouts === 0
-                ? "Ukens styrkemål er nådd."
-                : `${weekSummary.remainingStrengthWorkouts} ${
-                    weekSummary.remainingStrengthWorkouts === 1 ? "styrkeøkt gjenstår" : "styrkeøkter gjenstår"
-                  }.`}
+                ? t.dashboard.strengthGoalReached
+                : t.dashboard.strengthWorkoutsRemaining(weekSummary.remainingStrengthWorkouts)}
             </small>
           </div>
           <div className="dashboard-summary-item">
-            <dt>Gåturer</dt>
-            <dd>
-              {weekSummary.walks} av {WEEKLY_WALK_GOAL}
-            </dd>
+            <dt>{t.dashboard.walksLabel}</dt>
+            <dd>{t.dashboard.ofGoalFormat(weekSummary.walks, WEEKLY_WALK_GOAL)}</dd>
             <small className="muted">
               {weekSummary.remainingWalks === 0
-                ? "Ukens gåturer er registrert."
-                : `${weekSummary.remainingWalks} ${weekSummary.remainingWalks === 1 ? "gåtur gjenstår" : "gåturer gjenstår"}.`}
+                ? t.dashboard.walksGoalReached
+                : t.dashboard.walksRemaining(weekSummary.remainingWalks)}
             </small>
           </div>
           <div className="dashboard-summary-item">
-            <dt>Ukentlig innsjekk</dt>
-            <dd>{weekSummary.weightLogged ? "Registrert" : "Mangler"}</dd>
+            <dt>{t.dashboard.weeklyCheckInLabel}</dt>
+            <dd>{weekSummary.weightLogged ? t.dashboard.registered : t.dashboard.missing}</dd>
             <small className="muted">
-              {weekSummary.weightLogged
-                ? "Veiing er lagret for denne uken."
-                : "Legg inn vekt og refleksjon for å fullføre uken."}
+              {weekSummary.weightLogged ? t.dashboard.weightLoggedThisWeek : t.dashboard.weightNotLogged}
             </small>
           </div>
         </dl>
@@ -213,35 +212,50 @@ export function DashboardView({
 
       <section className="grid grid-3">
         <article className="card">
-          <h2>Vekttrend</h2>
-          <p className="dashboard-metric-value">{formatTrendValue("weight", trendHighlights.weight.currentValue)}</p>
-          <small className="muted">{formatTrendChange("weight", trendHighlights.weight.delta)}</small>
-          <Sparkline values={weightSeries} formatLabel={(v) => formatLocalNumber(v, 1)} />
+          <h2>{t.dashboard.weightTrend}</h2>
+          <p className="dashboard-metric-value">{formatTrendValue("weight", trendHighlights.weight.currentValue, t)}</p>
+          <small className="muted">{formatTrendChange("weight", trendHighlights.weight.delta, t)}</small>
+          <Sparkline
+            values={weightSeries}
+            formatLabel={(v) => formatLocalNumber(v, 1)}
+            emptyLabel={t.dashboard.noDataYet}
+            ariaLabel={t.dashboard.trendGraphAriaLabel}
+          />
         </article>
         <article className="card">
-          <h2>Energisnitt</h2>
-          <p className="dashboard-metric-value">{formatTrendValue("energy", trendHighlights.energy.currentValue)}</p>
-          <small className="muted">{formatTrendChange("energy", trendHighlights.energy.delta)}</small>
-          <Sparkline values={energySeries} formatLabel={(v) => formatLocalNumber(v, 1)} />
+          <h2>{t.dashboard.energyAverage}</h2>
+          <p className="dashboard-metric-value">{formatTrendValue("energy", trendHighlights.energy.currentValue, t)}</p>
+          <small className="muted">{formatTrendChange("energy", trendHighlights.energy.delta, t)}</small>
+          <Sparkline
+            values={energySeries}
+            formatLabel={(v) => formatLocalNumber(v, 1)}
+            emptyLabel={t.dashboard.noDataYet}
+            ariaLabel={t.dashboard.trendGraphAriaLabel}
+          />
         </article>
         <article className="card">
-          <h2>Netter med godkjent søvn</h2>
-          <p className="dashboard-metric-value">{formatTrendValue("sleep", trendHighlights.sleep.currentValue)}</p>
-          <small className="muted">{formatTrendChange("sleep", trendHighlights.sleep.delta)}</small>
-          <Sparkline values={sleepSeries} formatLabel={(v) => String(v)} />
+          <h2>{t.dashboard.sleepNights}</h2>
+          <p className="dashboard-metric-value">{formatTrendValue("sleep", trendHighlights.sleep.currentValue, t)}</p>
+          <small className="muted">{formatTrendChange("sleep", trendHighlights.sleep.delta, t)}</small>
+          <Sparkline
+            values={sleepSeries}
+            formatLabel={(v) => String(v)}
+            emptyLabel={t.dashboard.noDataYet}
+            ariaLabel={t.dashboard.trendGraphAriaLabel}
+          />
         </article>
       </section>
 
       <section className="grid grid-2">
         <article className="card">
-          <h2>Nylige økter</h2>
+          <h2>{t.dashboard.recentWorkouts}</h2>
           {recentWorkouts.length === 0 ? (
-            <small className="muted">Ingen økter loggført enda.</small>
+            <small className="muted">{t.dashboard.noWorkoutsYet}</small>
           ) : (
             <ul>
               {recentWorkouts.map((item) => (
                 <li key={`${item.dateTime}-${item.type}`}>
-                  {item.date} - {formatWorkoutType(item.type)}
+                  {item.date} - {formatWorkoutType(item.type, locale)}
                   {item.durationMin ? ` (${item.durationMin}m)` : ""}
                 </li>
               ))}
@@ -250,32 +264,35 @@ export function DashboardView({
         </article>
 
         <article className="card">
-          <h2>Siste ukentlige refleksjon</h2>
+          <h2>{t.dashboard.latestReflection}</h2>
           {latestCheckIn ? (
             <div className="grid dashboard-checkin-details">
               <p>
-                <strong>{formatLocalNumber(latestCheckIn.weightKg, 1)} kg</strong> registrert for uken fra{" "}
-                {formatWeekStart(latestCheckIn.weekStartDate)}.
+                {t.dashboard.weightRegisteredForWeek(
+                  formatLocalNumber(latestCheckIn.weightKg, 1),
+                  formatWeekStart(latestCheckIn.weekStartDate, t.intlLocale)
+                )}
               </p>
               <p>
-                <strong>Justering:</strong>{" "}
-                {latestCheckIn.adjustment?.trim() ? latestCheckIn.adjustment : "Ingen justering lagret."}
+                <strong>{t.dashboard.adjustmentLabel}</strong>{" "}
+                {latestCheckIn.adjustment?.trim() ? latestCheckIn.adjustment : t.dashboard.noAdjustmentSaved}
               </p>
               <p>
-                <strong>Notat:</strong> {latestCheckIn.notes?.trim() ? latestCheckIn.notes : "Ingen refleksjon lagret."}
+                <strong>{t.dashboard.notesLabel}</strong>{" "}
+                {latestCheckIn.notes?.trim() ? latestCheckIn.notes : t.dashboard.noReflectionSaved}
               </p>
             </div>
           ) : (
-            <small className="muted">Ingen ukentlig innsjekk registrert enda.</small>
+            <small className="muted">{t.dashboard.noCheckInYet}</small>
           )}
         </article>
       </section>
 
       <section className="grid grid-2">
         <article className="card">
-          <h2>Neste tiltak</h2>
+          <h2>{t.dashboard.nextActions}</h2>
           {nextActions.length === 0 ? (
-            <small className="muted">Bra jobba. Du er i rute denne uken.</small>
+            <small className="muted">{t.dashboard.onTrack}</small>
           ) : (
             <ul className="dashboard-action-list">
               {nextActions.map((action) => (

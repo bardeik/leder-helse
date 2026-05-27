@@ -1,132 +1,51 @@
-# Leader Health Loop
+# Leader Health Loop / Helseloggen
 
-Offline-first app for a 6-week health loop:
-- Weekly weigh-in (1x/week) + weekly review — `/check-in` page
-- Weekly Check-In date navigation: current week plus up to 2 previous weeks
-- Daily energy score (1–5), auto-saved on change
-- Daily sleep check (yes/no + optional hours), auto-saved on change
-- Workouts: Strength A, Strength B, Walk; with per-item delete
-- Date navigation on Log Today: up to 14 days back, stops at today
-- Dashboard: current week adherence (green/yellow/red), 6-week trends, next actions
-- Optional browser notifications (localStorage-persisted toggle)
-- Settings: JSON export/import backup of all data
-- Locale-aware numeric inputs for weight and sleep hours
-- Save confirmation toast fixed to the visible viewport on mobile
+Offline-first app for a 6-week health loop.
 
-## Language
-- UI language: **Norwegian (Bokmål)**
-- App name shown to users: **Helseloggen**
-- Auto-save toast text: **"Endringer lagret"**
+## Current features / Nåværende funksjoner
+- Weekly weigh-in and review / Ukentlig veiing og refleksjon
+- Daily energy and sleep logging with auto-save / Daglig energi- og søvnlogg med autolagring
+- Workouts: Strength A, Strength B, Walk / Økter: Styrke A, Styrke B, Gåtur
+- Dashboard with adherence, trends, next actions, and recent workouts / Oversikt med etterlevelse, trender, neste tiltak og nylige økter
+- Local JSON backup export/import / Lokal JSON-sikkerhetskopi med eksport/import
+- Browser notification reminders stored locally / Nettleservarsler lagret lokalt
+- Bilingual UI with Norwegian and English text / Tospråklig UI med norsk og engelsk tekst
+- First-open language choice and settings switcher / Språkvalg ved første åpning og bytte i innstillinger
 
-## Tech Stack
-- **Next.js 16 (App Router)** + **TypeScript strict**
-- **Dexie 4 (IndexedDB)** for offline-first local storage — all data persists locally without network
-- **Zod** for validation
-- **Vitest 4** for unit tests and **Playwright** for mobile + desktop E2E tests
+## Language / Språk
+- Default UI language: Norwegian Bokmål / Standard språk: norsk bokmål
+- Supported languages: Norwegian Bokmål and English / Støttede språk: norsk bokmål og engelsk
+- Translation parity is enforced in tests so both locales stay in sync / Oversettelsesparitet håndheves i tester
 
-## Project Structure
-- `src/domain/` — framework-agnostic types, Zod schemas, pure calculations
-- `src/data/` — Dexie database (`db.ts`), repositories, backup export/import
-- `src/features/logging/` — Log Today and Weekly Check-In (forms + hooks)
-- `src/features/dashboard/` — adherence snapshot and trend helpers
-- `src/features/settings/` — notification logic
-- `src/components/` — `Nav`, `ReminderEngine`
-- `src/app/` — Next.js App Router pages (`/`, `/log`, `/check-in`, `/settings`)
+## Tech stack / Teknologistack
+- Next.js 16 (App Router)
+- TypeScript strict
+- Dexie 4 for IndexedDB
+- Zod for validation
+- Vitest 4 for unit tests
+- Playwright for mobile and desktop E2E tests
 
-## Exact Commands
-1. Install dependencies:
+## Project structure / Prosjektstruktur
+- `src/domain/` — pure domain logic and schemas / ren domene-logikk og skjemaer
+- `src/data/` — Dexie database, repositories, backup / Dexie-database, repositorier, sikkerhetskopi
+- `src/features/` — feature hooks and UI / feature-hooks og UI
+- `src/components/` — shared components / delte komponenter
+- `src/i18n/` — shared locale data and provider / delt språkdata og provider
+- `src/app/` — Next.js routes and pages / Next.js-ruter og sider
 
+## Commands / Kommandoer
 ```bash
 npm install
-```
-
-2. Run development server:
-
-```bash
 npm run dev
-```
-
-3. Run lint:
-
-```bash
 npm run lint
-```
-
-4. Run unit tests:
-
-```bash
 npm run test
-```
-
-5. Run mobile E2E tests:
-
-```bash
 npm run test:e2e
-```
-
-6. Run production build:
-
-```bash
 npm run build
 ```
 
-## Verification Steps
-1. Open the app at `http://localhost:3000`.
-2. Go to `/log` (Logg i dag):
-	- Change energy or sleep — verify "Endringer lagret" appears briefly (no save button needed).
-	- Use `‹` / `›` navigation to go back to previous days and edit them.
-	- Add a workout, then delete it.
-3. Go to `/check-in` and save a weekly weight.
-	- Use week navigation to move between current week and up to two earlier weeks.
-4. Return to `/` (Oversikt) and verify:
-	- Adherence percent and green/yellow/red status for current week.
-	- Weight, energy, and sleep trend rows for recent weeks.
-	- Recent workouts list and "Next actions" section.
-5. Go to `/settings` (Innstillinger) and verify:
-	- Reminder toggles are persisted across page refresh.
-	- Export downloads a JSON backup file.
-	- Import accepts a valid JSON backup and restores data.
-6. Offline check:
-	- Data is stored locally in browser IndexedDB and persists without network.
-	- To verify offline capability: navigate to a page with data, then set Network to Offline in DevTools, and reload.
-	- All data loads from IndexedDB without needing the server.
+## Verify / Verifiser
+- Save energy or sleep on `/log` and confirm the toast / Lag energi eller søvn på `/log` og bekreft toasten
+- Save a weekly weight on `/check-in` / Lagre ukentlig vekt på `/check-in`
+- Switch language in `/settings` and confirm both locales render / Bytt språk i `/settings` og bekreft at begge språk vises
+- Export/import a backup / Eksporter og importer en sikkerhetskopi
 
-## Fly.io Deployment
-This app fits Fly.io well as a small stateless web service because all user data stays in browser IndexedDB.
-
-1. Install Fly CLI and authenticate:
-
-```bash
-fly auth login
-```
-
-2. Create the Fly app if needed:
-
-```bash
-fly apps create leader-health-loop
-```
-
-3. Review `fly.toml` and change the `app` value if your preferred name differs.
-
-4. Deploy:
-
-```bash
-fly deploy
-```
-
-5. Open the deployed app:
-
-```bash
-fly open
-```
-
-Notes:
-- The app listens on `0.0.0.0:3000` for Fly compatibility.
-- Deployment uses Next.js standalone output for a smaller production image.
-- No Fly volume or external database is required for the current MVP.
-- HTTPS is important for browser notification support.
-
-## Security and Safety Notes
-- Treat AI-generated code as third-party code: review, test, and verify licenses before shipping.
-- Do not add secrets, credentials, tokens, or private company/customer data.
-- App is local-first by default; no server-side data collection is required.

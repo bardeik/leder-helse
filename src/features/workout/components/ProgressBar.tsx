@@ -1,3 +1,5 @@
+import { useTranslation } from "@/i18n/LanguageProvider";
+
 interface ProgressBarProps {
   totalCompletedSteps: number;
   totalSteps: number;
@@ -5,13 +7,15 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ totalCompletedSteps, totalSteps, progressPercent }: ProgressBarProps) {
+  const { translations: t } = useTranslation();
+
   return (
     <section className="card">
-      <h2>Fremdrift</h2>
+      <h2>{t.workout.progressTitle}</h2>
       <p className="workout-progress-text">
-        {totalCompletedSteps} / {totalSteps} øvelser fullført ({progressPercent}%)
+        {t.workout.progressText(totalCompletedSteps, totalSteps, progressPercent)}
       </p>
-      <progress className="workout-progress-native" aria-label="Fremdrift i prosent" value={progressPercent} max={100} />
+      <progress className="workout-progress-native" aria-label={t.workout.progressAriaLabel} value={progressPercent} max={100} />
     </section>
   );
 }

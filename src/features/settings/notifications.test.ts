@@ -140,6 +140,25 @@ describe("notification settings", () => {
     });
   });
 
+  it("sends reminders in English when the app language is set to English", () => {
+    window.localStorage.setItem("leader-health-language", "en");
+    window.localStorage.setItem(
+      "leader-health-reminders",
+      JSON.stringify({
+        energyReminderEnabled: true,
+        strengthMorningEnabled: false,
+        strengthReminderHour: 7
+      })
+    );
+
+    maybeSendScheduledReminders(new Date(2026, 4, 5, 15, 1, 0));
+
+    expect(notificationSpy).toHaveBeenCalledOnce();
+    expect(notificationSpy).toHaveBeenCalledWith("Energy check-in", {
+      body: "How is your energy right now on a scale from 1 to 5?"
+    });
+  });
+
   it("still sends strength reminders at the clamped hour", () => {
     window.localStorage.setItem(
       "leader-health-reminders",

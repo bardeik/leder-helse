@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { exercises } from "@/features/workout/data/exercises";
+import { useEffect, useMemo, useRef } from "react";
+import { getExercises } from "@/features/workout/data/exercises";
 import { WorkoutControls } from "@/features/workout/components/WorkoutControls";
 import { WorkoutHeader } from "@/features/workout/components/WorkoutHeader";
 import { WorkoutSummary } from "@/features/workout/components/WorkoutSummary";
@@ -12,8 +12,35 @@ import { useWorkoutTimer } from "@/features/workout/hooks/useWorkoutTimer";
 import { useWorkoutAudio } from "@/features/workout/hooks/useWorkoutAudio";
 import { useWorkoutWakeLock } from "@/features/workout/hooks/useWorkoutWakeLock";
 import type { WorkoutPhase } from "@/features/workout/utils/workoutConfig";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import { EXERCISES_PER_ROUND, TOTAL_ROUNDS } from "@/features/workout/utils/workoutConfig";
+
+function resolveNextExerciseIndex(phase: WorkoutPhase, currentExercise: number, currentRound: number): number | null {
+  if (phase === "complete") {
+    return null;
+  }
+
+  if (phase === "roundRest") {
+    return 1;
+  }
+
+  if (phase === "rest") {
+    return Math.min(EXERCISES_PER_ROUND, currentExercise + 1);
+  }
+
+  if (currentExercise >= EXERCISES_PER_ROUND && currentRound >= TOTAL_ROUNDS) {
+    return null;
+  }
+
+  if (currentExercise >= EXERCISES_PER_ROUND) {
+    return 1;
+  }
+
+  return Math.min(EXERCISES_PER_ROUND, currentExercise + 1);
+}
 
 export function WorkoutPage() {
+  const { locale, translations: t } = useTranslation();
   const {
     currentRound,
     currentExercise,
@@ -21,8 +48,6 @@ export function WorkoutPage() {
     isRunning,
     isWorkoutComplete,
     phase,
-    currentExerciseData,
-    nextExerciseData,
     totalCompletedSteps,
     totalSteps,
     progressPercent,
@@ -32,7 +57,12 @@ export function WorkoutPage() {
     resetWorkout
   } = useWorkoutTimer();
 
-  const { initAudio, playCountdownTick, playTransitionBeep, muted, toggleMute } = useWorkoutAudio();
+  const workoutExercises = useMemo(() => getExercises(locale), [locale]);
+  const currentExerciseData = workoutExercises[Math.max(0, currentExercise - 1)] ?? workoutExercises[0];
+  const nextExerciseIndex = resolveNextExerciseIndex(phase, currentExercise, currentRound);
+  const nextExerciseData = typeof nextExerciseIndex === "number" ? workoutExercises[nextExerciseIndex - 1] : undefined;
+
+  const { initAudio, playCountdownTick, playTransitionBeep, muted, toggleMute } = useWorkoutAudio(locale);
   const { acquire: acquireWakeLock, release: releaseWakeLock } = useWorkoutWakeLock();
 
   // Track previous phase to detect transitions without triggering on mount
@@ -74,7 +104,7 @@ export function WorkoutPage() {
   }
 
   function handleReset() {
-    const confirmed = window.confirm("Vil du nullstille progresjonen for denne økten?");
+    const confirmed = window.confirm(t.workout.confirmReset);
     if (!confirmed) {
       return;
     }
@@ -96,8 +126,8 @@ export function WorkoutPage() {
   return (
     <section className={`workout-layout workout-layout-phase-${phase}`}>
       <WorkoutHeader
-        title="Intervalløkt"
-        description="3 runder, 9 øvelser per runde, 40 sekunder arbeid og 20 sekunder pause. 120 sekunder pause mellom rundene."
+        title={t.workout.pageTitle}
+        description={t.workout.description}
       />
 
       <div className="workout-grid">
@@ -109,14 +139,14 @@ export function WorkoutPage() {
         />
 
         <section className="card">
-          <h2>Status</h2>
+          <h2>{t.workout.statusTitle}</h2>
           <p>
-            Aktiv øvelse: <strong>{currentExerciseData.name}</strong>
+            {t.workout.activeExercise} <strong>{currentExerciseData.name}</strong>
           </p>
           <p>
-            Neste øvelse: <strong>{nextExerciseData?.name ?? "Ingen - siste intervall"}</strong>
+            {t.workout.nextExercise} <strong>{nextExerciseData?.name ?? t.workout.lastInterval}</strong>
           </p>
-          <small className="muted">{isRunning ? "Økten er i gang." : "Trykk Start for å fortsette."}</small>
+          <small className="muted">{isRunning ? t.workout.sessionRunning : t.workout.pressStartToContinue}</small>
         </section>
       </div>
 
@@ -137,7 +167,7 @@ export function WorkoutPage() {
       />
 
       <ExerciseList
-        exercises={exercises}
+        exercises={workoutExercises}
         currentRound={currentRound}
         currentExercise={currentExercise}
         completedExercises={totalCompletedSteps}

@@ -1,6 +1,6 @@
 # Leader Health Loop (6 weeks) — Repository Custom Instructions
 
-> Purpose: help GitHub Copilot plan and implement a small, secure, offline-first app that tracks a 6-week health loop (weight, energy, sleep) plus workouts (Strength A/B, walks).
+> Purpose: help GitHub Copilot plan and implement a small, secure, offline-first app that tracks a 6-week health loop (weight, energy, sleep) plus workouts (Strength A/B, walks) in Norwegian Bokmål and English.
 
 ## 0) Ground rules (quality + safety)
 - Treat any Copilot-generated code as *third-party code*: review carefully, run tests, and ensure licensing compatibility before merging.
@@ -22,6 +22,7 @@ The MVP is **fully implemented**. Features marked [x] are complete and working.
 - [x] Settings: export/import JSON backup of all IndexedDB data
 - [x] Locale-aware numeric inputs for weight and sleep hours, with raw editing on focus and localized formatting on blur
 - [x] Save confirmation toast anchored to the visible viewport via portal rendering
+- [x] Bilingual UI text in Norwegian Bokmål and English, with translation parity tests for shared keys
 
 Not yet implemented (potential next steps):
 - Push notifications (requires server-side)
@@ -30,7 +31,7 @@ Not yet implemented (potential next steps):
 ## 2) Tech stack (actual, as implemented)
 - Frontend: **Next.js 16.2.6 (App Router)** + **TypeScript 6.0.3** + **React 19.2.6**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
-- UI language: **Norwegian (Bokmål)** for all user-facing labels and messages.
+- UI language: **Norwegian (Bokmål) and English** for all user-facing labels and messages.
 - Local storage: **Dexie 4.4.2 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
   - All user data persists locally without network
@@ -48,6 +49,7 @@ Not yet implemented (potential next steps):
 - Persistence in `/src/data` — Dexie db setup (`db.ts`) + per-entity repositories in `repositories/`.
 - Pages in `/src/app` — Next.js App Router pages.
 - Shared components in `/src/components`.
+- Shared locale data and provider in `/src/i18n`.
 - Feature UI + hooks in `/src/features/<feature>/` with a `hooks/` subfolder.
 - Every new feature must have: types + validation, repository methods, UI components, at least 1 unit test.
 
@@ -63,12 +65,13 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 > For workouts logged on past dates, `dateTime` is set to `${date}T12:00:00.000Z` for stable ordering.
 
 ## 5) Implemented UX patterns (preserve these when extending)
-- **Auto-save**: `/log` page saves on every field change (radio `onChange`, input `onBlur`). `/check-in` auto-saves on blur as well. No manual save button. Transient "Endringer lagret" message appears for 1800ms.
+- **Auto-save**: `/log` page saves on every field change (radio `onChange`, input `onBlur`). `/check-in` auto-saves on blur as well. No manual save button. Transient "Endringer lagret" / "Changes saved" message appears for 1800ms.
 - **Date navigation** on Log Today: `useLogToday` exposes `selectedDate`, `canGoBack`, `canGoForward`, `goBack()`, `goForward()`. `MAX_PAST_DAYS = 13` (14 days including today).
 - **Date navigation** on Weekly Check-In: `useWeeklyCheckIn` exposes bounded Monday-based navigation for the current week and the 2 preceding weeks.
 - **Workout delete**: workouts are removed via per-item delete actions; no separate undo button is present.
 - **Localized numeric editing**: weight and sleep-hours inputs accept both `.` and `,`, keep raw text while focused, and format using the user's locale on blur.
 - **Save toast placement**: save confirmation is rendered through a portal to `document.body` so it stays fixed to the visible viewport on mobile while scrolling.
+- **Language prompt**: first-open users choose Norwegian or English; later changes happen in settings.
 - **Safe-area padding**: `main` uses `padding-bottom: env(safe-area-inset-bottom, 0px)` for iPhone home-bar clearance. Body uses `min-height: 100svh`.
 
 ## 6) Engineering standards

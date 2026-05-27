@@ -14,8 +14,10 @@ import {
   saveReminderSettings,
   type ReminderSettings
 } from "@/features/settings/notifications";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 export default function SettingsPage() {
+  const { locale, setLocale, translations: t } = useTranslation();
   const [settings, setSettings] = useState<ReminderSettings>(() => getReminderSettings());
   const [message, setMessage] = useState("");
   const [jsonPreview, setJsonPreview] = useState("");
@@ -30,7 +32,7 @@ export default function SettingsPage() {
       const nextSummary = await getStorageSummary();
       setSummary(nextSummary);
     } catch {
-      setMessage("Kunne ikke lese oppsummering av lokal lagring.");
+      setMessage(t.settings.storageSummaryFailed);
     }
   }
 
@@ -41,7 +43,9 @@ export default function SettingsPage() {
 
   function getErrorMessage(error: unknown, fallback: string) {
     if (error instanceof Error && error.message) {
-      return error.message;
+      if (error.message === t.settings.backupTooLarge || error.message === t.settings.backupInvalidJson) {
+        return error.message;
+      }
     }
 
     return fallback;
@@ -49,7 +53,7 @@ export default function SettingsPage() {
 
   async function enableNotifications() {
     const permission = await requestNotificationPermission();
-    setMessage(`Varslingstillatelse: ${permission}`);
+    setMessage(t.settings.notificationPermission(permission));
   }
 
   async function handleExport() {
@@ -62,16 +66,16 @@ export default function SettingsPage() {
       const objectUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = objectUrl;
-      link.download = `helseloggen-sikkerhetskopi-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `${t.settings.backupFilenamePrefix}-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(objectUrl);
 
-      setMessage("Sikkerhetskopi eksportert og nedlasting startet.");
+      setMessage(t.settings.exportSuccess);
       await refreshSummary();
     } catch {
-      setMessage("Eksport av sikkerhetskopi mislyktes. Kontroller at lokale data er gyldige.");
+      setMessage(t.settings.exportFailed);
     } finally {
       setBusy(false);
     }
@@ -84,22 +88,28 @@ export default function SettingsPage() {
   async function handleImport() {
     if (
       importMode === "overwrite" &&
-      !window.confirm("Dette vil overskrive alle lokale data med innholdet i sikkerhetskopien. Vil du fortsette?")
+      !window.confirm(t.settings.confirmOverwrite)
     ) {
       return;
     }
 
     setBusy(true);
     try {
-      await importBackup(jsonPreview, undefined, { mode: importMode });
+      await importBackup(jsonPreview, undefined, {
+        mode: importMode,
+        messages: {
+          tooLarge: t.settings.backupTooLarge,
+          invalidJson: t.settings.backupInvalidJson
+        }
+      });
       setMessage(
         importMode === "overwrite"
-          ? "Sikkerhetskopi importert og eksisterende data overskrevet."
-          : "Sikkerhetskopi importert og slått sammen med eksisterende data."
+          ? t.settings.importOverwriteSuccess
+          : t.settings.importMergeSuccess
       );
       await refreshSummary();
     } catch (error) {
-      setMessage(getErrorMessage(error, "Import av sikkerhetskopi mislyktes."));
+      setMessage(getErrorMessage(error, t.settings.importFailed));
     } finally {
       setBusy(false);
     }
@@ -107,18 +117,30 @@ export default function SettingsPage() {
 
   return (
     <section className="card appear" aria-labelledby="settings-title">
-      <h1 id="settings-title">Innstillinger</h1>
+      <h1 id="settings-title">{t.settings.title}</h1>
 
       <div className="grid section-margin-top">
         <fieldset className="settings-panel">
-          <legend>Påminnelser (valgfritt)</legend>
+          <legend>{t.settings.languageTitle}</legend>
+          <div className="settings-actions">
+            <button className={locale === "no" ? "primary" : "secondary"} type="button" onClick={() => setLocale("no")}>
+              {t.languagePrompt.norskButton}
+            </button>
+            <button className={locale === "en" ? "primary" : "secondary"} type="button" onClick={() => setLocale("en")}>
+              {t.languagePrompt.englishButton}
+            </button>
+          </div>
+        </fieldset>
+
+        <fieldset className="settings-panel">
+          <legend>{t.settings.remindersTitle}</legend>
           <label>
             <input
               type="checkbox"
               checked={settings.energyReminderEnabled}
               onChange={(event) => updateSettings({ ...settings, energyReminderEnabled: event.target.checked })}
             />{" "}
-            Daglig energipåminnelse kl. 15:00
+            {t.settings.energyReminderLabel}
           </label>
           <label>
             <input
@@ -126,9 +148,9 @@ export default function SettingsPage() {
               checked={settings.strengthMorningEnabled}
               onChange={(event) => updateSettings({ ...settings, strengthMorningEnabled: event.target.checked })}
             />{" "}
-            Morgenpåminnelse for styrkeøkt
+            {t.settings.strengthReminderLabel}
           </label>
-          <label htmlFor="strength-hour">Klokkeslett for styrkepåminnelse (0-23)</label>
+          <label htmlFor="strength-hour">{t.settings.strengthHourLabel}</label>
           <input
             id="strength-hour"
             type="number"
@@ -138,30 +160,29 @@ export default function SettingsPage() {
             onChange={(event) => updateSettings({ ...settings, strengthReminderHour: Number(event.target.value) })}
           />
           <button className="secondary" type="button" disabled={!canUseNotifications} onClick={enableNotifications}>
-            Aktiver nettleservarsler
+            {t.settings.enableNotificationsButton}
           </button>
         </fieldset>
 
         <fieldset className="settings-panel">
-          <legend>Sikkerhetskopi</legend>
+          <legend>{t.settings.backupTitle}</legend>
           <p>
             <small className="muted">
-              Lagret nå: daglige logger {summary?.dailyLogs ?? "-"}, ukentlige innsjekker{" "}
-              {summary?.weeklyCheckIns ?? "-"}, økter {summary?.workoutLogs ?? "-"}
+              {t.settings.storageSummary(summary?.dailyLogs ?? "-", summary?.weeklyCheckIns ?? "-", summary?.workoutLogs ?? "-")}
             </small>
           </p>
           <div className="settings-actions">
             <button className="secondary" type="button" onClick={() => void refreshSummary()} disabled={busy}>
-              Oppdater antall lagrede
+              {t.settings.refreshStorageButton}
             </button>
             <button className="secondary" type="button" onClick={handleExport} disabled={busy}>
-              {busy ? "Jobber..." : "Eksporter sikkerhetskopi (JSON)"}
+              {busy ? t.common.busy : t.settings.exportButton}
             </button>
           </div>
-          <label htmlFor="backup-json">Importer sikkerhetskopi-JSON</label>
+          <label htmlFor="backup-json">{t.settings.importLabel}</label>
           <textarea id="backup-json" value={jsonPreview} onChange={handleJsonChange} />
           <fieldset className="settings-panel settings-import-mode">
-            <legend>Importmodus</legend>
+            <legend>{t.settings.importModeTitle}</legend>
             <label>
               <input
                 type="radio"
@@ -170,7 +191,7 @@ export default function SettingsPage() {
                 checked={importMode === "overwrite"}
                 onChange={() => setImportMode("overwrite")}
               />{" "}
-              Overskriv eksisterende data med sikkerhetskopien
+              {t.settings.importModeOverwrite}
             </label>
             <label>
               <input
@@ -180,11 +201,10 @@ export default function SettingsPage() {
                 checked={importMode === "merge"}
                 onChange={() => setImportMode("merge")}
               />{" "}
-              Slå sammen med eksisterende data
+              {t.settings.importModeMerge}
             </label>
             <small className="muted">
-              Overskriv sletter dagens lokale data før import. Slå sammen beholder eksisterende data og oppdaterer
-              poster med samme nøkkel.
+              {t.settings.importModeHint}
             </small>
           </fieldset>
           <button
@@ -193,7 +213,11 @@ export default function SettingsPage() {
             onClick={handleImport}
             disabled={busy || jsonPreview.trim().length === 0}
           >
-            {busy ? "Jobber..." : importMode === "overwrite" ? "Importer og overskriv" : "Importer og slå sammen"}
+            {busy
+              ? t.common.busy
+              : importMode === "overwrite"
+                ? t.settings.importOverwriteButton
+                : t.settings.importMergeButton}
           </button>
         </fieldset>
 

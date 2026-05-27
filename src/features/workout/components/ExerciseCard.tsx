@@ -1,3 +1,4 @@
+import { useTranslation } from "@/i18n/LanguageProvider";
 import type { WorkoutExercise } from "@/features/workout/data/exercises";
 
 interface ExerciseCardProps {
@@ -6,6 +7,8 @@ interface ExerciseCardProps {
 }
 
 export function ExerciseCard({ exercise, status }: ExerciseCardProps) {
+  const { translations: t } = useTranslation();
+
   return (
     <li className={`workout-exercise-card ${status}`}>
       <p className="workout-exercise-title">
@@ -17,9 +20,9 @@ export function ExerciseCard({ exercise, status }: ExerciseCardProps) {
         href={exercise.videoUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Se video for ${exercise.name}`}
+        aria-label={t.workout.watchVideoAria(exercise.name)}
       >
-        Se video ↗
+        {t.workout.watchVideo}
       </a>
     </li>
   );

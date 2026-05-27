@@ -18,4 +18,9 @@ describe("workout helpers", () => {
     expect(formatWorkoutType("strength")).toBe("Styrkeøkt");
     expect(formatWorkoutType("walk")).toBe("Gåtur");
   });
+
+  it("formats workout labels in English", () => {
+    expect(formatWorkoutType("strength", "en")).toBe("Strength workout");
+    expect(formatWorkoutType("walk", "en")).toBe("Walk");
+  });
 });

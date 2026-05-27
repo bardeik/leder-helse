@@ -1,9 +1,13 @@
+import { useTranslation } from "@/i18n/LanguageProvider";
+
 interface WorkoutHeaderProps {
   title: string;
   description: string;
 }
 
 export function WorkoutHeader({ title, description }: WorkoutHeaderProps) {
+  const { translations: t } = useTranslation();
+
   return (
     <header className="workout-header card">
       <h1>{title}</h1>
@@ -14,15 +18,15 @@ export function WorkoutHeader({ title, description }: WorkoutHeaderProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Les artikkelen: Fysiologens favorittøkt (fvn.no) ↗
+          {t.workout.articleLinkText}
         </a>
       </p>
-      <h2>Oppvarming</h2>
+      <h2>{t.workout.warmupTitle}</h2>
       <p>
-        8-10 minutter før hoveddelen. Eksempler: rask gange, lette knebøy, gående utfall og jumping jacks.
+        {t.workout.warmupDescription}
       </p>
       <small className="muted">
-        Utfør hver repetisjon med god holdning, aktiv kjernemuskulatur og kontrollert bevegelse.
+        {t.workout.formReminder}
       </small>
     </header>
   );

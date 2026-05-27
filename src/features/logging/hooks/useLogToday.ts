@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { dailyLogsRepo } from "@/data/repositories/dailyLogsRepo";
 import { workoutLogsRepo } from "@/data/repositories/workoutLogsRepo";
 import type { WorkoutLog, WorkoutType } from "@/domain/types";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 export interface LogTodayState {
   date: string;
@@ -26,6 +27,7 @@ function addDaysToIso(iso: string, days: number): string {
 }
 
 export function useLogToday() {
+  const { translations: t } = useTranslation();
   const today = todayIsoDate();
   const minDate = addDaysToIso(today, -MAX_PAST_DAYS);
 
@@ -119,10 +121,10 @@ export function useLogToday() {
         sleepHours: nextState.sleepHours,
         notes: nextState.notes?.trim() || undefined
       });
-      setTransientMessage("Endringer lagret");
+      setTransientMessage(t.common.saveConfirm);
       return true;
     } catch {
-      setMessage("Kontroller feltene dine.");
+      setMessage(t.log.saveFailed);
       return false;
     } finally {
       setSaving(false);
@@ -149,13 +151,13 @@ export function useLogToday() {
     };
 
     setTodayWorkouts((prev) => [added, ...prev]);
-    setTransientMessage("Endringer lagret");
+    setTransientMessage(t.common.saveConfirm);
   }
 
   async function removeWorkout(id: number) {
     await workoutLogsRepo.delete(id);
     setTodayWorkouts((prev) => prev.filter((item) => item.id !== id));
-    setTransientMessage("Aktivitet slettet");
+    setTransientMessage(t.log.activityDeleted);
   }
 
   return {

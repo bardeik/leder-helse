@@ -11,7 +11,7 @@ Execution mode:
 
 - Implement one task at a time.
 - Open a separate branch/PR per task.
-- Do not change product scope or language (Norwegian Bokmal UI text).
+- Do not change product scope; keep both Norwegian Bokmål and English UI text in sync.
 - Preserve local-first architecture (Dexie/IndexedDB, no forced cloud sync).
 - Follow existing repository instructions in `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md`.
 
@@ -21,6 +21,7 @@ Definition of done for every task:
 2. `npm run test` passes.
 3. If UI/viewport behavior is touched, run `npm run test:e2e`.
 4. Update docs when behavior, policy, or stack details change.
+5. Add or update translation parity tests whenever new user-facing strings are introduced.
 
 ## Task 1: Add CI quality gate workflow (high)
 
