@@ -34,15 +34,12 @@ const COUNTDOWN_WORDS: Record<Locale, Partial<Record<number, string>>> = {
 
 function getPreferredVoice(voices: SpeechSynthesisVoice[], locale: Locale): SpeechSynthesisVoice | undefined {
   const preferredLangPrefix = locale === "en" ? "en" : "nb";
-  const fallbackLangPrefix = locale === "en" ? "en" : "no";
+  const fallbackLangPrefix = locale === "en" ? "english" : "norsk";
 
   return (
     voices.find((voice) => voice.lang.toLowerCase().startsWith(`${preferredLangPrefix}-`)) ??
-    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${preferredLangPrefix}`)) ??
-    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${fallbackLangPrefix}-`)) ??
-    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${fallbackLangPrefix}`)) ??
-    voices.find((voice) => voice.name.toLowerCase().includes(locale === "en" ? "english" : "norsk")) ??
-    voices[0]
+    voices.find((voice) => voice.lang.toLowerCase().startsWith(preferredLangPrefix)) ??
+    voices.find((voice) => voice.name.toLowerCase().includes(fallbackLangPrefix))
   );
 }
 

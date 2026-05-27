@@ -188,6 +188,25 @@ describe("useWorkoutAudio", () => {
     expect(mockCtx.createOscillator).not.toHaveBeenCalled();
   });
 
+  it("does not reuse an English voice for Norwegian countdowns", () => {
+    vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
+    vi.stubGlobal("speechSynthesis", {
+      getVoices: vi.fn().mockReturnValue([englishVoice]),
+      speak: speechSpeak,
+      cancel: speechCancel
+    });
+
+    renderHook();
+    act(() => result.initAudio());
+    act(() => result.playCountdownTick(3));
+
+    expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
+      text: "tre",
+      lang: "nb-NO"
+    });
+    expect((speechSpeak.mock.calls[0]?.[0] as MockSpeechSynthesisUtterance).voice).toBeNull();
+  });
+
   it("playCountdownTick speaks English countdown words when locale is English", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {
