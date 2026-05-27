@@ -188,6 +188,30 @@ describe("useWorkoutAudio", () => {
     expect(mockCtx.createOscillator).not.toHaveBeenCalled();
   });
 
+  it("speaks start and pause cues instead of one when requested", () => {
+    vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
+    vi.stubGlobal("speechSynthesis", {
+      getVoices: vi.fn().mockReturnValue([norwegianVoice]),
+      speak: speechSpeak,
+      cancel: speechCancel
+    });
+
+    renderHook();
+    act(() => result.initAudio());
+
+    act(() => result.playCountdownTick(1, "start"));
+    act(() => result.playCountdownTick(1, "pause"));
+
+    expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
+      text: "Start",
+      lang: "nb-NO"
+    });
+    expect(speechSpeak.mock.calls[1]?.[0]).toMatchObject({
+      text: "Pause",
+      lang: "nb-NO"
+    });
+  });
+
   it("does not reuse an English voice for Norwegian countdowns", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {

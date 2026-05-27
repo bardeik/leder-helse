@@ -159,6 +159,8 @@ export interface TranslationDict {
     start: string;
     pause: string;
     reset: string;
+    countdownStart: string;
+    countdownPause: string;
     unmuteLabel: string;
     muteLabel: string;
     soundOff: string;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { getTranslation } from "@/i18n/locales";
 import type { Locale } from "@/i18n/types";
 import type { WorkoutPhase } from "../utils/workoutConfig";
 
@@ -8,12 +9,14 @@ export interface UseWorkoutAudioReturn {
   /** Must be called inside a user-gesture handler (e.g. onClick) to satisfy browser AudioContext policy. */
   initAudio: () => void;
   /** Play a countdown tick for the last 3 seconds of any active phase (seconds = 3, 2, or 1). */
-  playCountdownTick: (secondsLeft: number) => void;
+  playCountdownTick: (secondsLeft: number, cue?: CountdownCue) => void;
   /** Play a distinct transition sound when the phase changes. */
   playTransitionBeep: (toPhase: WorkoutPhase) => void;
   muted: boolean;
   toggleMute: () => void;
 }
+
+export type CountdownCue = "start" | "pause";
 
 const COUNTDOWN_WORDS: Record<Locale, Partial<Record<number, string>>> = {
   no: {
@@ -97,12 +100,17 @@ export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
     [getAudioContext]
   );
 
-  const speakCountdownWord = useCallback((secondsLeft: number): boolean => {
+  const speakCountdownWord = useCallback((secondsLeft: number, cue?: CountdownCue): boolean => {
     if (typeof window === "undefined" || mutedRef.current) {
       return false;
     }
 
-    const word = COUNTDOWN_WORDS[locale][secondsLeft];
+    const word =
+      cue === "start"
+        ? getTranslation(locale).workout.countdownStart
+        : cue === "pause"
+          ? getTranslation(locale).workout.countdownPause
+          : COUNTDOWN_WORDS[locale][secondsLeft];
     if (!word) {
       return false;
     }
@@ -144,8 +152,8 @@ export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
    * Speak the countdown when available; otherwise play a louder high-pitched fallback tone.
    */
   const playCountdownTick = useCallback(
-    (secondsLeft: number): void => {
-      if (speakCountdownWord(secondsLeft)) {
+    (secondsLeft: number, cue?: CountdownCue): void => {
+      if (speakCountdownWord(secondsLeft, cue)) {
         return;
       }
 

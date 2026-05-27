@@ -161,6 +161,8 @@ export const no: TranslationDict = {
     start: "Start",
     pause: "Pause",
     reset: "Reset",
+    countdownStart: "Start",
+    countdownPause: "Pause",
     unmuteLabel: "Skru på lyd",
     muteLabel: "Skru av lyd",
     soundOff: "Lyd av",

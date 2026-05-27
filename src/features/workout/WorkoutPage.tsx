@@ -74,9 +74,9 @@ export function WorkoutPage() {
   useEffect(() => {
     if (!isRunning || isWorkoutComplete) return;
     if (phase === "countdown" && timeRemaining > 0) {
-      playCountdownTick(timeRemaining);
+      playCountdownTick(timeRemaining, timeRemaining === 1 ? "start" : undefined);
     } else if (phase !== "countdown" && timeRemaining > 0 && timeRemaining <= 3) {
-      playCountdownTick(timeRemaining);
+      playCountdownTick(timeRemaining, phase === "work" && timeRemaining === 1 ? "pause" : undefined);
     }
   }, [timeRemaining, isRunning, isWorkoutComplete, phase, playCountdownTick]);
 
