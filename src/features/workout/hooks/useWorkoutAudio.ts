@@ -32,7 +32,21 @@ const COUNTDOWN_WORDS: Record<Locale, Partial<Record<number, string>>> = {
   }
 };
 
-export function useWorkoutAudio(locale: Locale = "no"): UseWorkoutAudioReturn {
+function getPreferredVoice(voices: SpeechSynthesisVoice[], locale: Locale): SpeechSynthesisVoice | undefined {
+  const preferredLangPrefix = locale === "en" ? "en" : "nb";
+  const fallbackLangPrefix = locale === "en" ? "en" : "no";
+
+  return (
+    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${preferredLangPrefix}-`)) ??
+    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${preferredLangPrefix}`)) ??
+    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${fallbackLangPrefix}-`)) ??
+    voices.find((voice) => voice.lang.toLowerCase().startsWith(`${fallbackLangPrefix}`)) ??
+    voices.find((voice) => voice.name.toLowerCase().includes(locale === "en" ? "english" : "norsk")) ??
+    voices[0]
+  );
+}
+
+export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const [muted, setMuted] = useState(false);
   // Keep a ref to avoid stale-closure issues inside useCallback
@@ -105,6 +119,12 @@ export function useWorkoutAudio(locale: Locale = "no"): UseWorkoutAudioReturn {
       speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(word);
       utterance.lang = locale === "en" ? "en-US" : "nb-NO";
+      if (typeof speechSynthesis.getVoices === "function") {
+        const voice = getPreferredVoice(speechSynthesis.getVoices(), locale);
+        if (voice) {
+          utterance.voice = voice;
+        }
+      }
       utterance.rate = 1.15;
       utterance.pitch = 1.35;
       utterance.volume = 1;

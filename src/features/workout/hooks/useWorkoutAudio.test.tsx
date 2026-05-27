@@ -29,9 +29,20 @@ class MockSpeechSynthesisUtterance {
   rate = 1;
   pitch = 1;
   volume = 1;
+  voice: SpeechSynthesisVoice | null = null;
 
   constructor(public text: string) {}
 }
+
+const norwegianVoice = {
+  lang: "nb-NO",
+  name: "Norwegian"
+} as SpeechSynthesisVoice;
+
+const englishVoice = {
+  lang: "en-US",
+  name: "English"
+} as SpeechSynthesisVoice;
 
 const mockCtx = {
   state: "running" as AudioContextState,
@@ -51,7 +62,7 @@ function MockAudioContext() {
 type HookValue = ReturnType<typeof useWorkoutAudio>;
 
 function HookHarness({ onChange }: { onChange: (value: HookValue) => void }) {
-  const value = useWorkoutAudio();
+  const value = useWorkoutAudio("no");
   useEffect(() => {
     onChange(value);
   }, [onChange, value]);
@@ -154,6 +165,7 @@ describe("useWorkoutAudio", () => {
   it("playCountdownTick speaks Norwegian countdown words when speech synthesis is available", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {
+      getVoices: vi.fn().mockReturnValue([norwegianVoice, englishVoice]),
       speak: speechSpeak,
       cancel: speechCancel
     });
@@ -172,12 +184,14 @@ describe("useWorkoutAudio", () => {
       pitch: 1.35,
       volume: 1
     });
+    expect((speechSpeak.mock.calls[0]?.[0] as MockSpeechSynthesisUtterance).voice).toBe(norwegianVoice);
     expect(mockCtx.createOscillator).not.toHaveBeenCalled();
   });
 
   it("playCountdownTick speaks English countdown words when locale is English", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {
+      getVoices: vi.fn().mockReturnValue([englishVoice, norwegianVoice]),
       speak: speechSpeak,
       cancel: speechCancel
     });
@@ -201,6 +215,7 @@ describe("useWorkoutAudio", () => {
       text: "three",
       lang: "en-US"
     });
+    expect((speechSpeak.mock.calls[0]?.[0] as MockSpeechSynthesisUtterance).voice).toBe(englishVoice);
   });
 
   it("playCountdownTick is silent when muted", () => {
