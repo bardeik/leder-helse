@@ -74,9 +74,9 @@ export function WorkoutPage() {
   useEffect(() => {
     if (!isRunning || isWorkoutComplete) return;
     if (phase === "countdown" && timeRemaining > 0) {
-      playCountdownTick(timeRemaining, timeRemaining === 1 ? "start" : undefined);
+      playCountdownTick(timeRemaining);
     } else if (phase !== "countdown" && timeRemaining > 0 && timeRemaining <= 3) {
-      playCountdownTick(timeRemaining, phase === "work" && timeRemaining === 1 ? "pause" : undefined);
+      playCountdownTick(timeRemaining);
     }
   }, [timeRemaining, isRunning, isWorkoutComplete, phase, playCountdownTick]);
 
@@ -86,10 +86,15 @@ export function WorkoutPage() {
     previousPhaseRef.current = phase;
     // Skip the initial mount (prevPhase === phase since ref is initialised to phase)
     if (prevPhase === phase) return;
+    if (phase === "work") {
+      playCountdownTick(1, "start");
+    } else if ((phase === "rest" || phase === "roundRest") && prevPhase === "work") {
+      playCountdownTick(1, "pause");
+    }
     if (phase === "work" || phase === "rest" || phase === "roundRest" || phase === "complete") {
       playTransitionBeep(phase);
     }
-  }, [phase, playTransitionBeep]);
+  }, [phase, playTransitionBeep, playCountdownTick]);
 
   function handleStart() {
     // AudioContext must be created/resumed inside a user-gesture handler
