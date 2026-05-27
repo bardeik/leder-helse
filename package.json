@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
-    "test": "vitest run",
+    "test": "node ./node_modules/vitest/vitest.mjs run --coverage --reporter=dot",
     "test:watch": "vitest",
     "test:browser-errors": "node tests/e2e/browser-errors-smoke.mjs",
     "test:e2e": "playwright test",
