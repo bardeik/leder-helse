@@ -1,19 +1,20 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { getLanguage } from "@/features/settings/language";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
 export function LanguagePrompt() {
   const language = useLanguage();
+  const [isDismissed, setIsDismissed] = useState(false);
   const isMounted = useSyncExternalStore(
     () => () => undefined,
     () => true,
     () => false
   );
 
-  if (!language || !isMounted) {
+  if (!language || !isMounted || isDismissed) {
     return null;
   }
 
@@ -23,16 +24,21 @@ export function LanguagePrompt() {
 
   const { translations, setLocale } = language;
 
+  function handleLocaleSelect(locale: "no" | "en") {
+    setLocale(locale);
+    setIsDismissed(true);
+  }
+
   return createPortal(
     <div className="language-prompt-overlay" role="dialog" aria-modal="true" aria-labelledby="language-prompt-title">
       <section className="card language-prompt-card">
         <h1 id="language-prompt-title">{translations.languagePrompt.title}</h1>
         <p>{translations.languagePrompt.body}</p>
         <div className="settings-actions">
-          <button className="primary" type="button" onClick={() => setLocale("no")}>
+          <button className="primary" type="button" onClick={() => handleLocaleSelect("no")}>
             {translations.languagePrompt.norskButton}
           </button>
-          <button className="secondary" type="button" onClick={() => setLocale("en")}>
+          <button className="secondary" type="button" onClick={() => handleLocaleSelect("en")}>
             {translations.languagePrompt.englishButton}
           </button>
         </div>

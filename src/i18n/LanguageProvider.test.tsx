@@ -44,6 +44,26 @@ describe("LanguageProvider", () => {
     expect(screen.queryByRole("heading", { name: "Velg språk" })).toBeNull();
   });
 
+  it("also dismisses the prompt when Norwegian is selected", () => {
+    render(
+      <LanguageProvider>
+        <LanguagePrompt />
+        <LocaleProbe />
+      </LanguageProvider>
+    );
+
+    expect(screen.getByRole("heading", { name: "Velg språk" })).toBeInTheDocument();
+
+    act(() => {
+      screen.getByRole("button", { name: "Norsk" }).click();
+    });
+
+    expect(window.localStorage.getItem("leader-health-language")).toBe("no");
+    expect(document.documentElement.lang).toBe("nb-NO");
+    expect(screen.getByTestId("locale-probe")).toHaveTextContent("no:Oversikt");
+    expect(screen.queryByRole("heading", { name: "Velg språk" })).toBeNull();
+  });
+
   it("uses the stored locale when the app starts", () => {
     window.localStorage.setItem("leader-health-language", "en");
 
