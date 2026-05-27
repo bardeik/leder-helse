@@ -32,6 +32,7 @@ export function saveLanguage(locale: Locale): void {
   }
 
   window.localStorage.setItem(STORAGE_KEY, locale);
+  window.dispatchEvent(new Event("leader-health-language-change"));
 }
 
 /** Clears the persisted language selection. */
@@ -41,4 +42,5 @@ export function clearLanguage(): void {
   }
 
   window.localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event("leader-health-language-change"));
 }

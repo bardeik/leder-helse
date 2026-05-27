@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useState, useSyncExternalStore } from "react";
 import {
   exportBackup,
   getStorageSummary,
@@ -25,7 +25,11 @@ export default function SettingsPage() {
   const [busy, setBusy] = useState(false);
   const [importMode, setImportMode] = useState<BackupImportMode>("overwrite");
 
-  const canUseNotifications = useMemo(() => typeof window !== "undefined" && "Notification" in window, []);
+  const canUseNotifications = useSyncExternalStore(
+    () => () => undefined,
+    () => typeof window !== "undefined" && "Notification" in window,
+    () => false
+  );
 
   async function refreshSummary() {
     try {

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
 import { getLanguage, saveLanguage } from "@/features/settings/language";
 import { getTranslation } from "@/i18n/locales";
 import type { Locale, TranslationDict } from "@/i18n/types";
@@ -15,15 +15,29 @@ const defaultTranslations = getTranslation("no");
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
+function readLocale(): Locale {
+  return getLanguage() ?? "no";
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => getLanguage() ?? "no");
+  const locale = useSyncExternalStore<Locale>(
+    (onStoreChange) => {
+      window.addEventListener("storage", onStoreChange);
+      window.addEventListener("leader-health-language-change", onStoreChange);
+      return () => {
+        window.removeEventListener("storage", onStoreChange);
+        window.removeEventListener("leader-health-language-change", onStoreChange);
+      };
+    },
+    readLocale,
+    () => "no"
+  );
 
   useEffect(() => {
     document.documentElement.lang = getTranslation(locale).intlLocale;
   }, [locale]);
 
   const setLocale = useCallback((nextLocale: Locale) => {
-    setLocaleState(nextLocale);
     saveLanguage(nextLocale);
   }, []);
 
