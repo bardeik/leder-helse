@@ -406,6 +406,13 @@ small.muted {
   gap: 1rem;
 }
 
+.workout-layout-phase-work {
+  padding: 0.9rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #e4ffe8 0%, #c6f7d1 48%, #aff2c1 100%);
+  box-shadow: 0 10px 24px rgb(47 125 78 / 18%);
+}
+
 .workout-header h1,
 .workout-header h2,
 .workout-header p {
@@ -425,6 +432,21 @@ small.muted {
 
 .workout-timer {
   text-align: center;
+}
+
+.workout-layout-phase-work .workout-timer {
+  background: linear-gradient(135deg, #1f7a46 0%, #2f9c58 100%);
+  border-color: #1f7a46;
+  color: #ffffff;
+}
+
+.workout-layout-phase-work .workout-phase,
+.workout-layout-phase-work .workout-meta {
+  color: rgb(255 255 255 / 90%);
+}
+
+.workout-layout-phase-work .workout-time {
+  color: #ffffff;
 }
 
 .workout-phase {

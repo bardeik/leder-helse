@@ -14,6 +14,14 @@ export interface UseWorkoutAudioReturn {
   toggleMute: () => void;
 }
 
+const COUNTDOWN_WORDS: Partial<Record<number, string>> = {
+  1: "en",
+  2: "to",
+  3: "tre",
+  4: "fire",
+  5: "fem"
+};
+
 export function useWorkoutAudio(): UseWorkoutAudioReturn {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const [muted, setMuted] = useState(false);
@@ -39,7 +47,13 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
    * Uses AudioContext time scheduling for sample-accurate playback.
    */
   const playTone = useCallback(
-    (frequency: number, startTime: number, duration: number, gainValue = 0.25): void => {
+    (
+      frequency: number,
+      startTime: number,
+      duration: number,
+      gainValue = 0.25,
+      waveform: OscillatorType = "sine"
+    ): void => {
       if (mutedRef.current) return;
       const ctx = getAudioContext();
       if (!ctx) return;
@@ -48,7 +62,7 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
         const gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.type = "sine";
+        osc.type = waveform;
         osc.frequency.value = frequency;
         gain.gain.setValueAtTime(gainValue, startTime);
         // Exponential ramp to silence avoids a hard click at note end
@@ -62,6 +76,35 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
     [getAudioContext]
   );
 
+  const speakCountdownWord = useCallback((secondsLeft: number): boolean => {
+    if (typeof window === "undefined" || mutedRef.current) {
+      return false;
+    }
+
+    const word = COUNTDOWN_WORDS[secondsLeft];
+    if (!word) {
+      return false;
+    }
+
+    const speechSynthesis = window.speechSynthesis;
+    if (!speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") {
+      return false;
+    }
+
+    try {
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = "nb-NO";
+      utterance.rate = 1.15;
+      utterance.pitch = 1.35;
+      utterance.volume = 1;
+      speechSynthesis.speak(utterance);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
   /** Resume or create AudioContext — must be called inside a click/touch handler. */
   const initAudio = useCallback((): void => {
     const ctx = getAudioContext();
@@ -71,17 +114,20 @@ export function useWorkoutAudio(): UseWorkoutAudioReturn {
   }, [getAudioContext]);
 
   /**
-   * Short ascending tick for the last 3 seconds of a phase.
-   * Pitch increases as the countdown nears zero to create urgency.
+   * Speak the countdown when available; otherwise play a louder high-pitched fallback tone.
    */
   const playCountdownTick = useCallback(
     (secondsLeft: number): void => {
+      if (speakCountdownWord(secondsLeft)) {
+        return;
+      }
+
       const ctx = getAudioContext();
       if (!ctx) return;
-      const frequency = secondsLeft === 1 ? 1200 : secondsLeft === 2 ? 1050 : 880;
-      playTone(frequency, ctx.currentTime, 0.1, 0.3);
+      const frequency = secondsLeft === 1 ? 1700 : secondsLeft === 2 ? 1500 : 1300;
+      playTone(frequency, ctx.currentTime, 0.12, 0.45, "square");
     },
-    [getAudioContext, playTone]
+    [getAudioContext, playTone, speakCountdownWord]
   );
 
   /**

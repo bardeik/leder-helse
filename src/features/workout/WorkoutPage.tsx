@@ -94,10 +94,10 @@ export function WorkoutPage() {
   }, [isWorkoutComplete, releaseWakeLock]);
 
   return (
-    <section className="workout-layout">
+    <section className={`workout-layout workout-layout-phase-${phase}`}>
       <WorkoutHeader
         title="Intervalløkt"
-        description="3 runder, 9 øvelser per runde, 40 sekunder arbeid og 20 sekunder pause. 90 sekunder pause mellom rundene."
+        description="3 runder, 9 øvelser per runde, 40 sekunder arbeid og 20 sekunder pause. 120 sekunder pause mellom rundene."
       />
 
       <div className="workout-grid">
