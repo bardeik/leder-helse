@@ -1,5 +1,5 @@
-import { act, useEffect } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { act, cleanup, render } from "@testing-library/react";
+import { useEffect } from "react";
 import { useWorkoutTimer } from "@/features/workout/hooks/useWorkoutTimer";
 import { ROUND_REST_SECONDS } from "@/features/workout/utils/workoutConfig";
 
@@ -20,22 +20,13 @@ function flushPromises() {
 }
 
 describe("useWorkoutTimer", () => {
-  let container: HTMLDivElement;
-  let root: Root;
-
   beforeEach(() => {
     vi.useFakeTimers();
     window.localStorage.clear();
-    container = document.createElement("div");
-    document.body.appendChild(container);
-    root = createRoot(container);
   });
 
   afterEach(async () => {
-    await act(async () => {
-      root.unmount();
-    });
-    container.remove();
+    cleanup();
     window.localStorage.clear();
     vi.useRealTimers();
   });
@@ -59,7 +50,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -72,7 +63,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -120,7 +111,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -159,7 +150,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -195,7 +186,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -234,7 +225,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -274,7 +265,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 
@@ -311,7 +302,7 @@ describe("useWorkoutTimer", () => {
     let latestValue: HookValue | undefined;
 
     await act(async () => {
-      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      render(<HookHarness onChange={(value) => (latestValue = value)} />);
       await flushPromises();
     });
 

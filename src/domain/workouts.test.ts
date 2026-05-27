@@ -9,6 +9,11 @@ describe("workout helpers", () => {
     expect(normalizeWorkoutType("walk")).toBe("walk");
   });
 
+  it("returns undefined for unknown workout types", () => {
+    expect(normalizeWorkoutType("run")).toBeUndefined();
+    expect(normalizeWorkoutType("")).toBeUndefined();
+  });
+
   it("formats workout labels in Norwegian", () => {
     expect(formatWorkoutType("strength")).toBe("Styrkeøkt");
     expect(formatWorkoutType("walk")).toBe("Gåtur");

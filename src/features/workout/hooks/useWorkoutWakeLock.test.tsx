@@ -114,6 +114,73 @@ describe("useWorkoutWakeLock", () => {
     expect(audioContext.createOscillator).not.toHaveBeenCalled();
   });
 
+  it("releases an existing wake lock before requesting a new one", async () => {
+    const firstRelease = vi.fn().mockResolvedValue(undefined);
+
+    wakeLockRequest
+      .mockResolvedValueOnce({
+        released: false,
+        release: firstRelease,
+        addEventListener: wakeLockAddEventListener
+      })
+      .mockResolvedValueOnce({
+        released: false,
+        release: wakeLockRelease,
+        addEventListener: wakeLockAddEventListener
+      });
+
+    Object.defineProperty(navigator, "wakeLock", {
+      configurable: true,
+      value: { request: wakeLockRequest }
+    });
+
+    await act(async () => {
+      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+    });
+
+    await act(async () => {
+      await latestValue?.acquire();
+      await latestValue?.acquire();
+    });
+
+    expect(wakeLockRequest).toHaveBeenCalledTimes(2);
+    expect(firstRelease).toHaveBeenCalledOnce();
+  });
+
+  it("marks lock inactive when the wake lock release event fires", async () => {
+    let releaseListener: (() => void) | undefined;
+    wakeLockRequest.mockResolvedValue({
+      released: false,
+      release: wakeLockRelease,
+      addEventListener: (_type: "release", listener: () => void) => {
+        releaseListener = listener;
+      }
+    });
+
+    Object.defineProperty(navigator, "wakeLock", {
+      configurable: true,
+      value: { request: wakeLockRequest }
+    });
+
+    await act(async () => {
+      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+    });
+
+    await act(async () => {
+      await latestValue?.acquire();
+    });
+
+    expect(latestValue?.mode).toBe("screen-wake-lock");
+    expect(latestValue?.active).toBe(true);
+
+    act(() => {
+      releaseListener?.();
+    });
+
+    expect(latestValue?.mode).toBe("none");
+    expect(latestValue?.active).toBe(false);
+  });
+
   it("uses iOS fallback when Wake Lock API is unavailable", async () => {
     await act(async () => {
       root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
@@ -131,7 +198,9 @@ describe("useWorkoutWakeLock", () => {
     expect(latestValue?.active).toBe(true);
   });
 
-  it("releases wake lock and stops audio fallback", async () => {
+  it("does not acquire lock while document is hidden", async () => {
+    setVisibilityState("hidden");
+
     await act(async () => {
       root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
     });
@@ -139,6 +208,66 @@ describe("useWorkoutWakeLock", () => {
     await act(async () => {
       await latestValue?.acquire();
     });
+
+    expect(wakeLockRequest).not.toHaveBeenCalled();
+    expect(audioContext.createOscillator).not.toHaveBeenCalled();
+    expect(latestValue?.mode).toBe("none");
+    expect(latestValue?.active).toBe(false);
+  });
+
+  it("keeps mode none when no wake lock API and no audio context are available", async () => {
+    vi.unstubAllGlobals();
+    const windowWithoutWebkit = window as Window & { webkitAudioContext?: unknown };
+    windowWithoutWebkit.webkitAudioContext = undefined;
+
+    await act(async () => {
+      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+    });
+
+    await act(async () => {
+      await latestValue?.acquire();
+    });
+
+    expect(latestValue?.mode).toBe("none");
+    expect(latestValue?.active).toBe(false);
+  });
+
+  it("keeps mode none when wake lock and fallback acquisition both fail", async () => {
+    wakeLockRequest.mockRejectedValue(new Error("not allowed"));
+    Object.defineProperty(navigator, "wakeLock", {
+      configurable: true,
+      value: { request: wakeLockRequest }
+    });
+    audioContext.resume.mockRejectedValueOnce(new Error("audio blocked"));
+
+    await act(async () => {
+      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+    });
+
+    await act(async () => {
+      await latestValue?.acquire();
+    });
+
+    expect(wakeLockRequest).toHaveBeenCalledWith("screen");
+    expect(audioContext.resume).toHaveBeenCalledOnce();
+    expect(latestValue?.mode).toBe("none");
+    expect(latestValue?.active).toBe(false);
+  });
+
+  it("releases wake lock and stops audio fallback", async () => {
+    Reflect.deleteProperty(navigator, "wakeLock");
+
+    await act(async () => {
+      root.render(<HookHarness onChange={(value) => (latestValue = value)} />);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      await latestValue?.acquire();
+    });
+
+    expect(latestValue?.mode).toBe("ios-fallback");
+    expect(latestValue?.active).toBe(true);
 
     act(() => {
       latestValue?.release();
