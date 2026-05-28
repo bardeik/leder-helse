@@ -37,15 +37,17 @@ Offline-first app for a 6-week health loop.
 ```bash
 npm install
 npm run dev
+npm run dev:turbopack
 npm run lint
 npm run test
 npm run test:e2e
 npm run build
 ```
 
+`npm run dev` uses webpack dev mode for stability. `npm run dev:turbopack` is available for Turbopack-specific testing.
+
 ## Verify / Verifiser
 - Save energy or sleep on `/log` and confirm the toast / Lag energi eller søvn på `/log` og bekreft toasten
 - Save a weekly weight on `/check-in` / Lagre ukentlig vekt på `/check-in`
 - Switch language in `/settings` and confirm both locales render / Bytt språk i `/settings` og bekreft at begge språk vises
 - Export/import a backup / Eksporter og importer en sikkerhetskopi
-
