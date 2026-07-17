@@ -24,9 +24,6 @@ jobs:
           node-version: 22.22.2
           cache: "npm"
 
-      - name: Pin npm 11
-        run: npm install -g npm@11.13.0
-
       - name: Show npm version
         run: npm --version
 
