@@ -75,16 +75,19 @@ function createProductionHeaders() {
   const contentSecurityPolicy = [
     "default-src 'self'",
     `script-src 'self' ${inlineHashes.scripts.join(" ")}`,
+    "script-src-attr 'none'",
     `style-src 'self' 'unsafe-hashes' ${inlineHashes.styles.join(" ")}`,
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
     "connect-src 'self'",
+    "frame-src 'none'",
     "manifest-src 'self'",
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'"
+    "frame-ancestors 'none'",
+    "upgrade-insecure-requests"
   ].join("; ");
 
   return {
@@ -105,7 +108,14 @@ function ensureJunction(targetPath, sourcePath) {
   }
 
   fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-  fs.symlinkSync(sourcePath, targetPath, "junction");
+  try {
+    fs.symlinkSync(sourcePath, targetPath, "junction");
+  } catch (error) {
+    if (error && error.code === "EEXIST") {
+      return;
+    }
+    throw error;
+  }
 }
 
 if (!fs.existsSync(standaloneEntry)) {
