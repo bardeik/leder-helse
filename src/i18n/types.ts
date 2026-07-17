@@ -161,6 +161,7 @@ export interface TranslationDict {
     reset: string;
     countdownStart: string;
     countdownPause: string;
+    nextExerciseAnnouncement: (name: string) => string;
     unmuteLabel: string;
     muteLabel: string;
     soundOff: string;

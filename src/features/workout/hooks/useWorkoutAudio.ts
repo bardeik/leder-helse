@@ -12,6 +12,8 @@ export interface UseWorkoutAudioReturn {
   playCountdownTick: (secondsLeft: number, cue?: CountdownCue) => void;
   /** Play a distinct transition sound when the phase changes. */
   playTransitionBeep: (toPhase: WorkoutPhase) => void;
+  /** Speak the next exercise name at the start of a pause interval. */
+  announceNextExercise: (exerciseName: string) => void;
   muted: boolean;
   toggleMute: () => void;
 }
@@ -100,18 +102,12 @@ export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
     [getAudioContext]
   );
 
-  const speakCountdownWord = useCallback((secondsLeft: number, cue?: CountdownCue): boolean => {
+  const speakPhrase = useCallback((text: string): boolean => {
     if (typeof window === "undefined" || mutedRef.current) {
       return false;
     }
 
-    const word =
-      cue === "start"
-        ? getTranslation(locale).workout.countdownStart
-        : cue === "pause"
-          ? getTranslation(locale).workout.countdownPause
-          : COUNTDOWN_WORDS[locale][secondsLeft];
-    if (!word) {
+    if (!text) {
       return false;
     }
 
@@ -122,7 +118,7 @@ export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
 
     try {
       speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(word);
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = locale === "en" ? "en-US" : "nb-NO";
       if (typeof speechSynthesis.getVoices === "function") {
         const voice = getPreferredVoice(speechSynthesis.getVoices(), locale);
@@ -139,6 +135,20 @@ export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
       return false;
     }
   }, [locale]);
+
+  const speakCountdownWord = useCallback((secondsLeft: number, cue?: CountdownCue): boolean => {
+    const word =
+      cue === "start"
+        ? getTranslation(locale).workout.countdownStart
+        : cue === "pause"
+          ? getTranslation(locale).workout.countdownPause
+          : COUNTDOWN_WORDS[locale][secondsLeft];
+    if (!word) {
+      return false;
+    }
+
+    return speakPhrase(word);
+  }, [locale, speakPhrase]);
 
   /** Resume or create AudioContext — must be called inside a click/touch handler. */
   const initAudio = useCallback((): void => {
@@ -191,10 +201,15 @@ export function useWorkoutAudio(locale: Locale): UseWorkoutAudioReturn {
     [getAudioContext, playTone]
   );
 
+  const announceNextExercise = useCallback((exerciseName: string): void => {
+    const announcement = getTranslation(locale).workout.nextExerciseAnnouncement(exerciseName);
+    void speakPhrase(announcement);
+  }, [locale, speakPhrase]);
+
   const toggleMute = useCallback((): void => {
     mutedRef.current = !mutedRef.current;
     setMuted(mutedRef.current);
   }, []);
 
-  return { initAudio, playCountdownTick, playTransitionBeep, muted, toggleMute };
+  return { initAudio, playCountdownTick, playTransitionBeep, announceNextExercise, muted, toggleMute };
 }

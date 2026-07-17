@@ -50,6 +50,7 @@ describe("WorkoutPage", () => {
       initAudio: vi.fn(),
       playCountdownTick: vi.fn(),
       playTransitionBeep: vi.fn(),
+      announceNextExercise: vi.fn(),
       muted: false,
       toggleMute: vi.fn()
     });
@@ -80,10 +81,12 @@ describe("WorkoutPage", () => {
   it("announces start when the phase enters work and pause when it enters rest", async () => {
     const playCountdownTick = vi.fn();
     const playTransitionBeep = vi.fn();
+    const announceNextExercise = vi.fn();
     vi.mocked(useWorkoutAudio).mockReturnValue({
       initAudio: vi.fn(),
       playCountdownTick,
       playTransitionBeep,
+      announceNextExercise,
       muted: false,
       toggleMute: vi.fn()
     });
@@ -158,5 +161,6 @@ describe("WorkoutPage", () => {
 
     expect(playCountdownTick).toHaveBeenCalledWith(1, "start");
     expect(playCountdownTick).toHaveBeenCalledWith(1, "pause");
+    expect(announceNextExercise).toHaveBeenCalledWith(exercises[1]?.name);
   });
 });

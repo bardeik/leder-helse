@@ -230,6 +230,53 @@ describe("useWorkoutAudio", () => {
     });
   });
 
+  it("announces the next exercise name in Norwegian", () => {
+    vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
+    vi.stubGlobal("speechSynthesis", {
+      getVoices: vi.fn().mockReturnValue([norwegianVoice]),
+      speak: speechSpeak,
+      cancel: speechCancel
+    });
+
+    renderHook();
+    act(() => result.initAudio());
+    act(() => result.announceNextExercise("Knebøy"));
+
+    expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
+      text: "Neste øvelse: Knebøy",
+      lang: "nb-NO"
+    });
+  });
+
+  it("announces the next exercise name in English", () => {
+    vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
+    vi.stubGlobal("speechSynthesis", {
+      getVoices: vi.fn().mockReturnValue([englishVoice]),
+      speak: speechSpeak,
+      cancel: speechCancel
+    });
+
+    function EnglishHookHarness({ onChange }: { onChange: (value: HookValue) => void }) {
+      const value = useWorkoutAudio("en");
+      useEffect(() => {
+        onChange(value);
+      }, [onChange, value]);
+      return null;
+    }
+
+    act(() => {
+      root.render(<EnglishHookHarness onChange={(v) => (result = v)} />);
+    });
+
+    act(() => result.initAudio());
+    act(() => result.announceNextExercise("Lunges"));
+
+    expect(speechSpeak.mock.calls[0]?.[0]).toMatchObject({
+      text: "Next exercise: Lunges",
+      lang: "en-US"
+    });
+  });
+
   it("does not reuse an English voice for Norwegian countdowns", () => {
     vi.stubGlobal("SpeechSynthesisUtterance", MockSpeechSynthesisUtterance);
     vi.stubGlobal("speechSynthesis", {

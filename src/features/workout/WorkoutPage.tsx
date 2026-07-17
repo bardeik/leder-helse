@@ -62,7 +62,7 @@ export function WorkoutPage() {
   const nextExerciseIndex = resolveNextExerciseIndex(phase, currentExercise, currentRound);
   const nextExerciseData = typeof nextExerciseIndex === "number" ? workoutExercises[nextExerciseIndex - 1] : undefined;
 
-  const { initAudio, playCountdownTick, playTransitionBeep, muted, toggleMute } = useWorkoutAudio(locale);
+  const { initAudio, playCountdownTick, playTransitionBeep, announceNextExercise, muted, toggleMute } = useWorkoutAudio(locale);
   const { acquire: acquireWakeLock, release: releaseWakeLock } = useWorkoutWakeLock();
 
   // Track previous phase to detect transitions without triggering on mount
@@ -90,11 +90,14 @@ export function WorkoutPage() {
       playCountdownTick(1, "start");
     } else if ((phase === "rest" || phase === "roundRest") && prevPhase === "work") {
       playCountdownTick(1, "pause");
+      if (nextExerciseData?.name) {
+        announceNextExercise(nextExerciseData.name);
+      }
     }
     if (phase === "work" || phase === "rest" || phase === "roundRest" || phase === "complete") {
       playTransitionBeep(phase);
     }
-  }, [phase, playTransitionBeep, playCountdownTick]);
+  }, [phase, playTransitionBeep, playCountdownTick, announceNextExercise, nextExerciseData]);
 
   function handleStart() {
     // AudioContext must be created/resumed inside a user-gesture handler

@@ -163,6 +163,7 @@ export const no: TranslationDict = {
     reset: "Reset",
     countdownStart: "Start",
     countdownPause: "Pause",
+    nextExerciseAnnouncement: (name) => `Neste øvelse: ${name}`,
     unmuteLabel: "Skru på lyd",
     muteLabel: "Skru av lyd",
     soundOff: "Lyd av",

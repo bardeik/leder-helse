@@ -162,6 +162,7 @@ export const en: TranslationDict = {
     reset: "Reset",
     countdownStart: "Start",
     countdownPause: "Pause",
+    nextExerciseAnnouncement: (name) => `Next exercise: ${name}`,
     unmuteLabel: "Turn sound on",
     muteLabel: "Turn sound off",
     soundOff: "Sound off",
