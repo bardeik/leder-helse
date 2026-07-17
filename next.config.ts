@@ -20,10 +20,12 @@ const contentSecurityPolicy = (
     : [
         "default-src 'self'",
         "script-src 'self' 'unsafe-inline'",
+      "script-src-attr 'none'",
         "style-src 'self'",
         "img-src 'self' data: blob:",
         "font-src 'self' data:",
         "connect-src 'self'",
+      "frame-src 'none'",
         "manifest-src 'self'",
         "worker-src 'self' blob:",
         "object-src 'none'",

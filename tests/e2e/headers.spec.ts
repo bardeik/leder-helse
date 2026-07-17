@@ -107,6 +107,7 @@ const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
     expect(
       scriptDirective?.includes("'unsafe-inline'") || scriptDirective?.includes("'sha256-")
     ).toBeTruthy();
+    expect(csp).toContain("script-src-attr 'none'");
     expect(csp).toContain("style-src 'self'");
     expect(csp).not.toContain("'unsafe-eval'");
     expect(headers["strict-transport-security"]).toBe("max-age=31536000; includeSubDomains");

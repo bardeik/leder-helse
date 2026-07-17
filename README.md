@@ -51,3 +51,7 @@ npm run build
 - Save a weekly weight on `/check-in` / Lagre ukentlig vekt på `/check-in`
 - Switch language in `/settings` and confirm both locales render / Bytt språk i `/settings` og bekreft at begge språk vises
 - Export/import a backup / Eksporter og importer en sikkerhetskopi
+
+## E2E troubleshooting / Feilsøking for E2E
+- Some local environments may intermittently fail Playwright `webServer` readiness checks with `ECONNRESET` even when the app starts normally. Use CI as source of truth for security header validation via `.github/workflows/e2e-security.yml`.
+- Enkelte lokale miljøer kan periodevis feile Playwright `webServer`-tilgjengelighet med `ECONNRESET` selv når appen starter normalt. Bruk CI som fasit for validering av sikkerhetsheadere via `.github/workflows/e2e-security.yml`.
