@@ -10,10 +10,12 @@
 
 ## Secure development / Sikker utvikling
 - Run `npm run lint`, `npm run test`, and `npm run build` before shipping.
+- CI enforces `npm ci`, production `npm audit --omit=dev --audit-level=high`, lint, test, and build on push/PR.
 - Keep dependencies patched and current.
 - Use Zod schemas and runtime validators at persistence/import boundaries.
 - New locale text must exist in both Norwegian and English, and translation parity tests must pass.
 - Kjør `npm run lint`, `npm run test` og `npm run build` før publisering.
+- CI håndhever `npm ci`, produksjons-`npm audit --omit=dev --audit-level=high`, lint, test og build på push/PR.
 - Hold avhengigheter oppdatert og patchet.
 - Bruk Zod-skjemaer og runtime-validering ved lagring/import.
 - Ny tekst må finnes både på norsk og engelsk, og paritetstester for oversettelser må passere.
@@ -27,4 +29,3 @@
 - Importerte sikkerhetskopier feiler raskt med tydelige valideringsfeil ved feil format.
 - Lagrede tidsstempler må følge den kanoniske UTC-formen `YYYY-MM-DDTHH:mm:ss.sssZ`.
 - Produksjon bruker HSTS, COOP, CORP og en strengere CSP enn utvikling.
-

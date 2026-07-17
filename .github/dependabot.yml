@@ -4,7 +4,40 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 8
+    labels:
+      - "dependencies"
+    groups:
+      app-runtime:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "dexie"
+          - "zod"
+          - "eslint-config-next"
+      test-and-types:
+        patterns:
+          - "@playwright/test"
+          - "vitest"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "@types/*"
+          - "jsdom"
+      lint-and-format:
+        patterns:
+          - "eslint"
+          - "prettier"
+    ignore:
+      - dependency-name: "eslint"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "@types/node"
+        update-types:
+          - "version-update:semver-major"
     commit-message:
       prefix: "deps"
 
@@ -12,6 +45,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
+    labels:
+      - "ci"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     commit-message:
       prefix: "ci"
