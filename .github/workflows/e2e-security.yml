@@ -31,5 +31,8 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Build app
+        run: npm run build
+
       - name: Run security headers E2E smoke
         run: npm run test:e2e -- tests/e2e/headers.spec.ts --project="Desktop Chrome"
