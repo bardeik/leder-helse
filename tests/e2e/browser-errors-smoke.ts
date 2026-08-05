@@ -1,8 +1,14 @@
-import { chromium } from "playwright";
+import { chromium } from "@playwright/test";
 
-const baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+interface BrowserError {
+  type: "pageerror" | "console.error";
+  route: string;
+  message: string;
+}
+
+const baseUrl = process.env["BASE_URL"] ?? "http://localhost:3000";
 const routes = ["/", "/log", "/check-in", "/settings"];
-const errors = [];
+const errors: BrowserError[] = [];
 
 const browser = await chromium.launch({ headless: true });
 
