@@ -44,17 +44,17 @@ Build a native iPhone app with full feature parity by reusing the current domain
 39. Add go-live checklist: data-loss risk review, backup roundtrip validation, and user migration notes.
 
 **Relevant files**
-- `c:/Users/ywc9314/bardeik/leder-helse/src/domain/calc.ts` — Source of truth for week/date/adherence/trend algorithms to port 1:1.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/domain/validation.ts` — Runtime validation boundaries and strict timestamp/date rules.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/domain/schemas.ts` — Zod schema limits to mirror in Swift validators.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/domain/backupLimits.ts` — Backup payload/item guardrails (5 MB, 10,000 items).
-- `c:/Users/ywc9314/bardeik/leder-helse/src/domain/types.ts` — Canonical backup/entity shapes for Codable contract.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/data/backup.ts` — Import/export behavior, merge/overwrite semantics, and user-facing error mapping.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/features/logging/hooks/useLogToday.ts` — Date bounds, autosave, workout add/delete semantics.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/features/logging/hooks/useWeeklyCheckIn.ts` — Week navigation bounds and save semantics.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/features/settings/notifications.ts` — Reminder hour clamping, permission flow, dedup behavior.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/app/settings/page.tsx` — Settings UX behavior for import/export mode and messages.
-- `c:/Users/ywc9314/bardeik/leder-helse/src/i18n/locales.test.ts` — Translation parity/testing pattern to replicate in iOS tests.
+- `src/domain/calc.ts` — Source of truth for week/date/adherence/trend algorithms to port 1:1.
+- `src/domain/validation.ts` — Runtime validation boundaries and strict timestamp/date rules.
+- `src/domain/schemas.ts` — Zod schema limits to mirror in Swift validators.
+- `src/domain/backupLimits.ts` — Backup payload/item guardrails (5 MB, 10,000 items).
+- `src/domain/types.ts` — Canonical backup/entity shapes for Codable contract.
+- `src/data/backup.ts` — Import/export behavior, merge/overwrite semantics, and user-facing error mapping.
+- `src/features/logging/hooks/useLogToday.ts` — Date bounds, autosave, workout add/delete semantics.
+- `src/features/logging/hooks/useWeeklyCheckIn.ts` — Week navigation bounds and save semantics.
+- `src/features/settings/notifications.ts` — Reminder hour clamping, permission flow, dedup behavior.
+- `src/app/settings/page.tsx` — Settings UX behavior for import/export mode and messages.
+- `src/i18n/locales.test.ts` — Translation parity/testing pattern to replicate in iOS tests.
 
 **Verification**
 1. Domain parity tests: run same scenario matrices in TS and Swift; assert exact outputs for week-start math, adherence %, trend deltas, and status colors.
