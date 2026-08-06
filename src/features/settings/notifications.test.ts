@@ -92,7 +92,7 @@ describe("notification settings", () => {
 
   it("requests notification permission when permission has not been granted yet", async () => {
     MockNotification.permission = "default";
-    MockNotification.requestPermission.mockResolvedValueOnce("denied");
+    MockNotification.requestPermission.mockResolvedValueOnce("denied" as "granted");
 
     await expect(requestNotificationPermission()).resolves.toBe("denied");
     expect(MockNotification.requestPermission).toHaveBeenCalledOnce();

@@ -106,7 +106,7 @@ describe("domain validation helpers", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error.issues[0]?.message).toBe(
+    expect(result.error!.issues[0]?.message).toBe(
       `Daglige logger kan ikke inneholde mer enn ${MAX_BACKUP_ITEMS_PER_TABLE} elementer.`
     );
   });

@@ -1,6 +1,7 @@
 node_modules
 .next
 coverage
+*.tsbuildinfo
 public/sw.js
 public/workbox-*.js
 playwright-report

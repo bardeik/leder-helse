@@ -39,10 +39,12 @@ Not yet implemented (potential next steps):
 - Testing: **Vitest 4.1.7** for unit tests and **Playwright 1.60.0** for mobile + desktop viewport E2E checks
 - Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/features/dashboard/trends.test.ts`, `src/features/settings/notifications.test.ts`, `src/data/backup.test.ts`, `src/components/ServiceWorkerCleanup.test.tsx`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`, `tests/e2e/headers.spec.ts`
 
-## ESLint Status
-- Current: **ESLint 9.39.4** (latest in 9.x line)
-- **ESLint 10 is not yet compatible** due to TypeScript ESLint parser incompatibility (scopeManager API changes in ESLint 10)
-- Will reassess when TypeScript ESLint adds ESLint 10 support
+## TypeScript / ESLint Setup
+- TypeScript 7.0.2 (Go-based native compiler) is used for type-checking via `npx tsc`
+- ESLint and tools that call `require('typescript')` (e.g. typescript-eslint) use the TS 6 API compatibility shim (`@typescript/typescript6`) installed under the `typescript` package alias
+- `@typescript/native` (alias for `typescript@^7.0.2`) provides the fast `tsc` binary
+- See the [TS 7 blog post](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6-0) for details on the side-by-side setup
+- **ESLint 10 is not yet compatible** due to TypeScript ESLint parser incompatibility (scopeManager API changes in ESLint 10) — will reassess when TypeScript ESLint adds ESLint 10 support
 
 ## 3) Architecture rules
 - Domain logic in `/src/domain` — pure functions + types, no React, no browser APIs.

@@ -55,6 +55,8 @@ describe("WorkoutPage", () => {
       toggleMute: vi.fn()
     });
     vi.mocked(useWorkoutWakeLock).mockReturnValue({
+      active: false,
+      mode: "none",
       acquire: vi.fn(),
       release: vi.fn()
     });
