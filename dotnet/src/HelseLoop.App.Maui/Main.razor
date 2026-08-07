@@ -1,0 +1,13 @@
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using HelseLoop.SharedUI
+
+<Router AppAssembly="typeof(Main).Assembly" AdditionalAssemblies="new[] { SharedUiAssembly.Reference }">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <p role="alert">Ikke funnet.</p>
+    </NotFound>
+</Router>

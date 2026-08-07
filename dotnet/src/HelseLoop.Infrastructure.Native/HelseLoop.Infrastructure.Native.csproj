@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <!-- Microsoft.Data.Sqlite deferred to backlog issue B4 (SQLite adapter). -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HelseLoop.Application\HelseLoop.Application.csproj" />
+    <!-- Temporary: Native currently borrows Browser's in-memory stubs. Replaced by a
+         dedicated SQLite adapter in plan issue B4, at which point this reference is removed. -->
+    <ProjectReference Include="..\HelseLoop.Infrastructure.Browser\HelseLoop.Infrastructure.Browser.csproj" />
+  </ItemGroup>
+
+</Project>

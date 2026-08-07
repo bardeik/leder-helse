@@ -1,0 +1,20 @@
+## .NET build artifacts
+bin/
+obj/
+
+## Rider / VS user files
+*.user
+*.suo
+*.userprefs
+*.dbmdl
+
+## Coverage
+coverage/
+TestResults/
+*.coverage
+*.coveragexml
+*.trx
+
+## OS
+.DS_Store
+Thumbs.db

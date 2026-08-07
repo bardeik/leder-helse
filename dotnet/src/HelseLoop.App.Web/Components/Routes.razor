@@ -1,0 +1,11 @@
+@using HelseLoop.SharedUI
+
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { SharedUiAssembly.Reference }">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <p>Ikke funnet.</p>
+    </NotFound>
+</Router>

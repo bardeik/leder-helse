@@ -1,0 +1,66 @@
+@page "/log"
+@layout MainLayout
+@inject DailyLogUseCases DailyLogs
+
+<PageTitle>@Localised.NavLog</PageTitle>
+
+<section class="card">
+    <h1>@Localised.NavLog - @_state.Date.ToString("yyyy-MM-dd")</h1>
+    <p><small>@Localised.LogAutoSaveHint</small></p>
+
+    <fieldset>
+        <legend>@Localised.LogEnergyLabel</legend>
+        @for (var value = 1; value <= 5; value++)
+        {
+            var currentValue = value;
+            <label>
+                <input type="radio"
+                       name="energy"
+                       checked="@(_state.Energy == currentValue)"
+                       @onchange="() => UpdateEnergyAsync(currentValue)" />
+                @currentValue
+            </label>
+        }
+    </fieldset>
+
+    <fieldset>
+        <legend>@Localised.LogSleepOkLabel</legend>
+        <label>
+            <input type="radio"
+                   name="sleep"
+                   checked="@_state.SleepOk"
+                   @onchange="() => UpdateSleepAsync(true)" /> Ja
+        </label>
+        <label>
+            <input type="radio"
+                   name="sleep"
+                   checked="@(!_state.SleepOk)"
+                   @onchange="() => UpdateSleepAsync(false)" /> Nei
+        </label>
+    </fieldset>
+
+    @if (!string.IsNullOrEmpty(_saveMessage))
+    {
+        <small aria-live="polite">@_saveMessage</small>
+    }
+</section>
+
+@code {
+    private DailyLogState _state = DailyLogState.CreateDefault(DateOnly.MinValue);
+    private string _saveMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _state = await DailyLogs.LoadAsync(DailyLogs.Today);
+    }
+
+    private Task UpdateEnergyAsync(int energy) => SaveAsync(_state with { Energy = energy });
+    private Task UpdateSleepAsync(bool sleepOk) => SaveAsync(_state with { SleepOk = sleepOk });
+
+    private async Task SaveAsync(DailyLogState next)
+    {
+        _state = next;
+        var outcome = await DailyLogs.SaveAsync(next);
+        _saveMessage = outcome.Success ? Localised.SaveConfirm : $"Feil: {outcome.ErrorCode}";
+    }
+}

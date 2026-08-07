@@ -1,0 +1,16 @@
+@page "/"
+@layout MainLayout
+
+<PageTitle>@Localised.NavHome</PageTitle>
+
+<section class="card">
+    <h1>Helse Loop</h1>
+    <p>
+        Web-slice er under bygging. Domain (@_domainAssembly) og Application-lagene er portert;
+        se <code>.github/plans/migration-plan.md</code> for status.
+    </p>
+</section>
+
+@code {
+    private readonly string _domainAssembly = typeof(WeekCalculations).Assembly.GetName().Name ?? "HelseLoop.Domain";
+}

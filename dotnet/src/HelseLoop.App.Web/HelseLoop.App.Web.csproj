@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <UserSecretsId>helseloop-web</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HelseLoop.Shared.UI\HelseLoop.Shared.UI.csproj" />
+    <ProjectReference Include="..\HelseLoop.Infrastructure.Browser\HelseLoop.Infrastructure.Browser.csproj" />
+    <ProjectReference Include="..\HelseLoop.App.Web.Client\HelseLoop.App.Web.Client.csproj" />
+  </ItemGroup>
+
+</Project>

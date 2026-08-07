@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HelseLoop.Domain/HelseLoop.Domain.csproj" />
+    <Project Path="src/HelseLoop.Application/HelseLoop.Application.csproj" />
+    <Project Path="src/HelseLoop.Shared.UI/HelseLoop.Shared.UI.csproj" />
+    <Project Path="src/HelseLoop.Infrastructure.Browser/HelseLoop.Infrastructure.Browser.csproj" />
+    <Project Path="src/HelseLoop.Infrastructure.Native/HelseLoop.Infrastructure.Native.csproj" />
+    <Project Path="src/HelseLoop.App.Web/HelseLoop.App.Web.csproj" />
+    <Project Path="src/HelseLoop.App.Web.Client/HelseLoop.App.Web.Client.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/HelseLoop.Domain.Tests/HelseLoop.Domain.Tests.csproj" />
+    <Project Path="tests/HelseLoop.Application.Tests/HelseLoop.Application.Tests.csproj" />
+  </Folder>
+</Solution>

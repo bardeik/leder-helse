@@ -1,0 +1,17 @@
+@using Microsoft.AspNetCore.Components.Web
+@using HelseLoop.SharedUI
+
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <title>Helse Loop</title>
+    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+</head>
+<body>
+    <Routes @rendermode="InteractiveWebAssembly" />
+    <script src="_framework/blazor.web.js"></script>
+</body>
+</html>
