@@ -48,6 +48,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Next.js expects `typescript/bin/tsc`, but this project uses @typescript/typescript6
+  // (aliased as `typescript`) which only ships `tsc6`. Type-checking is enforced
+  // separately via `npx tsc` using the @typescript/native (TS 7) compiler.
+  typescript: {
+    ignoreBuildErrors: true
+  },
   allowedDevOrigins: ["127.0.0.1"],
   async headers() {
     return [
