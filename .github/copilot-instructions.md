@@ -41,8 +41,9 @@ Not yet implemented (potential next steps):
 
 ## TypeScript / ESLint Setup
 - TypeScript 7.0.2 (Go-based native compiler) is used for type-checking via `npx tsc`
-- ESLint and tools that call `require('typescript')` (e.g. typescript-eslint) use the TS 6 API compatibility shim (`@typescript/typescript6`) installed under the `typescript` package alias
-- `@typescript/native` (alias for `typescript@^7.0.2`) provides the fast `tsc` binary
+- ESLint and tools that call `require('typescript')` (e.g. typescript-eslint) use the standard `typescript@^6` package installed as the `typescript` devDependency
+- `@typescript/native` (alias for `typescript@^7.0.2`) provides the fast `tsc` binary for type-checking
+- Next.js build uses `typescript` (v6) for setup verification and tsconfig defaults; actual type-checking runs separately via `@typescript/native`
 - See the [TS 7 blog post](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6-0) for details on the side-by-side setup
 - **ESLint 10 is not yet compatible** due to TypeScript ESLint parser incompatibility (scopeManager API changes in ESLint 10) — will reassess when TypeScript ESLint adds ESLint 10 support
 

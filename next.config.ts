@@ -48,9 +48,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Next.js expects `typescript/bin/tsc`, but this project uses @typescript/typescript6
-  // (aliased as `typescript`) which only ships `tsc6`. Type-checking is enforced
-  // separately via `npx tsc` using the @typescript/native (TS 7) compiler.
+  // Next.js type-checking is skipped (ignoreBuildErrors: true) because type-checking
+  // is enforced separately via `npx tsc` using the @typescript/native (TS 7) compiler.
+  // The standard `typescript` (v6) package is still installed so that Next.js setup
+  // verification and tsconfig defaults can run without errors in CI.
   typescript: {
     ignoreBuildErrors: true
   },
