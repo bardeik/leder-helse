@@ -48,12 +48,17 @@ npm install
 npm run dev
 npm run dev:turbopack
 npm run lint
+npm run typecheck
 npm run test
 npm run test:e2e
 npm run build
 ```
 
 `npm run dev` uses webpack dev mode for stability. `npm run dev:turbopack` is available for Turbopack-specific testing.
+
+`npm run typecheck` runs the separate TypeScript compiler without emitting files. CI requires it before tests and build; Next.js still skips its built-in type-checking. / `npm run typecheck` kjører den separate TypeScript-kompilatoren uten å generere filer. CI krever den før tester og bygg; Next.js hopper fortsatt over sin innebygde typesjekk.
+
+Vitest uses an ESM configuration (`vitest.config.mts`) with module-relative paths. / Vitest bruker ESM-konfigurasjon (`vitest.config.mts`) med modulrelative stier.
 
 ## Verify / Verifiser
 - Save energy or sleep on `/log` and confirm the toast / Lag energi eller søvn på `/log` og bekreft toasten
@@ -62,6 +67,7 @@ npm run build
 - Export/import a backup / Eksporter og importer en sikkerhetskopi
 
 ## E2E troubleshooting / Feilsøking for E2E
+- Production header tests use an HTTPS browser origin and intercept only that test server's loopback requests to the HTTP fixture. CSP remains enabled; this validates browser behavior and headers, not a TLS handshake. This avoids WebKit upgrading HTTP assets to an unavailable HTTPS server. / Produksjonsheadertestene bruker HTTPS-origin i nettleseren og mapper bare testserverens lokale kall til HTTP-fixturen. CSP er fortsatt aktiv; testen validerer nettleseroppførsel og headere, ikke TLS-håndtrykk. Dette hindrer at WebKit oppgraderer HTTP-ressurser til en utilgjengelig HTTPS-server.
 - To reuse a development server on another port, set `PLAYWRIGHT_BASE_URL` to its loopback URL before running E2E. / Sett `PLAYWRIGHT_BASE_URL` til lokaladressen for å bruke en utviklingsserver på en annen port under E2E.
 - Some local environments may intermittently fail Playwright `webServer` readiness checks with `ECONNRESET` even when the app starts normally. Use CI as source of truth for security header validation via `.github/workflows/e2e-security.yml`.
 - Enkelte lokale miljøer kan periodevis feile Playwright `webServer`-tilgjengelighet med `ECONNRESET` selv når appen starter normalt. Bruk CI som fasit for validering av sikkerhetsheadere via `.github/workflows/e2e-security.yml`.
