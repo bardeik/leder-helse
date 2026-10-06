@@ -11,6 +11,121 @@
   --line: #e7ded2;
 }
 
+.manual-timer {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.manual-timer-settings {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.manual-timer-stepper {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 0.25rem;
+}
+
+.manual-timer-stepper button {
+  min-height: 44px;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1.25rem;
+}
+
+.manual-timer-stepper input {
+  min-width: 0;
+  text-align: center;
+  padding: 0.5rem 0.15rem;
+  border-radius: 8px;
+}
+
+.manual-timer-display {
+  padding: 1.25rem 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.manual-timer-phase {
+  min-height: 1.5rem;
+  font-weight: 600;
+}
+
+.manual-timer-seconds {
+  display: block;
+  font-size: 5rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.manual-timer-rest .manual-timer-seconds {
+  color: var(--warn);
+}
+
+.manual-timer-complete .manual-timer-seconds {
+  color: var(--ok);
+}
+
+.manual-timer-progress {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  text-align: center;
+  border-block: 1px solid var(--line);
+  padding: 1rem 0;
+}
+
+.manual-timer-progress dd {
+  margin: 0.5rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.manual-timer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.manual-timer-controls button {
+  min-height: 44px;
+  border-radius: 8px;
+}
+
+.manual-timer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.manual-timer-notices {
+  min-height: 3rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .manual-timer-settings {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .manual-timer-setting {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(145px, 1fr);
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .manual-timer-setting label {
+    margin: 0;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

@@ -31,8 +31,33 @@ export interface TranslationDict {
       log: string;
       checkIn: string;
       workout: string;
+      manualTimer: string;
       settings: string;
     };
+  };
+
+  manualTimer: {
+    activitySeconds: string;
+    restSeconds: string;
+    rounds: string;
+    increase: (label: string) => string;
+    decrease: (label: string) => string;
+    phase: { idle: string; ready: string; activity: string; rest: string; complete: string; paused: string };
+    currentRound: (current: number, total: number) => string;
+    completedRounds: string;
+    remainingRounds: string;
+    seconds: string;
+    start: string;
+    resume: string;
+    pause: string;
+    reset: string;
+    confirmReset: string;
+    mute: string;
+    unmute: string;
+    wakeActive: string;
+    wakeUnavailable: string;
+    audioUnavailable: string;
+    invalidSettings: string;
   };
 
   workoutType: {

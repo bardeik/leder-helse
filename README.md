@@ -11,6 +11,15 @@ Offline-first app for a 6-week health loop.
 - Browser notification reminders stored locally / Nettleservarsler lagret lokalt
 - Bilingual UI with Norwegian and English text / Tospråklig UI med norsk og engelsk tekst
 - First-open language choice and settings switcher / Språkvalg ved første åpning og bytte i innstillinger
+- Manual interval timer with adjustable activity, rest and rounds / Manuell tidtaking med justerbar aktivitet, pause og runder
+
+## Manual timer / Manuell tidtaking
+- Open `/manual-timer` from the menu. Defaults: 40 seconds activity, 20 seconds rest, 6 rounds. Duration buttons adjust by 10 seconds; round buttons adjust by one. / Åpne `/manual-timer` fra menyen. Standard: 40 sekunder aktivitet, 20 sekunder pause, 6 runder. Tidsknappene justerer med 10 sekunder; rundeknappene justerer med én.
+- Each activity completes one round. There is a three-second preparation countdown and no rest after the last round. Rest may be zero. / Hver aktivitet fullfører én runde. Økten starter med tre sekunders klargjøring og avsluttes uten pause etter siste runde. Pause kan være null.
+- Short beeps at three and two seconds before activity; a long beep at one second, at the start of rest, and at completion. / Korte pip tre og to sekunder før aktivitet; langt pip ett sekund før aktivitet, ved pausestart og ved fullføring.
+- Validated settings are stored in localStorage, separately from IndexedDB backups. Sessions do not resume after a reload and are not automatically logged as workouts. / Validerte innstillinger lagres i localStorage, separat fra IndexedDB-sikkerhetskopier. Økter fortsetter ikke etter sideoppdatering og loggføres ikke automatisk som trening.
+- Screen Wake Lock requires browser support and a secure context. It remains requested while on hold on the visible page, but the device may revoke it. Audio also depends on browser permissions. Test both on a physical device. / Skjermlås krever nettleserstøtte og sikker kontekst. Den beholdes når en synlig økt settes på vent, men enheten kan trekke den tilbake. Lyd avhenger også av nettleseren. Prøv begge på en fysisk enhet.
+- Hiding the page puts the session on hold. Returning requests screen wake lock again; continue the timer manually. / Skjules siden, settes økten på vent. Ved retur forsøkes skjermlås på nytt; fortsett timeren manuelt.
 
 ## Language / Språk
 - Default UI language: Norwegian Bokmål / Standard språk: norsk bokmål
@@ -53,5 +62,6 @@ npm run build
 - Export/import a backup / Eksporter og importer en sikkerhetskopi
 
 ## E2E troubleshooting / Feilsøking for E2E
+- To reuse a development server on another port, set `PLAYWRIGHT_BASE_URL` to its loopback URL before running E2E. / Sett `PLAYWRIGHT_BASE_URL` til lokaladressen for å bruke en utviklingsserver på en annen port under E2E.
 - Some local environments may intermittently fail Playwright `webServer` readiness checks with `ECONNRESET` even when the app starts normally. Use CI as source of truth for security header validation via `.github/workflows/e2e-security.yml`.
 - Enkelte lokale miljøer kan periodevis feile Playwright `webServer`-tilgjengelighet med `ECONNRESET` selv når appen starter normalt. Bruk CI som fasit for validering av sikkerhetsheadere via `.github/workflows/e2e-security.yml`.
