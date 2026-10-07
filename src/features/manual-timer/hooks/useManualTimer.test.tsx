@@ -31,6 +31,7 @@ describe("useManualTimer", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["setInterval", "clearInterval", "performance"] });
     vi.clearAllMocks();
+    context.state = "running";
     localStorage.clear();
     Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
     request.mockResolvedValue({ released: false, release, addEventListener: vi.fn() });
@@ -66,6 +67,28 @@ describe("useManualTimer", () => {
     advance(1000);
     expect(result.current.timer.phase).toBe("activity");
     expect(startTone).toHaveBeenCalledTimes(3);
+    unmount();
+  });
+
+  it("plays a countdown cue when audio becomes ready after its timer tick", async () => {
+    let resolveResume: () => void = () => undefined;
+    context.state = "suspended";
+    context.resume.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        resolveResume = resolve;
+      })
+    );
+    const { result, unmount } = renderHook(useManualTimer);
+    await begin(result.current.start);
+    advance(100);
+    expect(startTone).not.toHaveBeenCalled();
+
+    await act(async () => {
+      context.state = "running";
+      resolveResume();
+    });
+
+    expect(startTone).toHaveBeenCalledOnce();
     unmount();
   });
 

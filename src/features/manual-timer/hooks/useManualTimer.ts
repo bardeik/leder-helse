@@ -99,9 +99,9 @@ export function useManualTimer() {
     if (!countdown && !transition) return;
     const key = `${timer.completedRounds}:${timer.phase}:${transition ? "transition" : seconds}`;
     if (lastCue.current === key) return;
-    lastCue.current = key;
     const context = audio.current;
     if (mutedRef.current || !context || context.state !== "running") return;
+    lastCue.current = key;
     try {
       const oscillator = context.createOscillator();
       const gain = context.createGain();
