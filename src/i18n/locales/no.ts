@@ -30,8 +30,33 @@ export const no: TranslationDict = {
       log: "Logg i dag",
       checkIn: "Ukentlig innsjekk",
       workout: "Intervalløkt",
+      manualTimer: "Manuell tidtaking",
       settings: "Innstillinger"
     }
+  },
+
+  manualTimer: {
+    activitySeconds: "Aktivitet (sekunder)",
+    restSeconds: "Pause (sekunder)",
+    rounds: "Runder",
+    increase: (label) => `Øk ${label.toLowerCase()}`,
+    decrease: (label) => `Senk ${label.toLowerCase()}`,
+    phase: { idle: "Klar", ready: "Klargjøring", activity: "Aktivitet", rest: "Pause", complete: "Fullført", paused: "På vent" },
+    currentRound: (current, total) => `Runde ${current} av ${total}`,
+    completedRounds: "Utførte runder",
+    remainingRounds: "Gjenstående runder",
+    seconds: "sekunder",
+    start: "Start",
+    resume: "Fortsett",
+    pause: "Sett på vent",
+    reset: "Nullstill",
+    confirmReset: "Nullstille økten? Utførte runder slettes.",
+    mute: "Slå av lyd",
+    unmute: "Slå på lyd",
+    wakeActive: "Skjermen holdes våken",
+    wakeUnavailable: "Skjermlås kan ikke forhindres. Enheten kan låse seg automatisk.",
+    audioUnavailable: "Lyd er utilgjengelig. Følg nedtellingen på skjermen.",
+    invalidSettings: "Bruk heltall: aktivitet 10–600 sekunder, pause 0–600 sekunder og 1–99 runder."
   },
 
   workoutType: {

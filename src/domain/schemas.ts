@@ -4,6 +4,12 @@ import type { WorkoutType } from "@/domain/types";
 
 export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
+export const manualTimerSettingsSchema = z.object({
+  activitySeconds: z.number().int().min(10).max(600),
+  restSeconds: z.number().int().min(0).max(600),
+  rounds: z.number().int().min(1).max(99)
+});
+
 export const dailyLogSchema = z.object({
   date: isoDateSchema,
   energy: z.number().int().min(1).max(5),

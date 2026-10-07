@@ -14,6 +14,7 @@ export function Nav() {
     "/log": t.nav.pages.log,
     "/check-in": t.nav.pages.checkIn,
     "/workout": t.nav.pages.workout,
+    "/manual-timer": t.nav.pages.manualTimer,
     "/settings": t.nav.pages.settings
   };
   const pageTitle = pageTitleByPath[pathname] ?? t.nav.brandName;
@@ -50,6 +51,9 @@ export function Nav() {
           </Link>
           <Link className="topbar-menu-link" href="/workout" role="menuitem" onClick={() => setMenuOpen(false)}>
             {t.nav.pages.workout}
+          </Link>
+          <Link className="topbar-menu-link" href="/manual-timer" role="menuitem" onClick={() => setMenuOpen(false)}>
+            {t.nav.pages.manualTimer}
           </Link>
           <Link className="topbar-menu-link" href="/settings" role="menuitem" onClick={() => setMenuOpen(false)}>
             {t.nav.pages.settings}

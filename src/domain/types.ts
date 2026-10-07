@@ -1,6 +1,18 @@
 export type WorkoutType = "strength" | "walk";
 export type HealthStatus = "green" | "yellow" | "red";
 
+export interface ManualTimerSettings {
+  activitySeconds: number;
+  restSeconds: number;
+  rounds: number;
+}
+
+export interface ManualTimerState {
+  phase: "ready" | "activity" | "rest" | "complete";
+  remainingMs: number;
+  completedRounds: number;
+}
+
 export interface DailyLog {
   date: string;
   energy: number;
