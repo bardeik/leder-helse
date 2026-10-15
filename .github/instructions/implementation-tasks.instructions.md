@@ -252,3 +252,132 @@ Follow repository instructions files. Keep changes minimal and scoped.
 Before coding: list files to edit.
 After coding: run required checks and summarize results.
 If tests fail, fix relevant issues before finishing."
+
+## Next Security Modernization Tasks (2026-10-15)
+
+Execute one task per branch/PR. Do not bundle unrelated dependency, runtime, validation, or CSP changes. Re-check current Node.js support and npm advisories when starting each task; do not rely on this snapshot as current registry state.
+
+### Task 10: Move the container to a supported Node.js LTS (high)
+
+Goal:
+
+- Remove the end-of-life Node.js 20 runtime from the production container and align it with CI.
+- Target Node.js 24 LTS after confirming the current dependency set and deployment platform support it.
+
+Files to add/update:
+
+- `Dockerfile`
+- `.github/workflows/ci.yml`
+- `README.md` or `SECURITY.md` only if runtime requirements are documented there
+
+Required changes:
+
+- Use the same supported Node.js major in CI and the Docker build/runtime stages.
+- Pin CI to a specific current Node.js 24 patch release; use the corresponding maintained Bookworm slim image for Docker.
+- Preserve the existing npm version unless compatibility testing proves it must change.
+
+Acceptance criteria:
+
+- CI and the production container use the selected supported LTS major.
+- `npm ci`, lint, typecheck, tests, production build, and Docker image build pass on that runtime.
+- The deployed standalone server starts and serves the app from the resulting image.
+
+### Task 11: Reject impossible calendar dates (medium)
+
+Goal:
+
+- Ensure date strings accepted by runtime validators and Zod schemas represent real Gregorian calendar dates, not merely the `YYYY-MM-DD` shape.
+
+Files to add/update:
+
+- `src/domain/validation.ts`
+- `src/domain/schemas.ts`
+- `src/domain/validation.test.ts`
+
+Required changes:
+
+- Introduce or reuse one semantic calendar-date check for both validation paths.
+- Keep the canonical `YYYY-MM-DD` representation and existing public types.
+- Reject impossible dates before persistence or backup import.
+
+Acceptance criteria:
+
+- Valid ordinary dates and leap days pass.
+- Invalid month/day combinations, non-leap February 29, and dates such as `2026-02-31` fail in both runtime and Zod validation.
+- Existing backup, domain, lint, and full test checks pass.
+
+### Task 12: Resolve the development dependency advisory safely (high)
+
+Goal:
+
+- Address the `braces` stack-exhaustion advisory in the ESLint/Next lint-tool dependency chain without introducing a framework downgrade.
+
+Files to add/update:
+
+- `package.json` only if a compatible remediation is available
+- `package-lock.json`
+- `SECURITY.md` only if the advisory remains blocked upstream and the accepted residual risk needs documenting
+
+Required changes:
+
+- Start from a clean `npm ci` before evaluating installed versions or `npm outdated` output.
+- Re-check the advisory and upstream package versions, then prefer a compatible upstream update or a tested, narrowly scoped override.
+- Do not run `npm audit fix --force` or downgrade `eslint-config-next` to an older Next.js major to silence the report.
+- If no compatible patched release exists, record the unresolved advisory, affected development-only chain, owner/recheck date, and continue enforcing the production audit gate.
+
+Acceptance criteria:
+
+- A compatible fix makes `npm audit` pass, or the task is explicitly marked blocked with the residual risk documented; an unsafe downgrade is not an acceptable resolution.
+- Production audit, clean install, lint, typecheck, tests, and build pass after any dependency change.
+
+### Task 13: Type-check production container builds (medium)
+
+Goal:
+
+- Prevent a Docker build from succeeding with TypeScript errors when Next.js build-time type validation is disabled.
+
+Files to add/update:
+
+- `Dockerfile`
+
+Required changes:
+
+- Run the existing `npm run typecheck` in the builder stage before `npm run build`.
+- Keep the existing standalone output and runtime image behavior.
+
+Acceptance criteria:
+
+- A clean Docker image build runs typecheck and fails on a deliberate type error.
+- The normal image build, lint, tests, and app startup pass.
+
+### Task 14: Remove production CSP `unsafe-inline` for scripts (medium)
+
+Goal:
+
+- Reduce the production XSS execution surface while preserving the app's static routes and current Next.js behavior.
+
+Files to add/update:
+
+- `next.config.ts`
+- `tests/e2e/headers.spec.ts`
+- `SECURITY.md` only if the effective policy or deployment requirement changes
+
+Required changes:
+
+- First verify the supported nonce/hash approach for the repository's Next.js version and current static rendering model.
+- Implement the selected approach without enabling `unsafe-eval` or weakening other production directives.
+- Do not silently force routes to dynamic rendering; if the policy cannot be tightened without that product/deployment tradeoff, stop and document the decision before changing rendering behavior.
+
+Acceptance criteria:
+
+- Production `script-src` has no `unsafe-inline` or `unsafe-eval`.
+- Production header tests assert the policy and all user-facing routes load without CSP violations in Playwright.
+- Existing static rendering, deployed HTTPS behavior, lint, typecheck, tests, and build remain valid.
+
+## Suggested Execution Order for This Pass
+
+1. Task 10 (supported container runtime)
+2. Task 12 (development dependency advisory)
+3. Task 13 (container typecheck)
+4. Task 11 (calendar-date validation)
+5. Task 14 (production CSP; highest compatibility risk, keep last)
