@@ -49,6 +49,10 @@ function exerciseDictionary(locale: "no" | "en") {
   t.workout.watchVideoAria("Squat");
   t.workout.summaryStats(3, 27);
 
+  t.manualTimer.currentRound(2, 6);
+  t.manualTimer.increase(t.manualTimer.rounds);
+  t.manualTimer.decrease(t.manualTimer.activitySeconds);
+
   t.settings.storageSummary(1, 2, 3);
   t.settings.notificationPermission("default");
 }
@@ -60,6 +64,8 @@ describe("locales", () => {
 
     expect(getTranslation("no").nav.pages.home).toBe("Oversikt");
     expect(getTranslation("en").nav.pages.home).toBe("Overview");
+    expect(getTranslation("no").nav.pages.manualTimer).toBe("Manuell tidtaking");
+    expect(getTranslation("en").nav.pages.manualTimer).toBe("Manual timer");
   });
 
   it("keeps the Norwegian and English translation trees in sync", () => {

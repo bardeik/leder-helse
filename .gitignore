@@ -1,6 +1,8 @@
 node_modules
 .next
 coverage
+**/bin/
+**/obj/
 *.tsbuildinfo
 public/sw.js
 public/workbox-*.js

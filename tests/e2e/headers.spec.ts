@@ -61,9 +61,10 @@ test("serves hardened production headers and loads without CSP console violation
 }, testInfo) => {
   let productionServer: ChildProcess | undefined;
   let productionLogs = "";
-let context: Awaited<ReturnType<typeof browser.newContext>> | undefined;
-const productionPort = 3101 + testInfo.workerIndex;
-const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
+  let context: Awaited<ReturnType<typeof browser.newContext>> | undefined;
+  const productionPort = 3101 + testInfo.workerIndex;
+  const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
+  const productionBrowserUrl = productionBaseUrl.replace("http:", "https:");
 
   try {
     productionServer = spawn(process.execPath, ["scripts/start-standalone.cjs"], {
@@ -87,6 +88,11 @@ const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
     await waitForServer(`${productionBaseUrl}/`);
 
     context = await browser.newContext();
+    await context.route(`${productionBrowserUrl}/**`, async (route) => {
+      const url = new URL(route.request().url());
+      url.protocol = "http:";
+      await route.fulfill({ response: await route.fetch({ url: url.href }) });
+    });
     await context.addInitScript(() => {
       window.localStorage.setItem("leader-health-language", "no");
     });
@@ -126,10 +132,10 @@ const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
       pageErrors.push(error.message);
     });
 
-    await page.goto(`${productionBaseUrl}/`, { waitUntil: "networkidle" });
+    await page.goto(`${productionBrowserUrl}/`, { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Denne uken" })).toBeVisible();
 
-    await page.goto(`${productionBaseUrl}/log`, { waitUntil: "networkidle" });
+    await page.goto(`${productionBrowserUrl}/log`, { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Logg i dag" })).toBeVisible();
     const sleepInput = page.getByLabel("Sovntimer (valgfritt)");
     await sleepInput.click();
@@ -137,7 +143,7 @@ const productionBaseUrl = `http://127.0.0.1:${productionPort}`;
     await sleepInput.blur();
     await expect(page.getByText("Endringer lagret")).toBeVisible();
 
-    await page.goto(`${productionBaseUrl}/settings`, { waitUntil: "networkidle" });
+    await page.goto(`${productionBrowserUrl}/settings`, { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Innstillinger" })).toBeVisible();
 
     expect(consoleErrors).toEqual([]);

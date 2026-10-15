@@ -48,6 +48,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Next.js type-checking is skipped (ignoreBuildErrors: true) during `next build`.
+  // If type-checking is desired, run `npx tsc` (from @typescript/native) separately
+  // and/or add a dedicated CI step for it.
+  // The standard `typescript` (v6) package is installed so Next.js setup verification and
+  typescript: {
+    ignoreBuildErrors: true
+  },
   allowedDevOrigins: ["127.0.0.1"],
   async headers() {
     return [

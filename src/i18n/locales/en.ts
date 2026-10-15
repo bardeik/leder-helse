@@ -30,8 +30,33 @@ export const en: TranslationDict = {
       log: "Log today",
       checkIn: "Weekly check-in",
       workout: "Workout",
+      manualTimer: "Manual timer",
       settings: "Settings"
     }
+  },
+
+  manualTimer: {
+    activitySeconds: "Activity (seconds)",
+    restSeconds: "Rest (seconds)",
+    rounds: "Rounds",
+    increase: (label) => `Increase ${label.toLowerCase()}`,
+    decrease: (label) => `Decrease ${label.toLowerCase()}`,
+    phase: { idle: "Ready", ready: "Get ready", activity: "Activity", rest: "Rest", complete: "Complete", paused: "On hold" },
+    currentRound: (current, total) => `Round ${current} of ${total}`,
+    completedRounds: "Completed rounds",
+    remainingRounds: "Remaining rounds",
+    seconds: "seconds",
+    start: "Start",
+    resume: "Continue",
+    pause: "Hold",
+    reset: "Reset",
+    confirmReset: "Reset this session? Completed rounds will be cleared.",
+    mute: "Mute sound",
+    unmute: "Enable sound",
+    wakeActive: "Screen kept awake",
+    wakeUnavailable: "Screen wake lock is unavailable. Your device may lock automatically.",
+    audioUnavailable: "Sound is unavailable. Follow the countdown on screen.",
+    invalidSettings: "Use whole numbers: activity 10–600 seconds, rest 0–600 seconds, and 1–99 rounds."
   },
 
   workoutType: {
