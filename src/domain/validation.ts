@@ -1,8 +1,8 @@
 import { MAX_BACKUP_ITEMS_PER_TABLE } from "@/domain/backupLimits";
+import { isValidCalendarDate } from "@/domain/calendarDate";
 import type { BackupData, DailyLog, WeeklyCheckIn, WorkoutLog } from "@/domain/types";
 import { normalizeWorkoutType } from "@/domain/workouts";
 
-const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const ISO_UTC_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -40,7 +40,7 @@ function assertArrayWithLimit(
 
 function assertIsoDate(value: unknown, message: string): asserts value is string {
   assertString(value, message);
-  assert(ISO_DATE_PATTERN.test(value), message);
+  assert(isValidCalendarDate(value), message);
 }
 
 function assertIsoTimestamp(value: unknown, message: string): asserts value is string {

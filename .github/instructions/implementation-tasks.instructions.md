@@ -286,6 +286,8 @@ Acceptance criteria:
 
 ### Task 11: Reject impossible calendar dates (medium)
 
+Status: COMPLETE, verified 2026-10-20. Runtime validators, Zod schemas, and backup import reject impossible Gregorian dates; ordinary dates and leap days pass. Lint, typecheck, and all 181 tests pass.
+
 Goal:
 
 - Ensure date strings accepted by runtime validators and Zod schemas represent real Gregorian calendar dates, not merely the `YYYY-MM-DD` shape.
@@ -336,6 +338,8 @@ Acceptance criteria:
 
 ### Task 13: Type-check production container builds (medium)
 
+Status: COMPLETE, verified 2026-10-20. The container build runs typecheck before build; a deliberate type error fails at the typecheck step. The valid image builds and serves HTTP 200, with lint and all 179 tests passing at verification.
+
 Goal:
 
 - Prevent a Docker build from succeeding with TypeScript errors when Next.js build-time type validation is disabled.
@@ -380,6 +384,4 @@ Acceptance criteria:
 
 ## Suggested Execution Order for This Pass
 
-1. Task 13 (container typecheck)
-2. Task 11 (calendar-date validation)
-3. Task 14 (production CSP; highest compatibility risk, keep last)
+1. Task 14 (production CSP; highest compatibility risk, keep last)

@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { MAX_BACKUP_ITEMS_PER_TABLE } from "@/domain/backupLimits";
+import { isValidCalendarDate } from "@/domain/calendarDate";
 import type { WorkoutType } from "@/domain/types";
 
-export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+export const isoDateSchema = z.string().refine(isValidCalendarDate, "Dato må være på formatet YYYY-MM-DD.");
 
 export const manualTimerSettingsSchema = z.object({
   activitySeconds: z.number().int().min(10).max(600),
