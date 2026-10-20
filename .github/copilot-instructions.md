@@ -83,6 +83,7 @@ WeeklyTrendPoint: { weekStartDate: string; weightKg?: number; weightDeltaKg?: nu
 - Functions should be small and testable.
 - Add JSDoc for public domain functions.
 - All day-level dates are ISO `YYYY-MM-DD` strings. Full timestamps are ISO-8601.
+- Podman is installed and available in this development environment; use it for local container builds or runtime checks when needed.
 - Do not add arbitrary `console.log` statements.
 - Always run `npm run lint` and `npm run test` after implementing changes.
 
