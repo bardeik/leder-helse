@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { MAX_BACKUP_ITEMS_PER_TABLE } from "@/domain/backupLimits";
-import { backupSchema, workoutTypeSchema } from "@/domain/schemas";
+import { backupSchema, dailyLogSchema, weeklyCheckInSchema, workoutLogSchema, workoutTypeSchema } from "@/domain/schemas";
 import { parseBackupData, validateDailyLog, validateWeeklyCheckIn, validateWorkoutLog } from "@/domain/validation";
 
 describe("domain validation helpers", () => {
@@ -23,6 +23,65 @@ describe("domain validation helpers", () => {
         durationMin: 45
       })
     ).not.toThrow();
+  });
+
+  it("accepts ordinary dates and leap days in runtime and zod validation", () => {
+    const dailyLog = { date: "2024-02-29", energy: 3, sleepOk: true };
+    const weeklyCheckIn = { weekStartDate: "2026-04-20", weightKg: 82.4 };
+    const workoutLog = { dateTime: "2024-02-29T12:00:00.000Z", date: "2024-02-29", type: "walk" as const };
+
+    expect(() => validateDailyLog(dailyLog)).not.toThrow();
+    expect(() => validateWeeklyCheckIn(weeklyCheckIn)).not.toThrow();
+    expect(() => validateWorkoutLog(workoutLog)).not.toThrow();
+    expect(dailyLogSchema.safeParse(dailyLog).success).toBe(true);
+    expect(weeklyCheckInSchema.safeParse(weeklyCheckIn).success).toBe(true);
+    expect(workoutLogSchema.safeParse(workoutLog).success).toBe(true);
+  });
+
+  it("rejects impossible calendar dates in runtime, zod, and backup validation", () => {
+    const invalidDates = [
+      "2026-02-31",
+      "2026-02-29",
+      "2024-04-31",
+      "2026-13-01",
+      "2026-00-10",
+      "0000-01-01",
+      "2026-4-20",
+      "not-a-date"
+    ];
+
+    for (const date of invalidDates) {
+      const dailyLog = { date, energy: 3, sleepOk: true };
+      const weeklyCheckIn = { weekStartDate: date, weightKg: 82.4 };
+      const workoutLog = { dateTime: "2026-04-20T12:00:00.000Z", date, type: "walk" as const };
+
+      expect(() => validateDailyLog(dailyLog)).toThrow("Dato må være på formatet YYYY-MM-DD.");
+      expect(() => validateWeeklyCheckIn(weeklyCheckIn)).toThrow("Ukesdato må være på formatet YYYY-MM-DD.");
+      expect(() => validateWorkoutLog(workoutLog)).toThrow("Dato må være på formatet YYYY-MM-DD.");
+      expect(dailyLogSchema.safeParse(dailyLog).success).toBe(false);
+      expect(weeklyCheckInSchema.safeParse(weeklyCheckIn).success).toBe(false);
+      expect(workoutLogSchema.safeParse(workoutLog).success).toBe(false);
+    }
+
+    expect(() =>
+      parseBackupData({
+        version: 1,
+        exportedAt: "2026-04-20T08:24:30.102Z",
+        dailyLogs: [{ date: "2026-02-31", energy: 3, sleepOk: true }],
+        weeklyCheckIns: [],
+        workoutLogs: []
+      })
+    ).toThrow("Daglige logger inneholder ugyldig element 1: Dato må være på formatet YYYY-MM-DD.");
+
+    expect(
+      backupSchema.safeParse({
+        version: 1,
+        exportedAt: "2026-04-20T08:24:30.102Z",
+        dailyLogs: [{ date: "2026-02-31", energy: 3, sleepOk: true }],
+        weeklyCheckIns: [],
+        workoutLogs: []
+      }).success
+    ).toBe(false);
   });
 
   it("rejects timestamps that are not canonical ISO-8601 UTC strings", () => {
