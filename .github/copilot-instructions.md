@@ -29,15 +29,15 @@ Not yet implemented (potential next steps):
 - Cloud sync / multi-device
 
 ## 2) Tech stack (actual, as implemented)
-- Frontend: **Next.js 16.2.6 (App Router)** + **TypeScript 6.0.3** + **React 19.2.6**
+- Frontend: **Next.js 16.4.0 (App Router)** + **TypeScript 6.0.3** + **React 19.3.0**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
 - UI language: **Norwegian (Bokmål) and English** for all user-facing labels and messages.
-- Local storage: **Dexie 4.4.2 (IndexedDB)** — DB name: `leader-health-loop`
+- Local storage: **Dexie 4.4.6 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
   - All user data persists locally without network
-- Validation: **Zod 4.4.3** — schemas in `src/domain/schemas.ts`
-- Testing: **Vitest 4.1.7** for unit tests and **Playwright 1.60.0** for mobile + desktop viewport E2E checks
-- Current tests include `src/domain/calc.test.ts`, `src/domain/localeNumber.test.ts`, `src/domain/validation.test.ts`, `src/features/dashboard/trends.test.ts`, `src/features/settings/notifications.test.ts`, `src/data/backup.test.ts`, `src/components/ServiceWorkerCleanup.test.tsx`, `tests/e2e/save-message-mobile.spec.ts`, `tests/e2e/dashboard-trends-mobile.spec.ts`, `tests/e2e/headers.spec.ts`
+- Validation: **Zod 4.6.7** — schemas in `src/domain/schemas.ts`
+- Testing: **Vitest 5.0.5** for unit tests and **Playwright 1.64.1** for Mobile Chrome, Desktop Chrome, and Mobile Safari E2E checks
+- Runtime: **Node.js 24.22.0** in CI and the production container, with **npm 11.13.0**
 
 ## TypeScript / ESLint Setup
 - TypeScript 7.0.2 (Go-based native compiler) is used for type-checking via `npx tsc`

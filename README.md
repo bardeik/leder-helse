@@ -27,12 +27,13 @@ Offline-first app for a 6-week health loop.
 - Translation parity is enforced in tests so both locales stay in sync / Oversettelsesparitet håndheves i tester
 
 ## Tech stack / Teknologistack
-- Next.js 16 (App Router)
+- Node.js 24.22.0 with npm 11.13.0
+- Next.js 16.4.0 (App Router)
 - TypeScript strict
-- Dexie 4 for IndexedDB
-- Zod for validation
-- Vitest 4 for unit tests
-- Playwright for mobile and desktop E2E tests
+- Dexie 4.4.6 for IndexedDB
+- Zod 4.6.7 for validation
+- Vitest 5.0.5 for unit tests
+- Playwright 1.64.1 for Mobile Chrome, Desktop Chrome, and Mobile Safari E2E tests
 
 ## Project structure / Prosjektstruktur
 - `src/domain/` — pure domain logic and schemas / ren domene-logikk og skjemaer
