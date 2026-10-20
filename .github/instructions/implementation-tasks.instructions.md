@@ -259,6 +259,8 @@ Execute one task per branch/PR. Do not bundle unrelated dependency, runtime, val
 
 ### Task 10: Move the container to a supported Node.js LTS (high)
 
+Status: COMPLETE, verified 2026-10-20 on Node.js 24.22.0 and npm 11.13.0. Clean install, lint, typecheck, tests (179 passed), production build, Podman image build, and standalone HTTP smoke test passed. The production dependency audit reported zero vulnerabilities.
+
 Goal:
 
 - Remove the end-of-life Node.js 20 runtime from the production container and align it with CI.
@@ -307,6 +309,8 @@ Acceptance criteria:
 - Existing backup, domain, lint, and full test checks pass.
 
 ### Task 12: Resolve the development dependency advisory safely (high)
+
+Status: BLOCKED upstream, checked 2026-10-20. No patched `braces` release is available; the only npm audit fix offered is an unsafe major downgrade to `eslint-config-next@14.2.35`. The affected development-only chain, owner, recheck date, and passing production audit are documented in `SECURITY.md`.
 
 Goal:
 
@@ -376,8 +380,6 @@ Acceptance criteria:
 
 ## Suggested Execution Order for This Pass
 
-1. Task 10 (supported container runtime)
-2. Task 12 (development dependency advisory)
-3. Task 13 (container typecheck)
-4. Task 11 (calendar-date validation)
-5. Task 14 (production CSP; highest compatibility risk, keep last)
+1. Task 13 (container typecheck)
+2. Task 11 (calendar-date validation)
+3. Task 14 (production CSP; highest compatibility risk, keep last)
