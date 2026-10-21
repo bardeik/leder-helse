@@ -19,13 +19,13 @@ const contentSecurityPolicy = (
       ]
     : [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline'",
-      "script-src-attr 'none'",
+        "script-src 'self'",
+        "script-src-attr 'none'",
         "style-src 'self'",
         "img-src 'self' data: blob:",
         "font-src 'self' data:",
         "connect-src 'self'",
-      "frame-src 'none'",
+        "frame-src 'none'",
         "manifest-src 'self'",
         "worker-src 'self' blob:",
         "object-src 'none'",
@@ -48,6 +48,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    sri: {
+      algorithm: "sha256"
+    }
+  },
   // Next.js type-checking is skipped (ignoreBuildErrors: true) during `next build`.
   // If type-checking is desired, run `npx tsc` (from @typescript/native) separately
   // and/or add a dedicated CI step for it.

@@ -110,11 +110,11 @@ test("serves hardened production headers and loads without CSP console violation
 
     expect(scriptDirective).toBeTruthy();
     expect(scriptDirective).toContain("'self'");
-    expect(
-      scriptDirective?.includes("'unsafe-inline'") || scriptDirective?.includes("'sha256-")
-    ).toBeTruthy();
+    expect(scriptDirective).toMatch(/'sha256-[A-Za-z0-9+/]+=*'/);
+    expect(scriptDirective).not.toContain("'unsafe-inline'");
+    expect(scriptDirective).not.toContain("'unsafe-eval'");
     expect(csp).toContain("script-src-attr 'none'");
-    expect(csp).toContain("style-src 'self'");
+    expect(csp).toContain("style-src 'self' 'unsafe-hashes'");
     expect(csp).not.toContain("'unsafe-eval'");
     expect(headers["strict-transport-security"]).toBe("max-age=31536000; includeSubDomains");
     expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
@@ -132,8 +132,11 @@ test("serves hardened production headers and loads without CSP console violation
       pageErrors.push(error.message);
     });
 
-    await page.goto(`${productionBrowserUrl}/`, { waitUntil: "networkidle" });
-    await expect(page.getByRole("heading", { name: "Denne uken" })).toBeVisible();
+    for (const route of ["/", "/check-in", "/log", "/manual-timer", "/settings", "/workout"]) {
+      const pageResponse = await page.goto(`${productionBrowserUrl}${route}`, { waitUntil: "networkidle" });
+      expect(pageResponse?.ok(), `${route} should load successfully`).toBeTruthy();
+      await expect(page.locator("h1").first()).toBeVisible();
+    }
 
     await page.goto(`${productionBrowserUrl}/log`, { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Logg i dag" })).toBeVisible();
@@ -142,9 +145,6 @@ test("serves hardened production headers and loads without CSP console violation
     await sleepInput.fill("4,5");
     await sleepInput.blur();
     await expect(page.getByText("Endringer lagret")).toBeVisible();
-
-    await page.goto(`${productionBrowserUrl}/settings`, { waitUntil: "networkidle" });
-    await expect(page.getByRole("heading", { name: "Innstillinger" })).toBeVisible();
 
     expect(consoleErrors).toEqual([]);
     expect(pageErrors).toEqual([]);

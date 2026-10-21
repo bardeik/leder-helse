@@ -360,6 +360,8 @@ Acceptance criteria:
 
 ### Task 14: Remove production CSP `unsafe-inline` for scripts (medium)
 
+Status: COMPLETE, verified 2026-10-20. Next.js SHA-256 SRI preserves static rendering; the production container uses the standalone wrapper to hash inline scripts and styles. Production `script-src` has no `unsafe-inline` or `unsafe-eval`. CSP E2E passed in all three browser profiles, and all routes loaded from the image without browser errors. The full E2E suite was 23/24 because an unrelated Mobile Safari manual-timer test failed again in isolation.
+
 Goal:
 
 - Reduce the production XSS execution surface while preserving the app's static routes and current Next.js behavior.
@@ -384,4 +386,4 @@ Acceptance criteria:
 
 ## Suggested Execution Order for This Pass
 
-1. Task 14 (production CSP; highest compatibility risk, keep last)
+Task 12 remains blocked pending an upstream `braces` fix; recheck by 2026-11-20. No other security modernization tasks remain.

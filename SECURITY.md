@@ -34,8 +34,8 @@
 - Backup import is local and user-initiated, with a 5 MB pre-parse size limit and a maximum of 10,000 imported records per collection.
 - Imported backup collections fail fast with clear validation errors when malformed.
 - Persisted timestamps must match the canonical UTC format `YYYY-MM-DDTHH:mm:ss.sssZ`.
-- Production responses use HSTS, COOP, CORP, and a stricter CSP than development.
+- Production responses use HSTS, COOP, CORP, and CSP with no `unsafe-inline` or `unsafe-eval` in `script-src`. Static inline script hashes and SHA-256 SRI secure Next.js assets without changing static rendering.
 - Sikkerhetskopi-import er lokal og brukerinitiert, med 5 MB grense før parsing og maks 10 000 importerte poster per samling.
 - Importerte sikkerhetskopier feiler raskt med tydelige valideringsfeil ved feil format.
 - Lagrede tidsstempler må følge den kanoniske UTC-formen `YYYY-MM-DDTHH:mm:ss.sssZ`.
-- Produksjon bruker HSTS, COOP, CORP og en strengere CSP enn utvikling.
+- Produksjon bruker HSTS, COOP, CORP og CSP uten `unsafe-inline` eller `unsafe-eval` i `script-src`. Hashverdier for statiske inline-skript og SHA-256 SRI sikrer Next.js-ressurser uten å endre statisk rendering.
