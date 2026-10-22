@@ -1,4 +1,4 @@
-FROM node:24.22.0-bookworm-slim AS base
+FROM node:24.22.1-bookworm-slim AS base
 WORKDIR /app
 RUN npm install -g npm@11.13.0
 

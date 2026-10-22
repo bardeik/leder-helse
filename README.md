@@ -27,7 +27,7 @@ Offline-first app for a 6-week health loop.
 - Translation parity is enforced in tests so both locales stay in sync / Oversettelsesparitet håndheves i tester
 
 ## Tech stack / Teknologistack
-- Node.js 24.22.0 with npm 11.13.0
+- Node.js 24.22.1 with npm 11.13.0
 - Next.js 16.4.0 (App Router)
 - TypeScript strict
 - Dexie 4.4.6 for IndexedDB
