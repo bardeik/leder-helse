@@ -37,7 +37,7 @@ Not yet implemented (potential next steps):
   - All user data persists locally without network
 - Validation: **Zod 4.6.7** — schemas in `src/domain/schemas.ts`
 - Testing: **Vitest 5.0.5** for unit tests and **Playwright 1.64.1** for Mobile Chrome, Desktop Chrome, and Mobile Safari E2E checks
-- Runtime: **Node.js 24.22.1** in CI and the production container, with **npm 11.13.0**
+- Runtime: **Node.js 26.12.1** in CI and the production container, with **npm 11.13.0**
 
 ## TypeScript / ESLint Setup
 - TypeScript 7.0.2 (Go-based native compiler) is used for type-checking via `npx tsc`

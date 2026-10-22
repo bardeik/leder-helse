@@ -312,7 +312,7 @@ Acceptance criteria:
 
 ### Task 12: Resolve the development dependency advisory safely (high)
 
-Status: BLOCKED upstream, checked 2026-10-20. No patched `braces` release is available; the only npm audit fix offered is an unsafe major downgrade to `eslint-config-next@14.2.35`. The affected development-only chain, owner, recheck date, and passing production audit are documented in `SECURITY.md`.
+Status: BLOCKED upstream, rechecked 2026-10-22. No patched `braces` release is available; the only npm audit fix offered is an unsafe major downgrade to `eslint-config-next@14.2.35`. The affected development-only chain, owner, recheck date, and passing production audit are documented in `SECURITY.md`.
 
 Goal:
 
