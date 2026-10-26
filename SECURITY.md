@@ -20,15 +20,9 @@
 - Bruk Zod-skjemaer og runtime-validering ved lagring/import.
 - Ny tekst må finnes både på norsk og engelsk, og paritetstester for oversettelser må passere.
 
-## Open development dependency advisory / Åpent varsel for utviklingsavhengighet
-- `npm audit` reports GHSA-vfj7-8cjw-p6xm (CVE-2026-93687), a high-severity stack-exhaustion issue in `braces@3.0.3`. The affected development-only path is `eslint-config-next@16.4.0` -> `@next/eslint-plugin-next@16.4.0` -> `fast-glob@3.3.1` -> `micromatch@4.0.8` -> `braces@3.0.3`. The audit reports five affected packages in this same dependency chain.
-- Rechecked 2026-10-22: GitHub Advisory lists no patched `braces` release and npm's latest remains 3.0.3. `@next/eslint-plugin-next@16.4.2` still depends on `fast-glob@3.3.1`, so updating to compatible Next.js lint tooling does not clear the advisory. npm's only suggested fix remains `eslint-config-next@14.2.35`, an unsafe major downgrade; no dependency change is accepted.
-- Residual risk: the vulnerable package is in the development/lint toolchain, not the production dependency set. `npm audit --omit=dev --audit-level=high` reports zero vulnerabilities. Keep this production audit gate enabled.
-- Owner: repository maintainers. Recheck by 2026-11-20, or earlier when a patched `braces` release or compatible upstream lint-tool update becomes available.
-- `npm audit` rapporterer GHSA-vfj7-8cjw-p6xm (CVE-2026-93687), en høyt alvorlig stack exhaustion-sårbarhet i `braces@3.0.3`. Den berørte utviklingsavhengighetskjeden er `eslint-config-next@16.4.0` -> `@next/eslint-plugin-next@16.4.0` -> `fast-glob@3.3.1` -> `micromatch@4.0.8` -> `braces@3.0.3`. Revisjonen rapporterer fem berørte pakker i samme avhengighetskjede.
-- Kontrollert på nytt 2026-10-22: GitHub Advisory oppgir ingen patchet `braces`-versjon, og nyeste versjon på npm er fortsatt 3.0.3. `@next/eslint-plugin-next@16.4.2` bruker fremdeles `fast-glob@3.3.1`, så oppdatering av kompatible Next.js-lintverktøy fjerner ikke varselet. npm sitt eneste foreslåtte tiltak er fortsatt `eslint-config-next@14.2.35`, en usikker nedgradering av hovedversjonen; ingen avhengighetsendring godtas.
-- Restrisiko: den sårbare pakken finnes i utviklings-/lint-verktøykjeden, ikke i produksjonsavhengighetene. `npm audit --omit=dev --audit-level=high` rapporterer null sårbarheter. Behold denne produksjonskontrollen aktiv.
-- Ansvarlig: vedlikeholderne av repositoriet. Kontroller på nytt innen 2026-11-20, eller tidligere dersom en patchet `braces`-versjon eller kompatibel oppdatering av lint-verktøyene blir tilgjengelig.
+## Development dependency advisory / Varsel for utviklingsavhengighet
+- GHSA-vfj7-8cjw-p6xm for `braces@3.0.3` was withdrawn. The package remains in the development-only path `eslint-config-next@16.4.3` -> `@next/eslint-plugin-next@16.4.3` -> `fast-glob@3.3.1` -> `micromatch@4.0.8` -> `braces@3.0.3`; no patched `braces` release is available. As of 2026-10-26, `npm audit` reports no vulnerabilities. Keep the production audit gate enabled.
+- GHSA-vfj7-8cjw-p6xm for `braces@3.0.3` er trukket tilbake. Pakken finnes fortsatt i den utviklingsavhengige kjeden `eslint-config-next@16.4.3` -> `@next/eslint-plugin-next@16.4.3` -> `fast-glob@3.3.1` -> `micromatch@4.0.8` -> `braces@3.0.3`; det finnes ingen patchet `braces`-versjon. Per 2026-10-26 rapporterer `npm audit` ingen sårbarheter. Behold produksjonskontrollen aktiv.
 
 ## Current security constraints / Gjeldende sikkerhetsgrenser
 - Backup import is local and user-initiated, with a 5 MB pre-parse size limit and a maximum of 10,000 imported records per collection.
