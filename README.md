@@ -28,7 +28,7 @@ Offline-first app for a 6-week health loop.
 
 ## Tech stack / Teknologistack
 - Node.js 26.12.1 with npm 11.13.0
-- Next.js 16.4.0 (App Router)
+- Next.js 16.4.3 (App Router)
 - TypeScript strict
 - Dexie 4.4.6 for IndexedDB
 - Zod 4.6.7 for validation
