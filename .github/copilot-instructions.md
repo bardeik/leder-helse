@@ -2,6 +2,8 @@
 
 > Purpose: help GitHub Copilot plan and implement a small, secure, offline-first app that tracks a 6-week health loop (weight, energy, sleep) plus workouts (Strength A/B, walks) in Norwegian Bokmål and English.
 
+The implemented product is a Next.js/TypeScript web app in `src/`. There is no implemented .NET, MAUI, Blazor, or native Swift app in this repository. Migration prompts describe proposals, not shipped features. Do not infer an implementation from leftover `bin/` or `obj/` artifacts, and do not introduce a native app or another runtime unless explicitly requested.
+
 ## 0) Ground rules (quality + safety)
 - Treat any Copilot-generated code as *third-party code*: review carefully, run tests, and ensure licensing compatibility before merging.
 - Do **not** include or paste sensitive company data, secrets, credentials, tokens, customer information, or internal confidential material into prompts, issues, or code comments.
@@ -29,10 +31,10 @@ Not yet implemented (potential next steps):
 - Cloud sync / multi-device
 
 ## 2) Tech stack (actual, as implemented)
-- Frontend: **Next.js 16.4.0 (App Router)** + **TypeScript 6.0.3** + **React 19.3.0**
+- Frontend: **Next.js 16.4.3 (App Router)** + **TypeScript 6.0.3** + **React 19.3.1**
 - UI: minimal custom CSS, no UI library. Accessible semantic HTML.
 - UI language: **Norwegian (Bokmål) and English** for all user-facing labels and messages.
-- Local storage: **Dexie 4.4.6 (IndexedDB)** — DB name: `leader-health-loop`
+- Local storage: **Dexie 4.4.7 (IndexedDB)** — DB name: `leader-health-loop`
   - Tables: `dailyLogs (&date)`, `weeklyCheckIns (&weekStartDate)`, `workoutLogs (++id,date,dateTime,type)`
   - All user data persists locally without network
 - Validation: **Zod 4.6.7** — schemas in `src/domain/schemas.ts`
