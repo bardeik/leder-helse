@@ -13,6 +13,38 @@ export interface ManualTimerState {
   completedRounds: number;
 }
 
+export interface TimedSequenceStep {
+  readonly name: string;
+  readonly kind: "activity" | "rest";
+  readonly durationMs: number;
+}
+
+export interface TimedSequenceDefinition {
+  readonly steps: readonly TimedSequenceStep[];
+  readonly repetitions: number;
+  readonly omitFinalRest: boolean;
+}
+
+export interface TimedSequence extends TimedSequenceDefinition {
+  readonly cycleDurationMs: number;
+  readonly totalDurationMs: number;
+}
+
+export type TimedSequenceState =
+  | {
+      readonly phase: "running";
+      readonly elapsedMs: number;
+      readonly remainingMs: number;
+      readonly repetitionIndex: number;
+      readonly stepIndex: number;
+      readonly step: TimedSequenceStep;
+    }
+  | {
+      readonly phase: "complete";
+      readonly elapsedMs: number;
+      readonly remainingMs: 0;
+    };
+
 export interface DailyLog {
   date: string;
   energy: number;
